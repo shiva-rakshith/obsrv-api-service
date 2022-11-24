@@ -1,0 +1,4 @@
+{
+    "invalidDateRange":"invalid date range! make sure your range must be valid and cannot be more than ${allowedRange} days",
+    "noDataRange":"invalid date range! the date range cannot be a null value"
+}
