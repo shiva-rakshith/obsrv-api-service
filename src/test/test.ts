@@ -2,7 +2,6 @@ import app from "../app";
 import chai from "chai";
 import chaiHttp from "chai-http";
 import TestDruidQuery from "./testquery";
-
 chai.should();
 chai.use(chaiHttp);
 
@@ -15,6 +14,9 @@ describe("druid API", () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a("object");
+          res.body.result.should.be.a("object");
+          res.body.id.should.be.eq("druid.status");
+          res.body.responseCode.should.be.eq("OK");
           done();
         });
     });
@@ -25,16 +27,9 @@ describe("druid API", () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a("object");
-          done();
-        });
-    });
-    it("it should fetch all datasource(s) available", (done) => {
-      chai
-        .request(app)
-        .get("/druid/v2/datasources")
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a("object");
+          res.body.result.should.be.a("boolean");
+          res.body.id.should.be.eq("druid.health.check");
+          res.body.responseCode.should.be.eq("OK");
           done();
         });
     });
@@ -44,6 +39,11 @@ describe("druid API", () => {
         .get("/invalid/endpoint")
         .end((err, res) => {
           res.should.have.status(404);
+          res.body.should.be.a("object");
+          res.body.id.should.be.eq("druid.api");
+          res.body.responseCode.should.be.eq("failed");
+          res.body.params.status.should.be.eq("failed");
+          res.body.result.should.be.empty;
           done();
         });
     });
@@ -58,10 +58,13 @@ describe("druid API", () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a("object");
+          res.body.responseCode.should.be.eq("OK");
+          res.body.should.have.property("result");
+          res.body.result.length.should.be.lessThan(101);
+          res.body.id.should.be.eq("druid.execute.native.query");
           done();
         });
     });
-
     it("it should reject query, when datarange given as list is higher than limit", (done) => {
       chai
         .request(app)
@@ -70,6 +73,10 @@ describe("druid API", () => {
         .end((err, res) => {
           res.should.have.status(400);
           res.body.should.be.a("object");
+          res.body.responseCode.should.be.eq("failed");
+          res.body.params.status.should.be.eq("failed");
+          res.body.result.should.be.empty;
+          res.body.id.should.be.eq("druid.execute.native.query");
           done();
         });
     });
@@ -81,6 +88,10 @@ describe("druid API", () => {
         .end((err, res) => {
           res.should.have.status(400);
           res.body.should.be.a("object");
+          res.body.responseCode.should.be.eq("failed");
+          res.body.params.status.should.be.eq("failed");
+          res.body.result.should.be.empty;
+          res.body.id.should.be.eq("druid.execute.native.query");
           done();
         });
     });
@@ -88,10 +99,13 @@ describe("druid API", () => {
       chai
         .request(app)
         .post("/druid/v2/")
-        .send(JSON.parse(TestDruidQuery.HIGH_THRESHOLD_QUERY))
+        .send(JSON.parse(TestDruidQuery.HIGH_THRESHOLD_QUERY)) // given threshold is 1K  
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a("object");
+          res.body.responseCode.should.be.eq("OK");
+          res.body.result.length.should.be.lessThan(101); // default is 100
+          res.body.id.should.be.eq("druid.execute.native.query");
           done();
         });
     });
@@ -99,10 +113,13 @@ describe("druid API", () => {
       chai
         .request(app)
         .post("/druid/v2/")
-        .send(JSON.parse(TestDruidQuery.HIGH_LIMIT_QUERY))
+        .send(JSON.parse(TestDruidQuery.HIGH_LIMIT_QUERY)) // given row_limit is 1K
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a("object");
+          res.body.responseCode.should.be.eq("OK");
+          res.body.result.length.should.be.lessThan(101); // default is 100
+          res.body.id.should.be.eq("druid.execute.native.query");
           done();
         });
     });
@@ -114,6 +131,9 @@ describe("druid API", () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a("object");
+          res.body.responseCode.should.be.eq("OK");
+          res.body.result.length.should.be.lessThan(101); // default is 100
+          res.body.id.should.be.eq("druid.execute.native.query");
           done();
         });
     });
@@ -125,17 +145,41 @@ describe("druid API", () => {
         .end((err, res) => {
           res.should.have.status(400);
           res.body.should.be.a("object");
+          res.body.responseCode.should.be.eq("failed");
+          res.body.params.status.should.be.eq("failed");
+          res.body.result.should.be.empty;
+          res.body.id.should.be.eq("druid.execute.native.query");
           done();
         });
     });
-    it("it should allow druid to query when limits are not found for particular datasource", (done) => {
+    // todo
+    it("it should reject query when query limits are not found for particular datasource", (done) => {
       chai
         .request(app)
         .post("/druid/v2/")
         .send(JSON.parse(TestDruidQuery.UNSUPPORTED_DATA_SOURCE))
         .end((err, res) => {
-          res.should.have.status(200);
+          res.should.have.status(400);
           res.body.should.be.a("object");
+          res.body.responseCode.should.be.eq("failed");
+          res.body.params.status.should.be.eq("failed");
+          res.body.result.should.be.empty;
+          res.body.id.should.be.eq("druid.execute.native.query");
+          done();
+        });
+    });
+    it("it should reject query when querytype is invalid", (done) => {
+      chai
+        .request(app)
+        .post("/druid/v2/")
+        .send(JSON.parse(TestDruidQuery.INVALID_QUERY_TYPE))
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.body.should.be.a("object");
+          res.body.responseCode.should.be.eq("failed");
+          res.body.params.status.should.be.eq("failed");
+          res.body.result.should.be.empty;
+          res.body.id.should.be.eq("druid.execute.native.query");
           done();
         });
     });
@@ -147,6 +191,9 @@ describe("druid API", () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a("object");
+          res.body.responseCode.should.be.eq("OK");
+          res.body.result.length.should.be.lessThan(101);
+          res.body.id.should.be.eq("druid.execute.sql.query");
           done();
         });
     });
@@ -154,10 +201,13 @@ describe("druid API", () => {
       chai
         .request(app)
         .post("/druid/v2/sql/")
-        .send(JSON.parse(TestDruidQuery.HIGH_LIMIT_SQL_QUERY))
+        .send(JSON.parse(TestDruidQuery.HIGH_LIMIT_SQL_QUERY)) // given row_limit is 1K
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a("object");
+          res.body.responseCode.should.be.eq("OK");
+          res.body.result.length.should.be.lessThan(101); // default is 100
+          res.body.id.should.be.eq("druid.execute.sql.query");
           done();
         });
     });
@@ -169,6 +219,9 @@ describe("druid API", () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a("object");
+          res.body.responseCode.should.be.eq("OK");
+          res.body.result.length.should.be.lessThan(101); // default is 100
+          res.body.id.should.be.eq("druid.execute.sql.query");
           done();
         });
     });
@@ -180,6 +233,10 @@ describe("druid API", () => {
         .end((err, res) => {
           res.should.have.status(400);
           res.body.should.be.a("object");
+          res.body.responseCode.should.be.eq("failed");
+          res.body.params.status.should.be.eq("failed");
+          res.body.result.should.be.empty;
+          res.body.id.should.be.eq("druid.execute.sql.query");
           done();
         });
     });
@@ -191,6 +248,10 @@ describe("druid API", () => {
         .end((err, res) => {
           res.should.have.status(400);
           res.body.should.be.a("object");
+          res.body.responseCode.should.be.eq("failed");
+          res.body.params.status.should.be.eq("failed");
+          res.body.result.should.be.empty;
+          res.body.id.should.be.eq("druid.execute.sql.query");
           done();
         });
     });
@@ -200,8 +261,12 @@ describe("druid API", () => {
         .post("/druid/v2/sql/")
         .send(JSON.parse(TestDruidQuery.UNSUPPORTED_DATASOURCE_SQL_QUERY))
         .end((err, res) => {
-          res.should.have.status(500);
+          res.should.have.status(400);
           res.body.should.be.a("object");
+          res.body.responseCode.should.be.eq("failed");
+          res.body.params.status.should.be.eq("failed");
+          res.body.result.should.be.empty;
+          res.body.id.should.be.eq("druid.execute.sql.query");
           done();
         });
     });

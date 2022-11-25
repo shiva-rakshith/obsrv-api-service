@@ -15,10 +15,12 @@ class TestDruidQuery {
     '{"queryType":"search","dataSource":"telemetry-events","granularity":"all","resultFormat":"compactedList","columns":["__time"],"metrics":{"type":"numeric","metric":"count"},"aggregations":[{"type":"count","name":"count"}]}';
   public static UNSUPPORTED_DATA_SOURCE =
     '{"queryType":"timeBoundary","dataSource":"invalid_data_source","granularity":"all","intervals":{"type":"intervals","intervals":["2022-10-17/2022-10-19"]},"resultFormat":"compactedList","columns":["__time","scans"],"metrics":{"type":"numeric","metric":"count"},"aggregations":[{"type":"count","name":"count"}]}';
+  public static INVALID_QUERY_TYPE = 
+    '{"queryType":"invalidQueryType", "dataSource":"telemetry-events", "granulaity":"all", "intervals":"2021-12-31/2022-01-20"}';
   public static VALID_SQL_QUERY =
     '{"query":"SELECT * FROM \\"telemetry-events\\" WHERE __time >= TIMESTAMP \'2020-12-31\' AND __time < TIMESTAMP \'2021-01-21\' LIMIT 10"}';
   public static HIGH_LIMIT_SQL_QUERY =
-    '{"query":"SELECT mid FROM \\"telemetry-events\\" WHERE __time >= TIMESTAMP \'2021-01-01\' AND __time < TIMESTAMP \'2021-01-22\' LIMIT 100"}';
+    '{"query":"SELECT mid FROM \\"telemetry-events\\" WHERE __time >= TIMESTAMP \'2021-01-01\' AND __time < TIMESTAMP \'2021-01-22\' LIMIT 1000"}';
   public static WITHOUT_LIMIT_SQL_QUERY =
     '{"query":"SELECT actor_type, content_status FROM \\"telemetry-events\\" WHERE __time >= TIMESTAMP \'2021-01-01\' AND __time < TIMESTAMP \'2021-01-02\'"}';
   public static HIGH_DATE_RANGE_SQL_QUERY =
