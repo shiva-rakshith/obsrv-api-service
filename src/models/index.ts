@@ -3,21 +3,17 @@ export interface IValidationResponse {
   isValid: boolean;
 }
 
-export interface IDataSourceLimits {
-  limits: ILimits[];
-}
-export interface ILimits {
-  common: ICommon;
-  dataSource: string;
-  queryRules: IQueryRules;
+export interface IDataSourceRules {
+   dataSource:string;
+   queryRules:IQueryTypeRules;
 }
 
-export interface ICommon {
+export interface ICommonRules {
   max_result_threshold: number;
   max_result_row_limit: number;
 }
 
-export interface IQueryRules {
+export interface IQueryTypeRules {
   groupBy: IRules;
   scan: IRules;
   topN: IRules;
@@ -27,11 +23,7 @@ export interface IQueryRules {
 }
 
 export interface IRules {
-  max_date_range?: Number;
-}
-
-export interface IDimension {
-  [name: string]: any;
+  max_date_range?: number;
 }
 
 export interface IQuery {
@@ -54,6 +46,7 @@ export interface IFilter {
   dimension?: string;
   dimensions?: string[];
 }
-export interface IString {
+
+export interface ISqlQuery {
   query: string;
 }
