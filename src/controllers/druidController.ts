@@ -1,6 +1,6 @@
 import httpStatus from "http-status";
-import { ApiResponse } from "../helpers/response";
-import { druidInstance } from "../helpers/axios";
+import { ResponseHandler } from "../helpers/response";
+import { httpService } from "../helpers/axios";
 import { Request, Response, NextFunction } from "express";
 import createError from "http-errors";
 import routes from "../resources/routes.json";
@@ -12,8 +12,8 @@ class DruidController {
     next: NextFunction
   ) => {
     try {
-      const result = await druidInstance.get(routes.GETSTATUS.URL);
-      ApiResponse.handler(req, res, result);
+      const result = await httpService.get(routes.GET_STATUS.URL);
+      ResponseHandler.success(req, res, result);
     } catch (error: any) {
       next(createError(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
@@ -24,20 +24,8 @@ class DruidController {
     next: NextFunction
   ) => {
     try {
-      const result = await druidInstance.get(routes.HEALTHCHECK.URL);
-      ApiResponse.handler(req, res, result);
-    } catch (error: any) {
-      next(createError(httpStatus.INTERNAL_SERVER_ERROR, error.message));
-    }
-  };
-  public static listDataSources = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      const result = await druidInstance.get(routes.LISTDATSOURCES.URL);
-      ApiResponse.handler(req, res, result);
+      const result = await httpService.get(routes.HEALTH_CHECK.URL);
+      ResponseHandler.success(req, res, result);
     } catch (error: any) {
       next(createError(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
@@ -48,8 +36,8 @@ class DruidController {
     next: NextFunction
   ) => {
     try {
-      const result = await druidInstance.post(routes.NATIVEQUERY.URL, req.body);
-      ApiResponse.handler(req, res, result);
+      const result = await httpService.post(routes.NATIVE_QUERY.URL, req.body);
+      ResponseHandler.success(req, res, result);
     } catch (error: any) {
       next(createError(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
@@ -60,8 +48,8 @@ class DruidController {
     next: NextFunction
   ) => {
     try {
-      const result = await druidInstance.post(routes.SQLQUERY.URL, req.body);
-      ApiResponse.handler(req, res, result);
+      const result = await httpService.post(routes.SQL_QUERY.URL, req.body);
+      ResponseHandler.success(req, res, result);
     } catch (error: any) {
       next(createError(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
