@@ -1,8 +1,14 @@
 import { AxiosResponse } from "axios";
-import { Request, Response } from "express";
+import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 
-class ApiResponse {
-  public static handler(req: Request, res: Response, result: AxiosResponse) {
+type extendedErrorRequestHandler = ErrorRequestHandler & {
+  statusCode: number;
+  message: string;
+  id?: string;
+};
+
+class ResponseHandler {
+  public static success(req: Request, res: Response, result: AxiosResponse) {
     res
       .status(result.status)
       .json(
@@ -26,6 +32,23 @@ class ApiResponse {
       result,
     };
   }
+
+  public static error(error: extendedErrorRequestHandler,
+    req: Request,
+    res: Response,
+    next: NextFunction){
+    const { statusCode, message } = error;
+  const { id = "druid.api" } = req as any;
+  res
+    .status(statusCode)
+    .json(
+      ResponseHandler.refactorResponse({
+        id: id,
+        params: { status: "failed", errmsg: message },
+        responseCode: "failed",
+      })
+    );
+  }
 }
 
-export { ApiResponse };
+export { ResponseHandler };
