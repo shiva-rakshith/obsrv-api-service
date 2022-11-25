@@ -1,27 +1,22 @@
 {
-  "GETSTATUS": {
+  "GET_STATUS": {
     "URL": "/status",
     "METHOD": "GET",
-    "APIID": "druid.status"
+    "API_ID": "druid.status"
   },
-  "HEALTHCHECK": {
+  "HEALTH_CHECK": {
     "URL": "/status/health",
     "METHOD": "GET",
-    "APIID": "druid.health.check"
+    "API_ID": "druid.health.check"
   },
-  "LISTDATSOURCES": {
-    "URL": "/druid/v2/datasources",
-    "METHOD": "GET",
-    "APIID": "druid.datasources.list"
-  },
-  "NATIVEQUERY": {
+  "NATIVE_QUERY": {
     "URL": "/druid/v2",
     "METHOD": "POST",
-    "APIID": "druid.execute.native.query"
+    "API_ID": "druid.execute.native.query"
   },
-  "SQLQUERY": {
+  "SQL_QUERY": {
     "URL": "/druid/v2/sql/",
     "METHOD": "POST",
-    "APIID": "druid.execute.sql.query"
+    "API_ID": "druid.execute.sql.query"
   }
 }
