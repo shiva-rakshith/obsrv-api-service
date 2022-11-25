@@ -18,16 +18,17 @@ const validate =
       dataSource = getDataSource(queryPayload.query);
       result = ValidationService.validateSqlQuery(
         queryPayload,
+        limits.common,
         getLimits(dataSource)
       );
     } else {
       dataSource = queryPayload.dataSource;
       result = ValidationService.validateNativeQuery(
         queryPayload,
+        limits.common,
         getLimits(dataSource)
       );
     }
-
     if (!result.isValid) {
       throw createError(httpStatus.BAD_REQUEST, result.errorMessage!);
     }
@@ -36,9 +37,9 @@ const validate =
   };
 
 const getLimits = (datasource: string): any => {
-  for (var index = 0; index < limits.length; index++) {
-    if (limits[index].dataSource == datasource) {
-      return limits[index];
+  for (var index = 0; index < limits.rules.length; index++) {
+    if (limits.rules[index].dataSource == datasource) {
+      return limits.rules[index];
     }
   }
 };
