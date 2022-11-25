@@ -1,154 +1,155 @@
 import {
-  ICommon,
-  ILimits,
+  ICommonRules,
   IRules,
   IValidationResponse,
   IQuery,
-  IString,
+  ISqlQuery,
+  IDataSourceRules,
+  IQueryTypeRules,
 } from "../models";
 import constants from "../resources/constants.json";
+import moment from "moment";
 
 class ValidationService {
   public static validateNativeQuery(
     query: IQuery,
-    limits: ILimits
+    commonLimits: ICommonRules,
+    dataSourceLimits: IDataSourceRules
   ): IValidationResponse {
-    if (limits != undefined && limits) {
-      this.validateCommonRules(query, limits.common);
-      switch (query.queryType) {
-        case "groupBy":
-          return this.validateQueryTypes(query, limits.queryRules.groupBy);
-        case "topN":
-          return this.validateQueryTypes(query, limits.queryRules.topN);
-        case "scan":
-          return this.validateQueryTypes(query, limits.queryRules.scan);
-        case "search":
-          return this.validateQueryTypes(query, limits.queryRules.search);
-        case "timeseries":
-          return this.validateQueryTypes(query, limits.queryRules.timeseries);
-        case "timeBoundary":
-          return this.validateQueryTypes(query, limits.queryRules.timeBoundary);
-        default:
-          return { isValid: true };
-      }
-    } else {
-      return { isValid: true };
-    }
-  }
-
-  private static validateQueryTypes(
-    query: IQuery,
-    queryRules: IRules
-  ): IValidationResponse {
-    return this.validateDateRange(query.intervals, queryRules.max_date_range);
-  }
-
-  private static validateDateRange(
-    dateRange: string[] | string = "",
-    allowedRange: Number = 0
-  ): IValidationResponse {
-    if (dateRange) {
-      const extracted = Array.isArray(dateRange)
-        ? dateRange[0].split("/")
-        : dateRange.toString().split("/");
-      const fromDate = new Date(extracted[0]).getTime();
-      const toDate = new Date(extracted[1]).getTime();
-      const diffInDays = (toDate - fromDate) / (1000 * 3600 * 24);
-      if (diffInDays > allowedRange) {
-        return {
-          errorMessage: constants.invalidDateRange.replace(
-            "${allowedRange}",
-            allowedRange.toString()
-          ),
-          isValid: false,
-        };
-      } else {
-        return { isValid: true };
+    if (dataSourceLimits != undefined && dataSourceLimits) {
+      this.determineQueryLimits(query, commonLimits);
+      try {
+        return this.validateQueryRules(
+          query,
+          dataSourceLimits.queryRules[query.queryType as keyof IQueryTypeRules]
+        );
+      } catch (error) {
+        return { errorMessage: constants.INVALID_QUERY_TYPE, isValid: false };
       }
     } else {
       return {
-        errorMessage: constants.noDataRange,
+        errorMessage: constants.INVALID_DATA_SOURCE,
         isValid: false,
       };
     }
   }
 
-  private static validateCommonRules(query: IQuery, limits: ICommon): void {
+  private static validateQueryRules(
+    query: IQuery,
+    queryRules: IRules
+  ): IValidationResponse {
+    const dateRange = query.intervals;
+    const allowedRange = queryRules.max_date_range;
+    if (dateRange) {
+      const extractedDateRange = Array.isArray(dateRange)
+        ? dateRange[0].split("/")
+        : dateRange.toString().split("/");
+      const fromDate = moment(extractedDateRange[0], "YYYY-MM-DD HH:MI:SS");
+      const toDate = moment(extractedDateRange[1], "YYYY-MM-DD HH:MI:SS");
+      return this.validateDateRange(fromDate, toDate, allowedRange);
+    } else {
+      return {
+        errorMessage: constants.NO_DATE_RANGE,
+        isValid: false,
+      };
+    }
+  }
+
+  private static determineQueryLimits(
+    query: IQuery,
+    limits: ICommonRules
+  ): void {
     if (query.threshold) {
-      query.threshold =
-        query.threshold > limits.max_result_threshold
-          ? limits.max_result_threshold
-          : query.threshold || limits.max_result_threshold;
+      query.threshold = this.getNewRowLimit(
+        query.threshold,
+        limits.max_result_threshold
+      );
     } else {
       query.threshold = limits.max_result_threshold;
     }
     if (query.limit) {
-      query.limit =
-        query.limit > limits.max_result_row_limit
-          ? limits.max_result_row_limit
-          : query.limit || limits.max_result_row_limit;
+      query.limit = this.getNewRowLimit(
+        query.limit,
+        limits.max_result_row_limit
+      );
     } else {
       query.limit = limits.max_result_row_limit;
     }
   }
+
   public static validateSqlQuery(
-    queryData: IString,
-    limits: ILimits
+    queryData: ISqlQuery,
+    commonLimits: ICommonRules,
+    dataSourceLimits: IDataSourceRules
   ): IValidationResponse {
-    if (limits != undefined && limits) {
+    const maxRowLimit = commonLimits.max_result_row_limit;
+    if (dataSourceLimits != undefined && dataSourceLimits) {
       const isDateMentioned = queryData.query.indexOf("TIMESTAMP");
-      this.validateSqlLimits(queryData, limits.common.max_result_row_limit);
-      const allowedRange = limits.queryRules.scan.max_date_range || 0;
+      let limitIndex = queryData.query.indexOf("LIMIT");
+      if (limitIndex == -1) {
+        queryData.query = queryData.query.concat(
+          " LIMIT " + maxRowLimit.toString()
+        );
+      } else {
+        let queryLimit: number = parseInt(
+          queryData.query.substring(limitIndex).split(" ")[1]
+        );
+        let newLimit = this.getNewRowLimit(queryLimit, maxRowLimit);
+        queryData.query = queryData.query.replace(
+          queryLimit.toString(),
+          newLimit.toString()
+        );
+      }
+      const allowedRange = dataSourceLimits.queryRules.scan.max_date_range;
       if (isDateMentioned != -1) {
-        let fromDate: any = new Date(
+        let fromDate: any = moment(
           queryData.query
             .substring(queryData.query.indexOf("TIMESTAMP"))
-            .split(" ")[1]
-        ).getTime();
-        let toDate: any = new Date(
+            .split(" ")[1],
+          "YYYY-MM-DD HH:MI:SS"
+        );
+        let toDate: any = moment(
           queryData.query
             .substring(queryData.query.lastIndexOf("TIMESTAMP"))
-            .split(" ")[1]
-        ).getTime();
-        const diffInDays = (toDate - fromDate) / (1000 * 3600 * 24);
-        if (diffInDays > allowedRange || diffInDays < 0) {
-          return {
-            errorMessage: constants.invalidDateRange.replace(
-              "${allowedRange}",
-              allowedRange.toString()
-            ),
-            isValid: false,
-          };
-        } else {
-          return { isValid: true };
-        }
+            .split(" ")[1],
+          "YYYY-MM-DD HH:MI:SS"
+        );
+        return this.validateDateRange(fromDate, toDate, allowedRange);
       } else {
         return {
-          errorMessage: constants.noDataRange,
+          errorMessage: constants.NO_DATE_RANGE,
           isValid: false,
         };
       }
     } else {
+      return {
+        errorMessage: constants.INVALID_DATA_SOURCE,
+        isValid: false,
+      };
+    }
+  }
+
+  private static validateDateRange(
+    fromDate: moment.Moment,
+    toDate: moment.Moment,
+    allowedRange: Number = 0
+  ) {
+    const differenceInDays = Math.abs(fromDate.diff(toDate, "days"));
+    if (differenceInDays > allowedRange) {
+      return {
+        errorMessage: constants.INVALID_DATE_RANGE.replace(
+          "${allowedRange}",
+          allowedRange.toString()
+        ),
+        isValid: false,
+      };
+    } else {
       return { isValid: true };
     }
   }
-  private static validateSqlLimits(
-    queryData: IString,
-    maxLimit: Number = 0
-  ): void {
-    let isLimit = queryData.query.indexOf("LIMIT");
-    if (isLimit == -1) {
-      queryData.query = queryData.query.concat(" LIMIT " + maxLimit.toString());
-    } else {
-      let queryLimit: Number = parseInt(
-        queryData.query.substring(isLimit).split(" ")[1]
-      );
-      let newLimit = queryLimit > maxLimit ? maxLimit : queryLimit || maxLimit;
-      queryData.query = queryData.query.replace(
-        queryLimit.toString(),
-        newLimit.toString()
-      );
-    }
+
+  private static getNewRowLimit(queryLimit: number, maxRowLimit: number = 0) {
+    return queryLimit > maxRowLimit ? maxRowLimit : queryLimit || maxRowLimit;
   }
 }
 
