@@ -7,33 +7,27 @@ import setApiId from "../middlewares/utils/apiId";
 const router = express.Router();
 
 router.get(
-  routes.GETSTATUS.URL,
-  setApiId(routes.GETSTATUS.APIID),
+  routes.GET_STATUS.URL,
+  setApiId(routes.GET_STATUS.API_ID),
   DruidController.getStatus
 );
 
 router.get(
-  routes.HEALTHCHECK.URL,
-  setApiId(routes.HEALTHCHECK.APIID),
+  routes.HEALTH_CHECK.URL,
+  setApiId(routes.HEALTH_CHECK.API_ID),
   DruidController.getHealthStatus
 );
 
-router.get(
-  routes.LISTDATSOURCES.URL,
-  setApiId(routes.LISTDATSOURCES.APIID),
-  DruidController.listDataSources
-);
-
 router.post(
-  routes.NATIVEQUERY.URL,
-  setApiId(routes.NATIVEQUERY.APIID),
+  routes.NATIVE_QUERY.URL,
+  setApiId(routes.NATIVE_QUERY.API_ID),
   validate({ isSqlQuery: false }),
   DruidController.executeNativeQuery
 );
 
 router.post(
-  routes.SQLQUERY.URL,
-  setApiId(routes.SQLQUERY.APIID),
+  routes.SQL_QUERY.URL,
+  setApiId(routes.SQL_QUERY.API_ID),
   validate({ isSqlQuery: true }),
   DruidController.executeSqlQuery
 );
