@@ -89,16 +89,19 @@ export class ValidationService {
       let queryLimitIndex = vocabulary.indexOf("LIMIT");
       let fromDateIndex = vocabulary.indexOf("TIMESTAMP");
       let toDateIndex = vocabulary.lastIndexOf("TIMESTAMP");
-      let fromDate = moment(vocabulary[fromDateIndex + 1], "YYYY-MM-DD HH:MI:SS");
+      let fromDate = moment(
+        vocabulary[fromDateIndex + 1],
+        "YYYY-MM-DD HH:MI:SS"
+      );
       let toDate = moment(vocabulary[toDateIndex + 1], "YYYY-MM-DD HH:MI:SS");
       let queryLimit = Number(vocabulary[queryLimitIndex + 1]);
       const allowedRange = dataSourceLimits.queryRules.scan.max_date_range;
       if (isNaN(queryLimit)) {
-        queryData.query=[vocabulary, "LIMIT", maxRowLimit].join(" ")
+        queryData.query = [vocabulary, "LIMIT", maxRowLimit].join(" ");
       } else {
         let newLimit = this.getNewRowLimit(queryLimit, maxRowLimit);
-        vocabulary[queryLimitIndex+1]=newLimit.toString()
-        queryData.query=vocabulary.join(" ")
+        vocabulary[queryLimitIndex + 1] = newLimit.toString();
+        queryData.query = vocabulary.join(" ");
       }
       if (fromDate.isValid() && toDate.isValid()) {
         return this.validateDateRange(fromDate, toDate, allowedRange);
