@@ -33,15 +33,15 @@ class ResponseHandler {
     };
   }
 
-  public static error(error: extendedErrorRequestHandler,
+  public static error(
+    error: extendedErrorRequestHandler,
     req: Request,
     res: Response,
-    next: NextFunction){
+    next: NextFunction
+  ) {
     const { statusCode, message } = error;
-  const { id = "druid.api" } = req as any;
-  res
-    .status(statusCode)
-    .json(
+    const { id = "druid.api" } = req as any;
+    res.status(statusCode).json(
       ResponseHandler.refactorResponse({
         id: id,
         params: { status: "failed", errmsg: message },
