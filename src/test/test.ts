@@ -10,7 +10,7 @@ chai.use(chaiHttp);
 
 describe("druid API", () => {
   describe("If druid service is down", () => {
-    it("should raise error", (done) => {
+    it("should raise error while status endpoint is called", (done) => {
       chai
         .request(app)
         .get(config.apiStatusEndPoint)
@@ -19,7 +19,7 @@ describe("druid API", () => {
           done();
         });
     });
-    it("should raise error", (done) => {
+    it("should raise error while health endpoint is called", (done) => {
       chai
         .request(app)
         .get(config.apiHealthEndPoint)
@@ -28,7 +28,7 @@ describe("druid API", () => {
           done();
         });
     });
-    it("it should raise error", (done) => {
+    it("it should raise error when native query endpoint is called", (done) => {
       chai
         .request(app)
         .post(config.apiDruidEndPoint)
@@ -38,7 +38,7 @@ describe("druid API", () => {
           done();
         });
     });
-    it("should raise error", (done) => {
+    it("should raise error when sql query endpoint is called", (done) => {
       chai
         .request(app)
         .post(config.apiDruidSqlEndPoint)

@@ -2,34 +2,35 @@ import express from "express";
 import DruidController from "../controllers/druidController";
 import routes from "../resources/routes.json";
 import validate from "../middlewares/validators/druidValidator";
-import setApiId from "../middlewares/utils/apiId";
-
+import { ResponseHandler } from "../helpers/response"; 
+const druidController=new DruidController
 const router = express.Router();
+const responseHandler= new ResponseHandler
 
 router.get(
   routes.GET_STATUS.URL,
-  setApiId(routes.GET_STATUS.API_ID),
-  DruidController.getStatus
+  responseHandler.setApiId(routes.GET_STATUS.API_ID),
+  druidController.getStatus
 );
 
 router.get(
   routes.HEALTH_CHECK.URL,
-  setApiId(routes.HEALTH_CHECK.API_ID),
-  DruidController.getHealthStatus
+  responseHandler.setApiId(routes.HEALTH_CHECK.API_ID),
+  druidController.getHealthStatus
 );
 
 router.post(
   routes.NATIVE_QUERY.URL,
-  setApiId(routes.NATIVE_QUERY.API_ID),
+  responseHandler.setApiId(routes.NATIVE_QUERY.API_ID),
   validate({ isSqlQuery: false }),
-  DruidController.executeNativeQuery
+  druidController.executeNativeQuery
 );
 
 router.post(
   routes.SQL_QUERY.URL,
-  setApiId(routes.SQL_QUERY.API_ID),
+  responseHandler.setApiId(routes.SQL_QUERY.API_ID),
   validate({ isSqlQuery: true }),
-  DruidController.executeSqlQuery
+  druidController.executeSqlQuery
 );
 
 export { router };
