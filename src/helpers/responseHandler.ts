@@ -11,13 +11,15 @@ type extendedErrorRequestHandler = ErrorRequestHandler & {
 
 class ResponseHandler {
   public success(req: Request, res: Response, result: AxiosResponse) {
-    const responseHandler = new ResponseHandler();
-    res.status(result.status).json(
-      responseHandler.refactorResponse({
-        id: (req as any).id,
-        result: result.data,
-      })
-    );
+    const responseHandler = new ResponseHandler
+    res
+      .status(result.status)
+      .json(
+        responseHandler.refactorResponse({
+          id: (req as any).id,
+          result: result.data,
+        })
+      );
   }
 
   public routeNotFound = (req: Request, res: Response, next: NextFunction) => {
@@ -50,7 +52,7 @@ class ResponseHandler {
     res: Response,
     next: NextFunction
   ) {
-    const responseHandler = new ResponseHandler();
+    const responseHandler=new ResponseHandler
     const { statusCode, message } = error;
     const { id = "druid.api" } = req as any;
     res.status(statusCode).json(
@@ -62,10 +64,10 @@ class ResponseHandler {
     );
   }
   public setApiId =
-    (id: string) => (req: Request, res: Response, next: NextFunction) => {
-      (req as any).id = id;
-      next();
-    };
+  (id: string) => (req: Request, res: Response, next: NextFunction) => {
+    (req as any).id = id;
+    next();
+  };
 }
 
 export { ResponseHandler };

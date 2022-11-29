@@ -1,10 +1,10 @@
 import httpStatus from "http-status";
-import { ResponseHandler } from "../helpers/response";
+import { ResponseHandler } from "../helpers/responseHandler";
 import { httpService } from "../helpers/axios";
 import { Request, Response, NextFunction } from "express";
 import createError from "http-errors";
 import routes from "../resources/routes.json";
-const responseHandler =new  ResponseHandler
+const responseHandler = new ResponseHandler();
 
 class DruidController {
   public getStatus = async (

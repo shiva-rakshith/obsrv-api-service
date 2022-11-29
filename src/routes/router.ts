@@ -2,10 +2,10 @@ import express from "express";
 import DruidController from "../controllers/druidController";
 import routes from "../resources/routes.json";
 import validate from "../middlewares/validators/druidValidator";
-import { ResponseHandler } from "../helpers/response"; 
-const druidController=new DruidController
+import { ResponseHandler } from "../helpers/responseHandler";
+const druidController = new DruidController();
 const router = express.Router();
-const responseHandler= new ResponseHandler
+const responseHandler = new ResponseHandler();
 
 router.get(
   routes.GET_STATUS.URL,

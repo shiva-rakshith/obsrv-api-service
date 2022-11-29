@@ -8,15 +8,16 @@ import {
   IQueryTypeRules,
 } from "../models";
 import constants from "../resources/constants.json";
+import { isEmpty, isUndefined } from "lodash";
 import moment from "moment";
 
-class ValidationService {
+export class ValidationService {
   public static validateNativeQuery(
     query: IQuery,
     commonLimits: ICommonRules,
     dataSourceLimits: IDataSourceRules
   ): IValidationResponse {
-    if (dataSourceLimits != undefined && dataSourceLimits) {
+    if (!isEmpty(dataSourceLimits) && !isUndefined(dataSourceLimits)) {
       this.determineQueryLimits(query, commonLimits);
       try {
         return this.validateQueryRules(
@@ -38,9 +39,9 @@ class ValidationService {
     query: IQuery,
     queryRules: IRules
   ): IValidationResponse {
-    const dateRange = query.intervals;
+    const dateRange: any = query.intervals;
     const allowedRange = queryRules.max_date_range;
-    if (dateRange) {
+    if (!isEmpty(query.intervals)) {
       const extractedDateRange = Array.isArray(dateRange)
         ? dateRange[0].split("/")
         : dateRange.toString().split("/");
@@ -83,37 +84,23 @@ class ValidationService {
     dataSourceLimits: IDataSourceRules
   ): IValidationResponse {
     const maxRowLimit = commonLimits.max_result_row_limit;
-    if (dataSourceLimits != undefined && dataSourceLimits) {
-      const isDateMentioned = queryData.query.indexOf("TIMESTAMP");
-      let limitIndex = queryData.query.indexOf("LIMIT");
-      if (limitIndex == -1) {
-        queryData.query = queryData.query.concat(
-          " LIMIT " + maxRowLimit.toString()
-        );
-      } else {
-        let queryLimit: number = parseInt(
-          queryData.query.substring(limitIndex).split(" ")[1]
-        );
-        let newLimit = this.getNewRowLimit(queryLimit, maxRowLimit);
-        queryData.query = queryData.query.replace(
-          queryLimit.toString(),
-          newLimit.toString()
-        );
-      }
+    if (!isEmpty(dataSourceLimits) && !isUndefined(dataSourceLimits)) {
+      let vocabulary = queryData.query.split(" ");
+      let queryLimitIndex = vocabulary.indexOf("LIMIT");
+      let fromDateIndex = vocabulary.indexOf("TIMESTAMP");
+      let toDateIndex = vocabulary.lastIndexOf("TIMESTAMP");
+      let fromDate = moment(vocabulary[fromDateIndex + 1], "YYYY-MM-DD HH:MI:SS");
+      let toDate = moment(vocabulary[toDateIndex + 1], "YYYY-MM-DD HH:MI:SS");
+      let queryLimit = Number(vocabulary[queryLimitIndex + 1]);
       const allowedRange = dataSourceLimits.queryRules.scan.max_date_range;
-      if (isDateMentioned != -1) {
-        let fromDate: any = moment(
-          queryData.query
-            .substring(queryData.query.indexOf("TIMESTAMP"))
-            .split(" ")[1],
-          "YYYY-MM-DD HH:MI:SS"
-        );
-        let toDate: any = moment(
-          queryData.query
-            .substring(queryData.query.lastIndexOf("TIMESTAMP"))
-            .split(" ")[1],
-          "YYYY-MM-DD HH:MI:SS"
-        );
+      if (isNaN(queryLimit)) {
+        queryData.query=[vocabulary, "LIMIT", maxRowLimit].join(" ")
+      } else {
+        let newLimit = this.getNewRowLimit(queryLimit, maxRowLimit);
+        vocabulary[queryLimitIndex+1]=newLimit.toString()
+        queryData.query=vocabulary.join(" ")
+      }
+      if (fromDate.isValid() && toDate.isValid()) {
         return this.validateDateRange(fromDate, toDate, allowedRange);
       } else {
         return {
@@ -152,5 +139,3 @@ class ValidationService {
     return queryLimit > maxRowLimit ? maxRowLimit : queryLimit || maxRowLimit;
   }
 }
-
-export { ValidationService };
