@@ -4,11 +4,10 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "npm run app.js",
+    "start": "tsc && ts-node ./src/app.ts",
     "dev": "nodemon src/app.ts",
     "test": "mocha -r ts-node/register \"./src/test/**/*.ts\" --exit",
-    "coverage": "nyc npm run test report --reporter=html --exit",
-    "build": "tsc src/app.ts"
+    "coverage": "nyc npm run test report --reporter=html --exit"
   },
   "author": "GayathriSrividya",
   "license": "ISC",
