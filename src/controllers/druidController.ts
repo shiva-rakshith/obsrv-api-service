@@ -37,7 +37,7 @@ class DruidController {
     next: NextFunction
   ) => {
     try {
-      const result = await httpService.post(routes.NATIVE_QUERY.URL, req.body);
+      const result = await httpService.post(routes.NATIVE_QUERY.URL, req.body.query);
       responseHandler.success(req, res, result);
     } catch (error: any) {
       next(createError(httpStatus.INTERNAL_SERVER_ERROR, error.message));
@@ -49,7 +49,7 @@ class DruidController {
     next: NextFunction
   ) => {
     try {
-      const result = await httpService.post(routes.SQL_QUERY.URL, req.body);
+      const result = await httpService.post(routes.SQL_QUERY.URL, req.body.query);
       responseHandler.success(req, res, result);
     } catch (error: any) {
       next(createError(httpStatus.INTERNAL_SERVER_ERROR, error.message));

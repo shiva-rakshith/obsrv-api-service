@@ -1,5 +1,5 @@
 import axios from "axios";
-import { config } from "../config/config";
+import { config } from "../configs/config";
 
 const URL = config.druidHost + ":" + config.druidPort;
 const httpService = axios.create({

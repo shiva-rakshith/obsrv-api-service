@@ -4,8 +4,8 @@ export interface IValidationResponse {
 }
 
 export interface IDataSourceRules {
-   dataSource:string;
-   queryRules:IQueryTypeRules;
+  dataSource: string;
+  queryRules: IQueryTypeRules;
 }
 
 export interface ICommonRules {
@@ -26,7 +26,7 @@ export interface IRules {
   max_date_range?: number;
 }
 
-export interface IQuery {
+export interface INativeQuery {
   queryType: string;
   dataSource: string;
   dimension?: string;
@@ -47,6 +47,8 @@ export interface IFilter {
   dimensions?: string[];
 }
 
-export interface ISqlQuery {
-  query: string;
+export interface IQuery {
+  context: object;
+  query?: INativeQuery;
+  querySql?: string;
 }

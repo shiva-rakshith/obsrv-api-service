@@ -1,7 +1,7 @@
 import express from "express";
 import DruidController from "../controllers/druidController";
 import routes from "../resources/routes.json";
-import validate from "../middlewares/validators/druidValidator";
+import validate from "../middlewares/validators/requestQueryValidator";
 import { ResponseHandler } from "../helpers/responseHandler";
 const druidController = new DruidController();
 const router = express.Router();
