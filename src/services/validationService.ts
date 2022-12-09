@@ -61,7 +61,7 @@ export class ValidationService {
     queryRules: IRules
   ): IValidationResponse {
     const dateRange: any = query.intervals;
-    const allowedRange = queryRules.max_date_range;
+    let allowedRange = queryRules.max_date_range;
     const extractedDateRange = Array.isArray(dateRange)
       ? dateRange[0].split("/")
       : dateRange.toString().split("/");
@@ -136,7 +136,7 @@ export class ValidationService {
   private static validateDateRange(
     fromDate: moment.Moment,
     toDate: moment.Moment,
-    allowedRange: Number = 0
+    allowedRange: number = 0
   ) {
     const differenceInDays = Math.abs(fromDate.diff(toDate, "days"));
     if (differenceInDays > allowedRange) {
@@ -152,7 +152,7 @@ export class ValidationService {
     }
   }
 
-  private static getNewRowLimit(queryLimit: number, maxRowLimit: number = 0) {
-    return queryLimit > maxRowLimit ? maxRowLimit : queryLimit || maxRowLimit;
+  private static getNewRowLimit(queryLimit: number, maxRowLimit: number) {
+    return queryLimit > maxRowLimit ? maxRowLimit : queryLimit;
   }
 }

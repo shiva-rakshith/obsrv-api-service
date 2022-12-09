@@ -54,7 +54,7 @@ class ResponseHandler {
   ) {
     const responseHandler=new ResponseHandler
     const { statusCode, message } = error;
-    const { id = "druid.api" } = req as any;
+    const { id } = req as any;
     res.status(statusCode).json(
       responseHandler.refactorResponse({
         id: id,
