@@ -7,7 +7,8 @@
     "start": "tsc && ts-node ./src/app.ts",
     "dev": "nodemon src/app.ts",
     "test": "mocha -r ts-node/register \"./src/test/**/*.ts\" --exit",
-    "coverage": "nyc npm run test report --reporter=html --exit"
+    "coverage": "nyc npm run test report --reporter=lcov --exit",
+    "build": "tsc -P ."
   },
   "author": "GayathriSrividya",
   "license": "ISC",
