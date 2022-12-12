@@ -50,5 +50,9 @@ export interface IFilter {
 export interface IQuery {
   context: object;
   query?: INativeQuery;
-  querySql?: string;
+  querySql?: ISqlQuery;
+}
+
+export interface ISqlQuery{
+  query : string
 }
