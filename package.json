@@ -2,12 +2,10 @@
   "name": "obsrv-query-engine",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "dist/app.js",
   "scripts": {
     "start": "tsc && ts-node ./src/app.ts",
-    "dev": "nodemon src/app.ts",
-    "test": "mocha -r ts-node/register \"./src/test/**/*.ts\" --exit",
-    "coverage": "nyc npm run test report --reporter=lcov --exit",
+    "test": "nyc mocha ./src/test/druidTestService.spec.ts --exit",
     "build": "tsc -P ."
   },
   "author": "GayathriSrividya",
@@ -40,5 +38,17 @@
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.0",
     "typescript": "^4.8.4"
+  },
+  "nyc": {
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary",
+      "lcov"
+    ]
   }
 }
