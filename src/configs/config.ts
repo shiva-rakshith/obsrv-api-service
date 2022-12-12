@@ -1,7 +1,7 @@
 const config = {
   apiPort: process.env.api_port || 3000,
   druidHost: process.env.druid_host || "http://localhost",
-  druidPort: process.env.druid_port || 8082,
+  druidPort: process.env.druid_port || 8888,
   druidEndPoint: process.env.druid_end_point || "/druid/v2",
 
   limits : {

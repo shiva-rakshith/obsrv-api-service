@@ -89,7 +89,13 @@
       "nullable": true
     },
     "querySql": {
-      "type": "string",
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string"
+        }
+      },
+      "required":["query"],
       "nullable": true
     },
     "context": {

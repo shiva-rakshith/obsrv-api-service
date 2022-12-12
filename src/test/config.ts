@@ -5,7 +5,7 @@ const config = {
   apiDruidSqlEndPoint: "/druid/v2/sql/",
 
   druidHost: "http://localhost",
-  druidPort: 8082,
+  druidPort: 8888,
   druidEndPoint: "/druid/v2",
   druidSqlEndPoint: "/druid/v2/sql/",
   druidStatus: "/status",
