@@ -5,6 +5,8 @@ import {
   INativeQuery,
   IDataSourceRules,
   IQueryTypeRules,
+  IQuery,
+  ISqlQuery,
 } from "../models";
 import constants from "../resources/constants.json";
 import { isEmpty, isUndefined } from "lodash";
@@ -93,13 +95,17 @@ export class ValidationService {
   }
 
   public static validateSqlQuery(
-    queryData: string,
+    queryData: ISqlQuery,
     commonLimits: ICommonRules,
     dataSourceLimits: IDataSourceRules
   ): IValidationResponse {
     const maxRowLimit = commonLimits.max_result_row_limit;
-    if (!isEmpty(dataSourceLimits) && !isUndefined(dataSourceLimits)) {
-      let vocabulary = queryData.split(" ");
+    if (
+      !isEmpty(dataSourceLimits) &&
+      !isUndefined(dataSourceLimits) &&
+      !isUndefined(queryData.query)
+    ) {
+      let vocabulary = queryData.query.split(" ");
       let queryLimitIndex = vocabulary.indexOf("LIMIT");
       let fromDateIndex = vocabulary.indexOf("TIMESTAMP");
       let toDateIndex = vocabulary.lastIndexOf("TIMESTAMP");
@@ -111,11 +117,11 @@ export class ValidationService {
       let queryLimit = Number(vocabulary[queryLimitIndex + 1]);
       const allowedRange = dataSourceLimits.queryRules.scan.max_date_range;
       if (isNaN(queryLimit)) {
-        queryData = [vocabulary, "LIMIT", maxRowLimit].join(" ");
+        queryData.query = [vocabulary, "LIMIT", maxRowLimit].join(" ");
       } else {
         let newLimit = this.getNewRowLimit(queryLimit, maxRowLimit);
         vocabulary[queryLimitIndex + 1] = newLimit.toString();
-        queryData = vocabulary.join(" ");
+        queryData.query = vocabulary.join(" ");
       }
       if (fromDate.isValid() && toDate.isValid()) {
         return this.validateDateRange(fromDate, toDate, allowedRange);

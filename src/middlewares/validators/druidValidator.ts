@@ -6,7 +6,6 @@ import { ValidationService } from "../../services/validationService";
 import { config } from "../../configs/config";
 import createError from "http-errors";
 import httpStatus from "http-status";
-import { create } from "lodash";
 
 const limits = config.limits;
 let requestBodySchema = JSON.parse(
@@ -26,10 +25,10 @@ const validate =
       const isSqlQuery = configParams.isSqlQuery;
       let dataSource, result: IValidationResponse;
       if (isSqlQuery) {
-        queryPayload.querySql = queryPayload.querySql
+        queryPayload.querySql.query = queryPayload.querySql.query
           .replace(/\s+/g, " ")
           .trim();
-        dataSource = getDataSource(queryPayload.querySql);
+        dataSource = getDataSource(queryPayload.querySql.query);
         result = ValidationService.validateSqlQuery(
           queryPayload.querySql,
           limits.common,
