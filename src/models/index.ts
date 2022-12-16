@@ -1,16 +1,11 @@
-export interface IValidationResponse {
-  errorMessage?: string;
-  isValid: boolean;
-}
-
 export interface IDataSourceRules {
   dataSource: string;
   queryRules: IQueryTypeRules;
 }
 
 export interface ICommonRules {
-  max_result_threshold: number;
-  max_result_row_limit: number;
+  maxResultThreshold: number;
+  maxResultRowLimit: number;
 }
 
 export interface IQueryTypeRules {
@@ -23,20 +18,7 @@ export interface IQueryTypeRules {
 }
 
 export interface IRules {
-  max_date_range?: number;
-}
-
-export interface INativeQuery {
-  queryType: string;
-  dataSource: string;
-  dimension?: string;
-  dimensions?: string[];
-  filter?: IFilter;
-  aggregations?: any[];
-  postAggregations?: any[];
-  limit?: number;
-  threshold?: number;
-  intervals?: string[] | string;
+  maxDateRange?: number;
 }
 
 export interface IFilter {
@@ -47,12 +29,34 @@ export interface IFilter {
   dimensions?: string[];
 }
 
-export interface IQuery {
-  context: object;
-  query?: INativeQuery;
-  querySql?: ISqlQuery;
+interface ISqlQueryObject {
+  query: string;
 }
 
-export interface ISqlQuery{
-  query : string
+interface ISqlQuery {
+  context: object;
+  querySql: ISqlQueryObject;
+  query: never;
 }
+
+interface INativeQueryObj {
+  queryType: string;
+  dataSource: string;
+  dimension?: string;
+  dimensions?: string[];
+  filter?: IFilter;
+  aggregations?: any[];
+  postAggregations?: any[];
+  granularity: string;
+  limit?: number;
+  threshold?: number;
+  intervals: string[] | string;
+}
+
+interface INativeQuery {
+  context: object;
+  query: INativeQueryObj;
+  querySql: never;
+}
+
+export type IQuery = ISqlQuery | INativeQuery;
