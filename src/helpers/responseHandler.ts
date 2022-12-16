@@ -6,26 +6,26 @@ import constants from "../resources/constants.json";
 type extendedErrorRequestHandler = ErrorRequestHandler & {
   statusCode: number;
   message: string;
+  errCode: string;
   id?: string;
 };
 
 class ResponseHandler {
   public success(req: Request, res: Response, result: AxiosResponse) {
-    const responseHandler = new ResponseHandler
-    res
-      .status(result.status)
-      .json(
-        responseHandler.refactorResponse({
-          id: (req as any).id,
-          result: result.data,
-        })
-      );
+    const responseHandler = new ResponseHandler();
+    res.status(result.status).json(
+      responseHandler.refactorResponse({
+        id: (req as any).id,
+        result: result.data,
+      })
+    );
   }
 
   public routeNotFound = (req: Request, res: Response, next: NextFunction) => {
     next({
       statusCode: httpStatus.NOT_FOUND,
       message: constants.ROUTE_NOT_FOUND,
+      errCode: httpStatus["404_NAME"],
     });
   };
 
@@ -52,22 +52,22 @@ class ResponseHandler {
     res: Response,
     next: NextFunction
   ) {
-    const responseHandler=new ResponseHandler
-    const { statusCode, message } = error;
+    const responseHandler = new ResponseHandler();
+    const { statusCode, message, errCode } = error;
     const { id } = req as any;
     res.status(statusCode).json(
       responseHandler.refactorResponse({
         id: id,
         params: { status: "failed", errmsg: message },
-        responseCode: "failed",
+        responseCode: errCode || httpStatus["500_NAME"],
       })
     );
   }
   public setApiId =
-  (id: string) => (req: Request, res: Response, next: NextFunction) => {
-    (req as any).id = id;
-    next();
-  };
+    (id: string) => (req: Request, res: Response, next: NextFunction) => {
+      (req as any).id = id;
+      next();
+    };
 }
 
 export { ResponseHandler };
