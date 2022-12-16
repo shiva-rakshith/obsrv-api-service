@@ -1,164 +1,225 @@
-import {
-  ICommonRules,
-  IRules,
-  IValidationResponse,
-  INativeQuery,
-  IDataSourceRules,
-  IQueryTypeRules,
-  IQuery,
-  ISqlQuery,
-} from "../models";
-import constants from "../resources/constants.json";
-import { isEmpty, isUndefined } from "lodash";
-import moment from "moment";
+import { NextFunction, Request, Response } from "express";
+import { isUndefined } from "lodash";
+import { config } from "../configs/config";
+import { schemaValidator } from "../helpers/schemaValidator";
+import { ICommonRules, IRules, IQueryTypeRules, IQuery } from "../models";
+import moment, { Moment } from "moment";
 import fs from "fs";
-import Ajv from "ajv";
+import errorResponse from "http-errors";
+import httpStatus from "http-status";
+import constants from "../resources/constants.json";
+const limits = config.limits;
+let requestBodySchema = JSON.parse(
+  fs.readFileSync(process.cwd() + config.requestBodySchemaPath, "utf8")
+);
+let nativeQuerySchema = JSON.parse(
+  fs.readFileSync(process.cwd() + config.nativeQuerySchemaPath, "utf8")
+);
 
 export class ValidationService {
-  public static validateNativeQuery(
-    query: INativeQuery,
-    commonLimits: ICommonRules,
-    dataSourceLimits: IDataSourceRules
-  ): IValidationResponse {
-    let nativeQuerySchema = JSON.parse(
-      fs.readFileSync(
-        process.cwd() + "/src/configs/nativeQuerySchema.json",
-        "utf8"
-      )
+  public validateRequestBody = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const queryPayload = req.body;
+    let validRequestObj = schemaValidator.validate(
+      requestBodySchema,
+      queryPayload
     );
-    let ajv = new Ajv();
-    let isValidQuery = ajv.validate(
+    if (!validRequestObj) {
+      let error = schemaValidator.errors;
+      let errorMessage =
+        error![0].instancePath.replace("/", "") + " " + error![0].message;
+      throw errorResponse(httpStatus.BAD_REQUEST, errorMessage, {
+        errCode: httpStatus["400_NAME"],
+      });
+    }
+    next();
+  };
+
+  public validateConfiguration = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    let dataSource: string = this.getDataSource(req.body);
+    let dataSourceLimits = this.getDataSourceLimits(dataSource);
+    if (
+      dataSource != req.body.context.dataSource ||
+      isUndefined(dataSourceLimits)
+    ) {
+      throw errorResponse(
+        httpStatus.BAD_REQUEST,
+        constants.INVALID_DATA_SOURCE,
+        {
+          errCode: httpStatus["400_NAME"],
+        }
+      );
+    }
+    next();
+  };
+
+  public validateNativeQuery = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    let isValidQuery = schemaValidator.validate(
       nativeQuerySchema,
-      JSON.parse(JSON.stringify(query))
+      req.body.query
     );
     if (isValidQuery) {
-      if (!isEmpty(dataSourceLimits) && !isUndefined(dataSourceLimits)) {
-        this.determineQueryLimits(query, commonLimits);
-        try {
-          return this.validateQueryRules(
-            query,
-            dataSourceLimits.queryRules[
-              query.queryType as keyof IQueryTypeRules
-            ]
-          );
-        } catch (error) {
-          return { errorMessage: constants.INVALID_QUERY_TYPE, isValid: false };
-        }
-      } else {
-        return {
-          errorMessage: constants.INVALID_DATA_SOURCE,
-          isValid: false,
-        };
+      let queryObj: IQuery = req.body;
+      this.setQueryLimits(req.body, config.limits.common);
+      let dataSourceLimits = this.getDataSourceLimits(
+        queryObj.query.dataSource
+      );
+      try {
+        this.validateQueryRules(
+          queryObj,
+          dataSourceLimits.queryRules[
+            queryObj.query.queryType as keyof IQueryTypeRules
+          ]
+        );
+      } catch (error: any) {
+        next(
+          errorResponse(httpStatus.BAD_REQUEST, error.message, {
+            errCode: httpStatus["400_NAME"],
+          })
+        );
       }
     } else {
-      let error = ajv.errors;
-      let message =
+      let error = schemaValidator.errors;
+      let errorMessage =
         error![0].instancePath.replace("/", "") + " " + error![0].message;
-      return { errorMessage: message, isValid: false };
-    }
-  }
-
-  private static validateQueryRules(
-    query: INativeQuery,
-    queryRules: IRules
-  ): IValidationResponse {
-    const dateRange: any = query.intervals;
-    let allowedRange = queryRules.max_date_range;
-    const extractedDateRange = Array.isArray(dateRange)
-      ? dateRange[0].split("/")
-      : dateRange.toString().split("/");
-    const fromDate = moment(extractedDateRange[0], "YYYY-MM-DD HH:MI:SS");
-    const toDate = moment(extractedDateRange[1], "YYYY-MM-DD HH:MI:SS");
-    return this.validateDateRange(fromDate, toDate, allowedRange);
-  }
-
-  private static determineQueryLimits(
-    query: INativeQuery,
-    limits: ICommonRules
-  ): void {
-    if (query.threshold) {
-      query.threshold = this.getNewRowLimit(
-        query.threshold,
-        limits.max_result_threshold
+      next(
+        errorResponse(httpStatus.BAD_REQUEST, errorMessage, {
+          errCode: httpStatus["400_NAME"],
+        })
       );
-    } else {
-      query.threshold = limits.max_result_threshold;
     }
-    if (query.limit) {
-      query.limit = this.getNewRowLimit(
-        query.limit,
-        limits.max_result_row_limit
-      );
-    } else {
-      query.limit = limits.max_result_row_limit;
-    }
-  }
+    next();
+  };
 
-  public static validateSqlQuery(
-    queryData: ISqlQuery,
-    commonLimits: ICommonRules,
-    dataSourceLimits: IDataSourceRules
-  ): IValidationResponse {
-    const maxRowLimit = commonLimits.max_result_row_limit;
-    if (
-      !isEmpty(dataSourceLimits) &&
-      !isUndefined(dataSourceLimits) &&
-      !isUndefined(queryData.query)
-    ) {
-      let vocabulary = queryData.query.split(" ");
-      let queryLimitIndex = vocabulary.indexOf("LIMIT");
+  public validateSqlQuery = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    this.setQueryLimits(req.body, config.limits.common);
+    let dataSourceLimits = this.getDataSourceLimits(
+      this.getDataSource(req.body)
+    );
+    try {
+      this.validateQueryRules(req.body, dataSourceLimits.queryRules.scan);
+    } catch (error: any) {
+      next(
+        errorResponse(httpStatus.BAD_REQUEST, error.message, {
+          errCode: httpStatus["400_NAME"],
+        })
+      );
+    }
+    next();
+  };
+
+  private validateQueryRules = (queryPayload: IQuery, limits: IRules) => {
+    let fromDate: Moment | undefined, toDate: Moment | undefined;
+    let allowedRange = limits.maxDateRange;
+    if (queryPayload.query) {
+      const dateRange = queryPayload.query.intervals;
+      const extractedDateRange = Array.isArray(dateRange)
+        ? dateRange[0].split("/")
+        : dateRange.toString().split("/");
+      fromDate = moment(extractedDateRange[0], "YYYY-MM-DD HH:MI:SS");
+      toDate = moment(extractedDateRange[1], "YYYY-MM-DD HH:MI:SS");
+    } else {
+      let vocabulary = queryPayload.querySql.query.split(" ");
       let fromDateIndex = vocabulary.indexOf("TIMESTAMP");
       let toDateIndex = vocabulary.lastIndexOf("TIMESTAMP");
-      let fromDate = moment(
-        vocabulary[fromDateIndex + 1],
-        "YYYY-MM-DD HH:MI:SS"
-      );
-      let toDate = moment(vocabulary[toDateIndex + 1], "YYYY-MM-DD HH:MI:SS");
-      let queryLimit = Number(vocabulary[queryLimitIndex + 1]);
-      const allowedRange = dataSourceLimits.queryRules.scan.max_date_range;
-      if (isNaN(queryLimit)) {
-        queryData.query = [vocabulary, "LIMIT", maxRowLimit].join(" ");
+      fromDate = moment(vocabulary[fromDateIndex + 1], "YYYY-MM-DD HH:MI:SS");
+      toDate = moment(vocabulary[toDateIndex + 1], "YYYY-MM-DD HH:MI:SS");
+    }
+    if (fromDate && toDate && fromDate.isValid() && toDate.isValid()) {
+      return this.validateDateRange(fromDate, toDate, allowedRange);
+    } else {
+      throw new Error(constants.NO_DATE_RANGE);
+    }
+  };
+
+  private setQueryLimits = (queryPayload: IQuery, limits: ICommonRules) => {
+    if (queryPayload.query) {
+      if (queryPayload.query.threshold) {
+        queryPayload.query.threshold = this.getLimit(
+          queryPayload.query.threshold,
+          limits.maxResultThreshold
+        );
       } else {
-        let newLimit = this.getNewRowLimit(queryLimit, maxRowLimit);
-        vocabulary[queryLimitIndex + 1] = newLimit.toString();
-        queryData.query = vocabulary.join(" ");
+        queryPayload.query.threshold = limits.maxResultThreshold;
       }
-      if (fromDate.isValid() && toDate.isValid()) {
-        return this.validateDateRange(fromDate, toDate, allowedRange);
+      if (queryPayload.query.limit) {
+        queryPayload.query.limit = this.getLimit(
+          queryPayload.query.limit,
+          limits.maxResultRowLimit
+        );
       } else {
-        return {
-          errorMessage: constants.NO_DATE_RANGE,
-          isValid: false,
-        };
+        queryPayload.query.limit = limits.maxResultRowLimit;
       }
     } else {
-      return {
-        errorMessage: constants.INVALID_DATA_SOURCE,
-        isValid: false,
-      };
+      let vocabulary = queryPayload.querySql.query.split(" ");
+      let queryLimitIndex = vocabulary.indexOf("LIMIT");
+      let queryLimit = Number(vocabulary[queryLimitIndex + 1]);
+      if (isNaN(queryLimit)) {
+        const updatedVocabulary = [
+          ...vocabulary,
+          "LIMIT",
+          limits.maxResultRowLimit,
+        ].join(" ");
+        queryPayload.querySql.query = updatedVocabulary;
+      } else {
+        let newLimit = this.getLimit(queryLimit, limits.maxResultRowLimit);
+        vocabulary[queryLimitIndex + 1] = newLimit.toString();
+        queryPayload.querySql.query = vocabulary.join(" ");
+      }
     }
-  }
+  };
 
-  private static validateDateRange(
+  private getDataSource = (queryPayload: IQuery): string => {
+    if (queryPayload.querySql) {
+      let query = queryPayload.querySql.query;
+      query = query.replace(/\s+/g, " ").trim();
+      let dataSource = query.substring(query.indexOf("FROM")).split(" ")[1];
+      return dataSource.replace(/"/g, "");
+    } else {
+      return queryPayload.query.dataSource;
+    }
+  };
+
+  private getDataSourceLimits = (datasource: string): any => {
+    for (var index = 0; index < limits.rules.length; index++) {
+      if (limits.rules[index].dataSource == datasource) {
+        return limits.rules[index];
+      }
+    }
+  };
+
+  private validateDateRange = (
     fromDate: moment.Moment,
     toDate: moment.Moment,
     allowedRange: number = 0
-  ) {
+  ) => {
     const differenceInDays = Math.abs(fromDate.diff(toDate, "days"));
     if (differenceInDays > allowedRange) {
-      return {
-        errorMessage: constants.INVALID_DATE_RANGE.replace(
+      throw new Error(
+        constants.INVALID_DATE_RANGE.replace(
           "${allowedRange}",
           allowedRange.toString()
-        ),
-        isValid: false,
-      };
-    } else {
-      return { isValid: true };
+        )
+      );
     }
-  }
+  };
 
-  private static getNewRowLimit(queryLimit: number, maxRowLimit: number) {
+  private getLimit = (queryLimit: number, maxRowLimit: number) => {
     return queryLimit > maxRowLimit ? maxRowLimit : queryLimit;
-  }
+  };
 }
