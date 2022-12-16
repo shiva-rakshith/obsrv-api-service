@@ -3,33 +3,35 @@ const config = {
   druidHost: process.env.druid_host || "http://localhost",
   druidPort: process.env.druid_port || 8888,
   druidEndPoint: process.env.druid_end_point || "/druid/v2",
+  requestBodySchemaPath: "/src/configs/requestBodySchema.json",
+  nativeQuerySchemaPath: "/src/configs/nativeQuerySchema.json",
 
-  limits : {
+  limits: {
     common: {
-      max_result_threshold: 100,
-      max_result_row_limit: 100,
+      maxResultThreshold: 100,
+      maxResultRowLimit: 100,
     },
     rules: [
       {
         dataSource: "telemetry-events",
         queryRules: {
           groupBy: {
-            max_date_range: 30,
+            maxDateRange: 30,
           },
           scan: {
-            max_date_range: 30,
+            maxDateRange: 30,
           },
           search: {
-            max_date_range: 30,
+            maxDateRange: 30,
           },
           timeBoundary: {
-            max_date_range: 30,
+            maxDateRange: 30,
           },
           timeseries: {
-            max_date_range: 30,
+            maxDateRange: 30,
           },
           topN: {
-            max_date_range: 30,
+            maxDateRange: 30,
           },
         },
       },
@@ -37,26 +39,26 @@ const config = {
         dataSource: "summary-events",
         queryRules: {
           groupBy: {
-            max_date_range: 30,
+            maxDateRange: 30,
           },
           scan: {
-            max_date_range: 30,
+            maxDateRange: 30,
           },
           search: {
-            max_date_range: 30,
+            maxDateRange: 30,
           },
           timeBoundary: {
-            max_date_range: 30,
+            maxDateRange: 30,
           },
           timeseries: {
-            max_date_range: 30,
+            maxDateRange: 30,
           },
           topN: {
-            max_date_range: 30,
+            maxDateRange: 30,
           },
         },
       },
     ],
-  }
+  },
 };
 export { config };

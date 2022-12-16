@@ -95,7 +95,7 @@
           "type": "string"
         }
       },
-      "required":["query"],
+      "required": ["query"],
       "nullable": true
     },
     "context": {
@@ -108,5 +108,10 @@
       "required": ["dataSource"]
     }
   },
-  "required": ["context"]
+  "oneOf": [
+    {
+      "required": ["context", "querySql"]
+    },
+    { "required": ["context", "query"] }
+  ]
 }
