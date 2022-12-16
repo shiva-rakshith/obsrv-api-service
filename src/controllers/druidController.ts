@@ -1,8 +1,8 @@
 import httpStatus from "http-status";
 import { ResponseHandler } from "../helpers/responseHandler";
-import { httpService } from "../helpers/axios";
+import { httpService } from "../helpers/httpService";
 import { Request, Response, NextFunction } from "express";
-import createError from "http-errors";
+import errorResponse from "http-errors";
 import routes from "../resources/routes.json";
 const responseHandler = new ResponseHandler();
 
@@ -16,7 +16,7 @@ class DruidController {
       const result = await httpService.get(routes.GET_STATUS.URL);
       responseHandler.success(req, res, result);
     } catch (error: any) {
-      next(createError(httpStatus.INTERNAL_SERVER_ERROR, error.message));
+      next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
   };
   public getHealthStatus = async (
@@ -28,7 +28,7 @@ class DruidController {
       const result = await httpService.get(routes.HEALTH_CHECK.URL);
       responseHandler.success(req, res, result);
     } catch (error: any) {
-      next(createError(httpStatus.INTERNAL_SERVER_ERROR, error.message));
+      next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
   };
   public executeNativeQuery = async (
@@ -43,7 +43,7 @@ class DruidController {
       );
       responseHandler.success(req, res, result);
     } catch (error: any) {
-      next(createError(httpStatus.INTERNAL_SERVER_ERROR, error.message));
+      next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
   };
   public executeSqlQuery = async (
@@ -58,7 +58,7 @@ class DruidController {
       );
       responseHandler.success(req, res, result);
     } catch (error: any) {
-      next(createError(httpStatus.INTERNAL_SERVER_ERROR, error.message));
+      next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
   };
 }
