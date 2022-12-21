@@ -23,6 +23,7 @@ class DruidController {
       next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
   };
+  
   public getHealthStatus = async (
     req: Request,
     res: Response,
@@ -38,6 +39,7 @@ class DruidController {
       next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
   };
+
   public executeNativeQuery = async (
     req: Request,
     res: Response,
@@ -62,6 +64,7 @@ class DruidController {
       next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
   };
+
   public executeSqlQuery = async (
     req: Request,
     res: Response,
