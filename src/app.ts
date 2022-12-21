@@ -4,7 +4,7 @@ import { router } from "./routes/router";
 const app: Application = express();
 import { ResponseHandler } from "./helpers/responseHandler";
 const responseHandler = new ResponseHandler();
-const globalErrorHandler = responseHandler.error;
+const globalErrorHandler = responseHandler.errorResponse;
 
 app.use(express.json());
 

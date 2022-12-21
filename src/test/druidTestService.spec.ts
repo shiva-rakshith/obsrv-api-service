@@ -5,6 +5,8 @@ import nock from "nock";
 import httpStatus from "http-status";
 import TestDruidQuery from "./testquery";
 import { config } from "./config";
+import constants from "../resources/constants.json";
+import routes from '../resources/routes.json'
 chai.should();
 chai.use(chaiHttp);
 
@@ -68,7 +70,7 @@ describe("druid API", () => {
           res.should.have.status(httpStatus.OK);
           res.body.should.be.a("object");
           res.body.result.should.be.a("object");
-          res.body.id.should.be.eq("druid.status");
+          res.body.id.should.be.eq(routes.GET_STATUS.API_ID);
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           done();
         });
@@ -80,9 +82,9 @@ describe("druid API", () => {
         .end((err, res) => {
           res.should.have.status(httpStatus.NOT_FOUND);
           res.body.should.be.a("object");
-          res.body.id.should.be.eq("druid.api");
+          res.body.id.should.be.eq(routes.DEFAULT.API_ID);
           res.body.responseCode.should.be.eq(httpStatus["404_NAME"]);
-          res.body.params.status.should.be.eq("failed");
+          res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
           done();
         });
@@ -92,7 +94,7 @@ describe("druid API", () => {
   describe("GET /status/health", () => {
     beforeEach(() => {
       nock(config.druidHost + ":" + config.druidPort)
-        .get("/status/health")
+        .get(config.druidHealth)
         .reply(200);
     });
     it("it should return true as response for health check", (done) => {
@@ -102,7 +104,7 @@ describe("druid API", () => {
         .end((err, res) => {
           res.should.have.status(httpStatus.OK);
           res.body.should.be.a("object");
-          res.body.id.should.be.eq("druid.health.check");
+          res.body.id.should.be.eq(routes.HEALTH_CHECK.API_ID);
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           done();
         });
@@ -113,7 +115,7 @@ describe("druid API", () => {
     beforeEach(() => {
       nock(config.druidHost + ":" + config.druidPort)
         .post(config.druidEndPoint)
-        .reply(200);
+        .reply(200,[{'events':[]}]);
     });
     it("it should fetch information from druid data source", (done) => {
       chai
@@ -126,7 +128,7 @@ describe("druid API", () => {
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.should.have.property("result");
           res.body.result.length.should.be.lessThan(101);
-          res.body.id.should.be.eq("druid.execute.native.query");
+          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -139,9 +141,9 @@ describe("druid API", () => {
           res.should.have.status(httpStatus.BAD_REQUEST);
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
-          res.body.params.status.should.be.eq("failed");
+          res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq("druid.execute.native.query");
+          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -154,9 +156,9 @@ describe("druid API", () => {
           res.should.have.status(httpStatus.BAD_REQUEST);
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
-          res.body.params.status.should.be.eq("failed");
+          res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq("druid.execute.native.query");
+          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -170,7 +172,7 @@ describe("druid API", () => {
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.result.length.should.be.lessThan(101); // default is 100
-          res.body.id.should.be.eq("druid.execute.native.query");
+          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -184,7 +186,7 @@ describe("druid API", () => {
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.result.length.should.be.lessThan(101); // default is 100
-          res.body.id.should.be.eq("druid.execute.native.query");
+          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -198,7 +200,7 @@ describe("druid API", () => {
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.result.length.should.be.lessThan(101); // default is 100
-          res.body.id.should.be.eq("druid.execute.native.query");
+          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -211,9 +213,9 @@ describe("druid API", () => {
           res.should.have.status(httpStatus.BAD_REQUEST);
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
-          res.body.params.status.should.be.eq("failed");
+          res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq("druid.execute.native.query");
+          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -227,9 +229,9 @@ describe("druid API", () => {
           res.should.have.status(httpStatus.BAD_REQUEST);
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
-          res.body.params.status.should.be.eq("failed");
+          res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq("druid.execute.native.query");
+          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -242,9 +244,9 @@ describe("druid API", () => {
           res.should.have.status(httpStatus.BAD_REQUEST);
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
-          res.body.params.status.should.be.eq("failed");
+          res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq("druid.execute.native.query");
+          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -257,9 +259,9 @@ describe("druid API", () => {
           res.should.have.status(httpStatus.BAD_REQUEST);
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
-          res.body.params.status.should.be.eq("failed");
+          res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq("druid.execute.native.query");
+          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -280,7 +282,7 @@ describe("druid API", () => {
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.result.length.should.be.lessThan(101);
-          res.body.id.should.be.eq("druid.execute.sql.query");
+          res.body.id.should.be.eq(routes.SQL_QUERY.API_ID);
           done();
         });
     });
@@ -294,7 +296,7 @@ describe("druid API", () => {
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.result.length.should.be.lessThan(101); // default is 100
-          res.body.id.should.be.eq("druid.execute.sql.query");
+          res.body.id.should.be.eq(routes.SQL_QUERY.API_ID);
           done();
         });
     });
@@ -308,7 +310,7 @@ describe("druid API", () => {
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.result.length.should.be.lessThan(101); // default is 100
-          res.body.id.should.be.eq("druid.execute.sql.query");
+          res.body.id.should.be.eq(routes.SQL_QUERY.API_ID);
           done();
         });
     });
@@ -321,9 +323,9 @@ describe("druid API", () => {
           res.should.have.status(httpStatus.BAD_REQUEST);
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
-          res.body.params.status.should.be.eq("failed");
+          res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq("druid.execute.sql.query");
+          res.body.id.should.be.eq(routes.SQL_QUERY.API_ID);
           done();
         });
     });
@@ -336,9 +338,9 @@ describe("druid API", () => {
           res.should.have.status(httpStatus.BAD_REQUEST);
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
-          res.body.params.status.should.be.eq("failed");
+          res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq("druid.execute.sql.query");
+          res.body.id.should.be.eq(routes.SQL_QUERY.API_ID);
           done();
         });
     });
@@ -351,9 +353,9 @@ describe("druid API", () => {
           res.should.have.status(httpStatus.BAD_REQUEST);
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
-          res.body.params.status.should.be.eq("failed");
+          res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq("druid.execute.sql.query");
+          res.body.id.should.be.eq(routes.SQL_QUERY.API_ID);
           done();
         });
     });

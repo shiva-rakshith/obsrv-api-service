@@ -3,7 +3,8 @@ import { ResponseHandler } from "../helpers/responseHandler";
 import { httpService } from "../helpers/httpService";
 import { Request, Response, NextFunction } from "express";
 import errorResponse from "http-errors";
-import routes from "../resources/routes.json";
+import { config } from "../configs/config";
+import _ from "lodash";
 const responseHandler = new ResponseHandler();
 
 class DruidController {
@@ -13,8 +14,11 @@ class DruidController {
     next: NextFunction
   ) => {
     try {
-      const result = await httpService.get(routes.GET_STATUS.URL);
-      responseHandler.success(req, res, result);
+      const result = await httpService.get(config.druidStatusEndPoint);
+      responseHandler.successResponse(req, res, {
+        status: result.status,
+        data: result.data,
+      });
     } catch (error: any) {
       next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
@@ -25,8 +29,11 @@ class DruidController {
     next: NextFunction
   ) => {
     try {
-      const result = await httpService.get(routes.HEALTH_CHECK.URL);
-      responseHandler.success(req, res, result);
+      const result = await httpService.get(config.druidHealthEndPoint);
+      responseHandler.successResponse(req, res, {
+        status: result.status,
+        data: result.data,
+      });
     } catch (error: any) {
       next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
@@ -37,11 +44,20 @@ class DruidController {
     next: NextFunction
   ) => {
     try {
-      const result = await httpService.post(
-        routes.NATIVE_QUERY.URL,
+      var result = await httpService.post(
+        config.druidNativeQueryEndPoint,
         req.body.query
       );
-      responseHandler.success(req, res, result);
+      var mergedResult = result.data;
+      if (req.body.query.queryType === "scan" && result.data) {
+        mergedResult = result.data.map((item: Record<string, any>) => {
+          return item.events;
+        });
+      }
+      responseHandler.successResponse(req, res, {
+        status: result.status,
+        data: _.flatten(mergedResult),
+      });
     } catch (error: any) {
       next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
@@ -53,10 +69,13 @@ class DruidController {
   ) => {
     try {
       const result = await httpService.post(
-        routes.SQL_QUERY.URL,
+        config.druidSqlQueryEndPoint,
         req.body.querySql
       );
-      responseHandler.success(req, res, result);
+      responseHandler.successResponse(req, res, {
+        status: result.status,
+        data: result.data,
+      });
     } catch (error: any) {
       next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }

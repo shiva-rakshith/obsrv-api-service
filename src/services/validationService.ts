@@ -1,14 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 import { isUndefined } from "lodash";
 import { config } from "../configs/config";
-import { schemaValidator } from "../helpers/schemaValidator";
 import { ICommonRules, IRules, IQueryTypeRules, IQuery } from "../models";
 import moment, { Moment } from "moment";
 import fs from "fs";
+import Ajv from "ajv";
 import errorResponse from "http-errors";
 import httpStatus from "http-status";
 import constants from "../resources/constants.json";
 const limits = config.limits;
+const schemaValidator = new Ajv();
 let requestBodySchema = JSON.parse(
   fs.readFileSync(process.cwd() + config.requestBodySchemaPath, "utf8")
 );
@@ -51,7 +52,7 @@ export class ValidationService {
     ) {
       throw errorResponse(
         httpStatus.BAD_REQUEST,
-        constants.INVALID_DATA_SOURCE,
+        constants.ERROR_MESSAGE.INVALID_DATA_SOURCE,
         {
           errCode: httpStatus["400_NAME"],
         }
@@ -143,7 +144,7 @@ export class ValidationService {
     if (fromDate && toDate && fromDate.isValid() && toDate.isValid()) {
       return this.validateDateRange(fromDate, toDate, allowedRange);
     } else {
-      throw new Error(constants.NO_DATE_RANGE);
+      throw new Error(constants.ERROR_MESSAGE.NO_DATE_RANGE);
     }
   };
 
@@ -211,7 +212,7 @@ export class ValidationService {
     const differenceInDays = Math.abs(fromDate.diff(toDate, "days"));
     if (differenceInDays > allowedRange) {
       throw new Error(
-        constants.INVALID_DATE_RANGE.replace(
+        constants.ERROR_MESSAGE.INVALID_DATE_RANGE.replace(
           "${allowedRange}",
           allowedRange.toString()
         )

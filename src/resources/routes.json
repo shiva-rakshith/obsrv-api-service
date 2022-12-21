@@ -1,22 +1,25 @@
 {
   "GET_STATUS": {
-    "URL": "/status",
+    "URL": "/obsrv/status",
     "METHOD": "GET",
-    "API_ID": "druid.status"
+    "API_ID": "obsrv.status"
   },
   "HEALTH_CHECK": {
-    "URL": "/status/health",
+    "URL": "/obsrv/health",
     "METHOD": "GET",
-    "API_ID": "druid.health.check"
+    "API_ID": "obsrv.health"
   },
   "NATIVE_QUERY": {
-    "URL": "/druid/v2",
+    "URL": "/obsrv/native-query",
     "METHOD": "POST",
-    "API_ID": "druid.execute.native.query"
+    "API_ID": "obsrv.native.query"
   },
   "SQL_QUERY": {
-    "URL": "/druid/v2/sql/",
+    "URL": "/obsrv/sql-query",
     "METHOD": "POST",
-    "API_ID": "druid.execute.sql.query"
+    "API_ID": "obsrv.sql.query"
+  },
+  "DEFAULT":{
+    "API_ID":"obsrv.api"
   }
 }
