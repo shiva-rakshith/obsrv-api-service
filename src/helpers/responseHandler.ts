@@ -2,7 +2,7 @@ import { IResponse } from "../models";
 import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import constants from "../resources/constants.json";
-import routes from '../resources/routes.json'
+import routes from "../resources/routes.json";
 
 type extendedErrorRequestHandler = ErrorRequestHandler & {
   statusCode: number;
