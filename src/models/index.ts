@@ -64,5 +64,4 @@ interface INativeQuery {
   querySql: never;
 }
 
-
 export type IQuery = ISqlQuery | INativeQuery;
