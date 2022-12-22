@@ -1,125 +1,71 @@
 import { NextFunction, Request, Response } from "express";
 import { isUndefined } from "lodash";
-import { config } from "../configs/config";
-import { ICommonRules, IRules, IQueryTypeRules, IQuery } from "../models";
+import { ICommonRules, IRules, IQueryTypeRules, IQuery, ILimits } from "../models";
 import moment, { Moment } from "moment";
 import fs from "fs";
 import Ajv from "ajv";
 import errorResponse from "http-errors";
 import httpStatus from "http-status";
 import constants from "../resources/constants.json";
-const limits = config.limits;
 const schemaValidator = new Ajv();
-let requestBodySchema = JSON.parse(
-  fs.readFileSync(process.cwd() + config.requestBodySchemaPath, "utf8")
-);
-let nativeQuerySchema = JSON.parse(
-  fs.readFileSync(process.cwd() + config.nativeQuerySchemaPath, "utf8")
-);
 
 export class ValidationService {
-  public validateRequestBody = (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  private requestBodySchema: Object;
+  private nativeQuerySchema: Object;
+  private limits: ILimits;
+
+  constructor(configDir: string) {
+    this.requestBodySchema = JSON.parse(fs.readFileSync(process.cwd() + configDir + "requestBodySchema.json", "utf8"));
+    this.nativeQuerySchema = JSON.parse(fs.readFileSync(process.cwd() + configDir + "nativeQuerySchema.json", "utf8"));
+    this.limits = JSON.parse(fs.readFileSync(process.cwd() + configDir + "limits.json", "utf8"));
+  }
+
+  public validateRequestBody = (req: Request, res: Response, next: NextFunction) => {
     const queryPayload = req.body;
-    let validRequestObj = schemaValidator.validate(
-      requestBodySchema,
-      queryPayload
-    );
+    let validRequestObj = schemaValidator.validate(this.requestBodySchema, queryPayload);
     if (!validRequestObj) {
       let error = schemaValidator.errors;
-      let errorMessage =
-        error![0].instancePath.replace("/", "") + " " + error![0].message;
-      throw errorResponse(httpStatus.BAD_REQUEST, errorMessage, {
-        errCode: httpStatus["400_NAME"],
-      });
+      let errorMessage = error![0].instancePath.replace("/", "") + " " + error![0].message;
+      throw errorResponse(httpStatus.BAD_REQUEST, errorMessage, { errCode: httpStatus["400_NAME"] });
     }
     next();
   };
 
-  public validateConfiguration = (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  public validateConfiguration = (req: Request, res: Response, next: NextFunction) => {
     let dataSource: string = this.getDataSource(req.body);
     let dataSourceLimits = this.getDataSourceLimits(dataSource);
-    if (
-      dataSource != req.body.context.dataSource ||
-      isUndefined(dataSourceLimits)
-    ) {
-      throw errorResponse(
-        httpStatus.BAD_REQUEST,
-        constants.ERROR_MESSAGE.INVALID_DATA_SOURCE,
-        {
-          errCode: httpStatus["400_NAME"],
-        }
-      );
+    if (dataSource != req.body.context.dataSource || isUndefined(dataSourceLimits)) {
+      throw errorResponse(httpStatus.BAD_REQUEST, constants.ERROR_MESSAGE.INVALID_DATA_SOURCE, { errCode: httpStatus["400_NAME"] });
     }
     next();
   };
 
-  public validateNativeQuery = (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    let isValidQuery = schemaValidator.validate(
-      nativeQuerySchema,
-      req.body.query
-    );
+  public validateNativeQuery = (req: Request, res: Response, next: NextFunction) => {
+    let isValidQuery = schemaValidator.validate(this.nativeQuerySchema, req.body.query);
     if (isValidQuery) {
       let queryObj: IQuery = req.body;
-      this.setQueryLimits(req.body, config.limits.common);
-      let dataSourceLimits = this.getDataSourceLimits(
-        queryObj.query.dataSource
-      );
+      this.setQueryLimits(req.body, this.limits.common);
+      let dataSourceLimits = this.getDataSourceLimits(queryObj.query.dataSource);
       try {
-        this.validateQueryRules(
-          queryObj,
-          dataSourceLimits.queryRules[
-            queryObj.query.queryType as keyof IQueryTypeRules
-          ]
-        );
+        this.validateQueryRules(queryObj, dataSourceLimits.queryRules[queryObj.query.queryType as keyof IQueryTypeRules]);
       } catch (error: any) {
-        next(
-          errorResponse(httpStatus.BAD_REQUEST, error.message, {
-            errCode: httpStatus["400_NAME"],
-          })
-        );
+        next(errorResponse(httpStatus.BAD_REQUEST, error.message, { errCode: httpStatus["400_NAME"] }));
       }
     } else {
       let error = schemaValidator.errors;
-      let errorMessage =
-        error![0].instancePath.replace("/", "") + " " + error![0].message;
-      next(
-        errorResponse(httpStatus.BAD_REQUEST, errorMessage, {
-          errCode: httpStatus["400_NAME"],
-        })
-      );
+      let errorMessage = error![0].instancePath.replace("/", "") + " " + error![0].message;
+      next(errorResponse(httpStatus.BAD_REQUEST, errorMessage, { errCode: httpStatus["400_NAME"] }));
     }
     next();
   };
 
-  public validateSqlQuery = (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    this.setQueryLimits(req.body, config.limits.common);
-    let dataSourceLimits = this.getDataSourceLimits(
-      this.getDataSource(req.body)
-    );
+  public validateSqlQuery = (req: Request, res: Response, next: NextFunction) => {
+    this.setQueryLimits(req.body, this.limits.common);
+    let dataSourceLimits = this.getDataSourceLimits(this.getDataSource(req.body));
     try {
       this.validateQueryRules(req.body, dataSourceLimits.queryRules.scan);
     } catch (error: any) {
-      next(
-        errorResponse(httpStatus.BAD_REQUEST, error.message, {
-          errCode: httpStatus["400_NAME"],
-        })
-      );
+      next(errorResponse(httpStatus.BAD_REQUEST, error.message, { errCode: httpStatus["400_NAME"] }));
     }
     next();
   };
@@ -129,9 +75,7 @@ export class ValidationService {
     let allowedRange = limits.maxDateRange;
     if (queryPayload.query) {
       const dateRange = queryPayload.query.intervals;
-      const extractedDateRange = Array.isArray(dateRange)
-        ? dateRange[0].split("/")
-        : dateRange.toString().split("/");
+      const extractedDateRange = Array.isArray(dateRange) ? dateRange[0].split("/") : dateRange.toString().split("/");
       fromDate = moment(extractedDateRange[0], "YYYY-MM-DD HH:MI:SS");
       toDate = moment(extractedDateRange[1], "YYYY-MM-DD HH:MI:SS");
     } else {
@@ -151,18 +95,12 @@ export class ValidationService {
   private setQueryLimits = (queryPayload: IQuery, limits: ICommonRules) => {
     if (queryPayload.query) {
       if (queryPayload.query.threshold) {
-        queryPayload.query.threshold = this.getLimit(
-          queryPayload.query.threshold,
-          limits.maxResultThreshold
-        );
+        queryPayload.query.threshold = this.getLimit(queryPayload.query.threshold, limits.maxResultThreshold);
       } else {
         queryPayload.query.threshold = limits.maxResultThreshold;
       }
       if (queryPayload.query.limit) {
-        queryPayload.query.limit = this.getLimit(
-          queryPayload.query.limit,
-          limits.maxResultRowLimit
-        );
+        queryPayload.query.limit = this.getLimit(queryPayload.query.limit, limits.maxResultRowLimit);
       } else {
         queryPayload.query.limit = limits.maxResultRowLimit;
       }
@@ -171,11 +109,7 @@ export class ValidationService {
       let queryLimitIndex = vocabulary.indexOf("LIMIT");
       let queryLimit = Number(vocabulary[queryLimitIndex + 1]);
       if (isNaN(queryLimit)) {
-        const updatedVocabulary = [
-          ...vocabulary,
-          "LIMIT",
-          limits.maxResultRowLimit,
-        ].join(" ");
+        const updatedVocabulary = [...vocabulary, "LIMIT", limits.maxResultRowLimit].join(" ");
         queryPayload.querySql.query = updatedVocabulary;
       } else {
         let newLimit = this.getLimit(queryLimit, limits.maxResultRowLimit);
@@ -197,26 +131,17 @@ export class ValidationService {
   };
 
   private getDataSourceLimits = (datasource: string): any => {
-    for (var index = 0; index < limits.rules.length; index++) {
-      if (limits.rules[index].dataSource == datasource) {
-        return limits.rules[index];
+    for (var index = 0; index < this.limits.rules.length; index++) {
+      if (this.limits.rules[index].dataSource == datasource) {
+        return this.limits.rules[index];
       }
     }
   };
 
-  private validateDateRange = (
-    fromDate: moment.Moment,
-    toDate: moment.Moment,
-    allowedRange: number = 0
-  ) => {
+  private validateDateRange = (fromDate: moment.Moment, toDate: moment.Moment, allowedRange: number = 0) => {
     const differenceInDays = Math.abs(fromDate.diff(toDate, "days"));
     if (differenceInDays > allowedRange) {
-      throw new Error(
-        constants.ERROR_MESSAGE.INVALID_DATE_RANGE.replace(
-          "${allowedRange}",
-          allowedRange.toString()
-        )
-      );
+      throw new Error(constants.ERROR_MESSAGE.INVALID_DATE_RANGE.replace("${allowedRange}", allowedRange.toString()));
     }
   };
 
