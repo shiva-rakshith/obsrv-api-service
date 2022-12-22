@@ -6,7 +6,7 @@ import httpStatus from "http-status";
 import TestDruidQuery from "./testquery";
 import { config } from "./config";
 import constants from "../resources/constants.json";
-import routes from '../resources/routes.json'
+import routes from "../resources/routes.json";
 chai.should();
 chai.use(chaiHttp);
 
@@ -115,7 +115,7 @@ describe("druid API", () => {
     beforeEach(() => {
       nock(config.druidHost + ":" + config.druidPort)
         .post(config.druidEndPoint)
-        .reply(200,[{'events':[]}]);
+        .reply(200, [{ events: [] }]);
     });
     it("it should fetch information from druid data source", (done) => {
       chai

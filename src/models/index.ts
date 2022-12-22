@@ -29,7 +29,7 @@ export interface IFilter {
   dimensions?: string[];
 }
 
-export interface IResponse{
+export interface IResponse {
   data: object;
   status: number;
 }
@@ -64,4 +64,8 @@ interface INativeQuery {
   querySql: never;
 }
 
+export interface ILimits {
+  common: ICommonRules;
+  rules: IDataSourceRules[];
+}
 export type IQuery = ISqlQuery | INativeQuery;

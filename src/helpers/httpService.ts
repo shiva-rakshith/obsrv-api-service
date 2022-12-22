@@ -5,7 +5,7 @@ const URL = config.druidHost + ":" + config.druidPort;
 const httpService = axios.create({
   baseURL: URL,
   timeout: 3000,
-  headers: { "Content-Type": "application/json" },
+  headers: { "Content-Type": "application/json" }
 });
 
 export { httpService };
