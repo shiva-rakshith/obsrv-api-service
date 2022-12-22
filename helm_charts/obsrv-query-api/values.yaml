@@ -1,0 +1,8 @@
+namespace: "obsrv-query-engine"
+dockerhub: "gayathrisrividya"
+replicaCount: 1
+repository: "obsrv-query-api"
+image_tag: 1.0.0
+network:
+  port: 3000
+  targetport: 3000
