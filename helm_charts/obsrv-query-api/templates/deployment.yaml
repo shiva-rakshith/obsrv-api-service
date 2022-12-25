@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata: 
   name: {{ .Chart.Name }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.namespace }}-{{ .Values.env }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector: 
@@ -16,17 +16,28 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
-        image: {{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}
-        imagePullPolicy: IfNotPresent
+        image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
+        imagePullPolicy: Always
+        env:
+        - name: druid_host
+          valueFrom:
+            configMapKeyRef:
+              name: "{{ .Chart.Name }}-config"
+              key: DRUID_HOST
+        - name: druid_port
+          valueFrom:
+            configMapKeyRef:
+              name: "{{ .Chart.Name }}-config"
+              key: DRUID_PORT
         ports:
-        - containerPort: {{ .Values.network.port }}
+        - containerPort: 3000
 
 ---
 apiVersion: v1 
 kind: Service
 metadata:
-  name: {{ .Chart.Name }}-service
-  namespace: {{ .Values.namespace }}
+  name: "{{ .Chart.Name }}-service"
+  namespace: {{ .Values.namespace }}-{{ .Values.env }}
   labels:
     app: {{ .Chart.Name }}
 spec:
