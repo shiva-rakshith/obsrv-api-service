@@ -1,8 +1,0 @@
----
-services:
-  - name: obsrv-query-engine
-    port: 3000
-    druid_host: http://localhost
-    druid_port: 8082
-    druid_endpoint: /druid/v2
-    
