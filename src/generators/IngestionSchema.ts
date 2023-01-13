@@ -1,32 +1,6 @@
-import _, { initial } from "lodash";
-export interface IngestionSpecModel {
-    dimensions: any,
-    metrics: any,
-    flattenSpec: any
-}
+import _ from "lodash";
+import { IngestionConfig, IngestionSpecModel } from "../models/ingestionModels";
 
-export interface IOConfig {
-    topic: string,
-    bootstrapIp: string,
-    taskDuration: string,
-    completionTimeout: string
-}
-export interface TuningConfig {
-    maxRowPerSegment: number,
-    taskCount: number,
-}
-
-export interface GranularitySpec {
-    segmentGranularity: string,
-    queryGranularity: string,
-    rollup: boolean
-}
-
-export interface IngestionConfig {
-    granularitySpec: GranularitySpec,
-    tuningConfig: TuningConfig,
-    ioConfig: IOConfig
-}
 export class IngestionSchema {
     private ingestionConfig: IngestionConfig;
     private dataSource: string;
@@ -37,9 +11,13 @@ export class IngestionSchema {
         this.ingestionConfig = config;
         this.indexCol = indexCol
     }
-
+    /**
+     *  Generates the Ingestion Schema
+     * @param sample -  Map<string, any>[]), Generate Ingestion Schema against Sample Data 
+     * @returns - any, Ingestion Template
+     */
     generate(sample: Map<string, any>[]): any {
-        const generatedSpec: IngestionSpecModel[] = _.map(sample, (value, key) => {
+        const generatedSpec: IngestionSpecModel[] = _.map(sample, (value, key): any => {
             return this.process(value)
         })
 
@@ -61,6 +39,12 @@ export class IngestionSchema {
         return this.getIngestionTemplate(flattenSpec, dims, metrics)
     }
 
+    /**
+     * Method to process the sample rquest
+     * 
+     * @param sample - Map<string, any>
+     * @returns - IngestionSpecModel
+     */
     process(sample: Map<string, any>): IngestionSpecModel {
 
         const simplifiedSpec = this.generateExpression(sample)
@@ -92,7 +76,6 @@ export class IngestionSchema {
             return value
         })
     }
-
 
     filterMetricsCols(sample: Map<string, any>): any[] {
         const metricsType = ["doubleSum"]
@@ -208,3 +191,5 @@ export class IngestionSchema {
         }
     }
 }
+
+export { IngestionConfig };
