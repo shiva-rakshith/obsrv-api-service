@@ -1,7 +1,7 @@
 {
   "ERROR_MESSAGE": {
-    "INVALID_DATE_RANGE": "invalid date range! make sure your range must be valid and cannot be more than ${allowedRange} days",
-    "NO_DATE_RANGE": "invalid date range! the date range cannot be a null value",
+    "INVALID_DATE_RANGE": "Invalid date range! make sure your range must be valid and cannot be more than ${allowedRange} days",
+    "NO_DATE_RANGE": "Invalid date range! the date range cannot be a null value",
     "ROUTE_NOT_FOUND": "Route not found",
     "INVALID_DATA_SOURCE": "limits for datasource does not exist!"
   },

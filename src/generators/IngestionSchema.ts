@@ -1,15 +1,15 @@
 import _ from "lodash";
-import { IngestionConfig, IngestionSpecModel } from "../models/ingestionModels";
+import { IngestionConfig, IngestionSpecModel, ISchemaGenerator } from "../models/IngestionModels";
 
-export class IngestionSchema {
+export class IngestionSchema implements ISchemaGenerator {
     private ingestionConfig: IngestionConfig;
-    private dataSource: string;
+    private dataSet: string;
     private indexCol: string
 
-    constructor(dataSource: string, indexCol: string, config: IngestionConfig,) {
-        this.dataSource = dataSource
+    constructor(dataSet: string,  config: IngestionConfig) {
+        this.dataSet = dataSet
         this.ingestionConfig = config;
-        this.indexCol = indexCol
+        this.indexCol = config.indexCol
     }
     /**
      *  Generates the Ingestion Schema
@@ -94,7 +94,7 @@ export class IngestionSchema {
                 if (_.isPlainObject(value)) {
                     recursive(value, `${path}.${key}`);
                 } else if (this.getObjectType(value) === "array") {
-                    if (this.isComplexArray(value)) {
+                    if (this.isComplexArray(value)) { // defines simple array or complex array
                         let mergedResult = _.assign.apply(_, value)
                         recursive(mergedResult, `${path}.${key}[*]`);
                     } else {
@@ -151,7 +151,7 @@ export class IngestionSchema {
             "type": "kafka",
             "spec": {
                 "dataSchema": {
-                    "dataSource": this.dataSource,
+                    "dataSource": this.dataSet,
                     "dimensionsSpec": { "dimensions": dims },
                     "timestampSpec": { "column": this.indexCol, "format": "auto" },
                     "metricsSpec": metrics,
@@ -193,3 +193,4 @@ export class IngestionSchema {
 }
 
 export { IngestionConfig };
+

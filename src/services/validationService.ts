@@ -1,11 +1,11 @@
-import { NextFunction, Request, Response } from "express";
-import { isUndefined } from "lodash";
-import { ICommonRules, IRules, IQueryTypeRules, IQuery, ILimits } from "../models";
-import moment, { Moment } from "moment";
-import fs from "fs";
 import Ajv from "ajv";
+import { NextFunction, Request, Response } from "express";
+import fs from "fs";
 import errorResponse from "http-errors";
 import httpStatus from "http-status";
+import { isUndefined } from "lodash";
+import moment, { Moment } from "moment";
+import { ICommonRules, ILimits, IQuery, IQueryTypeRules, IRules } from "../models/QueryModels";
 import constants from "../resources/constants.json";
 const schemaValidator = new Ajv();
 

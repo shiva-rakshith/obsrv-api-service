@@ -6,7 +6,7 @@ import httpStatus from "http-status";
 import TestDruidQuery from "./testquery";
 import { config } from "./config";
 import constants from "../resources/constants.json";
-import routes from "../resources/routes.json";
+import routes from "../routes/routesConfig";
 chai.should();
 chai.use(chaiHttp);
 
@@ -82,7 +82,7 @@ describe("druid API", () => {
         .end((err, res) => {
           res.should.have.status(httpStatus.NOT_FOUND);
           res.body.should.be.a("object");
-          res.body.id.should.be.eq(routes.DEFAULT.API_ID);
+          res.body.id.should.be.eq(routes.API_ID);
           res.body.responseCode.should.be.eq(httpStatus["404_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
@@ -128,7 +128,7 @@ describe("druid API", () => {
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.should.have.property("result");
           res.body.result.length.should.be.lessThan(101);
-          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -143,7 +143,7 @@ describe("druid API", () => {
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -158,7 +158,7 @@ describe("druid API", () => {
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -172,7 +172,7 @@ describe("druid API", () => {
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.result.length.should.be.lessThan(101); // default is 100
-          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -186,7 +186,7 @@ describe("druid API", () => {
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.result.length.should.be.lessThan(101); // default is 100
-          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -200,7 +200,7 @@ describe("druid API", () => {
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.result.length.should.be.lessThan(101); // default is 100
-          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -215,7 +215,7 @@ describe("druid API", () => {
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -231,7 +231,7 @@ describe("druid API", () => {
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -246,7 +246,7 @@ describe("druid API", () => {
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -261,7 +261,7 @@ describe("druid API", () => {
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq(routes.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -282,7 +282,7 @@ describe("druid API", () => {
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.result.length.should.be.lessThan(101);
-          res.body.id.should.be.eq(routes.SQL_QUERY.API_ID);
+          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -296,7 +296,7 @@ describe("druid API", () => {
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.result.length.should.be.lessThan(101); // default is 100
-          res.body.id.should.be.eq(routes.SQL_QUERY.API_ID);
+          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
           done();
         });
     });
@@ -310,7 +310,7 @@ describe("druid API", () => {
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.result.length.should.be.lessThan(101); // default is 100
-          res.body.id.should.be.eq(routes.SQL_QUERY.API_ID);
+          res.body.id.should.be.eq(routes.QUERY.SQL_QUERY.API_ID);
           done();
         });
     });
@@ -325,7 +325,7 @@ describe("druid API", () => {
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq(routes.SQL_QUERY.API_ID);
+          res.body.id.should.be.eq(routes.QUERY.SQL_QUERY.API_ID);
           done();
         });
     });
@@ -340,7 +340,7 @@ describe("druid API", () => {
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq(routes.SQL_QUERY.API_ID);
+          res.body.id.should.be.eq(routes.QUERY.SQL_QUERY.API_ID);
           done();
         });
     });
@@ -355,7 +355,7 @@ describe("druid API", () => {
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq(routes.SQL_QUERY.API_ID);
+          res.body.id.should.be.eq(routes.QUERY.SQL_QUERY.API_ID);
           done();
         });
     });

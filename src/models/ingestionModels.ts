@@ -22,6 +22,8 @@ export interface GranularitySpec {
 }
 
 export interface IngestionConfig {
+    dataSet: string,
+    indexCol: string,
     granularitySpec: GranularitySpec,
     tuningConfig: TuningConfig,
     ioConfig: IOConfig
@@ -29,7 +31,10 @@ export interface IngestionConfig {
 
 export interface IngestionSchemeRequest {
     data : Map<string, any>[],
-    datasource: string,
-    indexCol: string,
     config: IngestionConfig
+}
+
+export interface ISchemaGenerator {
+    generate(sample: Map<string, any>[]): any;
+    process(sample: Map<string, any>): any;
 }

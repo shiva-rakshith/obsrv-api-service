@@ -11,10 +11,12 @@
   "author": "GayathriSrividya",
   "license": "ISC",
   "dependencies": {
+    "@jsonhero/schema-infer": "^0.1.4",
     "@types/moment": "^2.13.0",
     "ajv": "^8.11.2",
     "axios": "^1.1.3",
     "express": "^4.18.2",
+    "generate-schema": "^2.6.0",
     "http-errors": "^2.0.0",
     "http-status": "^1.5.3",
     "lodash": "^4.17.21",

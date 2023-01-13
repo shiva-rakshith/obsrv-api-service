@@ -1,8 +1,8 @@
-import { IResponse } from "../models";
 import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
+import { IResponse } from "../models/QueryModels";
 import constants from "../resources/constants.json";
-import routes from "../resources/routes.json";
+import routes from "../routes/routesConfig";
 
 type extendedErrorRequestHandler = ErrorRequestHandler & {
   statusCode: number;
@@ -18,10 +18,10 @@ class ResponseHandler {
   }
 
   public routeNotFound = (req: Request, res: Response, next: NextFunction) => {
-    next({ statusCode: httpStatus.NOT_FOUND, message: constants.ERROR_MESSAGE.ROUTE_NOT_FOUND, errCode: httpStatus["404_NAME"] });
+    next({ statusCode: httpStatus.NOT_FOUND, message: constants.ERROR_MESSAGE.ROUTE_NOT_FOUND, errCode: httpStatus['404_NAME'] });
   };
 
-  public refactorResponse({ id = routes.DEFAULT.API_ID, ver = "v1", params = { status: "SUCCESS", errmsg: "" }, responseCode = "OK", result = {} }): object {
+  public refactorResponse({ id = routes.API_ID, ver = "v2", params = { status: httpStatus[200], errmsg: "" }, responseCode = httpStatus[200], result = {} }): object {
     return {
       id,
       ver,
@@ -36,7 +36,7 @@ class ResponseHandler {
     const responseHandler = new ResponseHandler();
     const { statusCode, message, errCode } = error;
     const { id } = req as any;
-    res.status(statusCode).json(responseHandler.refactorResponse({ id: id, params: { status: "FAILED", errmsg: message, }, responseCode: errCode || httpStatus["500_NAME"] }));
+    res.status(statusCode).json(responseHandler.refactorResponse({ id: id, params: { status: httpStatus[400], errmsg: message, }, responseCode: errCode || httpStatus["500_NAME"] }));
   }
 
   public setApiId = (id: string) => (req: Request, res: Response, next: NextFunction) => {
