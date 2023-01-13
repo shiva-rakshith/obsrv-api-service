@@ -16,4 +16,12 @@ router.post(routes.NATIVE_QUERY.URL, responseHandler.setApiId(routes.NATIVE_QUER
 
 router.post(routes.SQL_QUERY.URL, responseHandler.setApiId(routes.SQL_QUERY.API_ID), validationService.validateRequestBody, validationService.validateConfiguration, validationService.validateSqlQuery, druidController.executeSqlQuery);
 
+
+/**
+ * Schema Config Routers
+ */
+
+router.post(routes.INGESTION_SCHEMA_GENERATION.URL, responseHandler.setApiId(routes.INGESTION_SCHEMA_GENERATION.API_ID), druidController.generateIngestionSpec);
+
+
 export { router };

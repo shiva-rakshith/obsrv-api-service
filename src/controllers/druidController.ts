@@ -5,6 +5,7 @@ import { Request, Response, NextFunction } from "express";
 import errorResponse from "http-errors";
 import { config } from "../configs/config";
 import _ from "lodash";
+import { IngestionConfig, IngestionSchema } from "../generators/IngestionSchema";
 const responseHandler = new ResponseHandler();
 
 class DruidController {
@@ -49,6 +50,21 @@ class DruidController {
       next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
   };
+
+  public generateIngestionSpec = async (req: Request, res: Response, next: NextFunction) => {
+
+    const datasource = req.body.dataSource 
+    const indexCol = req.body.indexCol
+    const config = req.body.config
+    const sample = req.body.data
+    
+    const ingestionSpec = new IngestionSchema(datasource, indexCol, <IngestionConfig>config)
+    const spec = ingestionSpec.generate(sample)
+    responseHandler.successResponse(req, res, { status: 200, data: spec });
+  }
+
+
+
 }
 
 export default DruidController;

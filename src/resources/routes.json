@@ -19,6 +19,12 @@
     "METHOD": "POST",
     "API_ID": "obsrv.sql.query"
   },
+  "INGESTION_SCHEMA_GENERATION": {
+    "URL": "/config/v2/ingestion/schema/generate",
+    "METHOD": "POST",
+    "API_ID": "obsrv.config.ingestion.generation"
+  },
+
   "DEFAULT": {
     "API_ID": "obsrv.api"
   }
