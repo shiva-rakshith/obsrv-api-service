@@ -15,8 +15,8 @@ export class ValidationService {
   private limits: ILimits;
 
   constructor(configDir: string) {
-    this.requestBodySchema = JSON.parse(fs.readFileSync(process.cwd() + configDir + "requestBodySchema.json", "utf8"));
-    this.nativeQuerySchema = JSON.parse(fs.readFileSync(process.cwd() + configDir + "nativeQuerySchema.json", "utf8"));
+    this.requestBodySchema = JSON.parse(fs.readFileSync(process.cwd() + `${configDir}schemas/` + "queryRequest.json", "utf8"));
+    this.nativeQuerySchema = JSON.parse(fs.readFileSync(process.cwd() + `${configDir}schemas/` + "nativeQuery.json", "utf8"));
     this.limits = JSON.parse(fs.readFileSync(process.cwd() + configDir + "limits.json", "utf8"));
   }
 
