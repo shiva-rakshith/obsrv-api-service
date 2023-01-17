@@ -1,8 +1,8 @@
 import express, { Application } from "express";
 import { config } from "./configs/config";
+import { ResponseHandler } from "./helpers/ResponseHandler";
 import { router } from "./routes/router";
 const app: Application = express();
-import { ResponseHandler } from "./helpers/ResponseHandler";
 const responseHandler = new ResponseHandler();
 const globalErrorHandler = responseHandler.errorResponse;
 

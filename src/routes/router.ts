@@ -1,9 +1,9 @@
 import express from "express";
 import { ResponseHandler } from "../helpers/ResponseHandler";
+import { QueryService } from "../services/QueryService";
 import { SchemaGeneratorService } from "../services/SchemaGeneratorService";
 import { ValidationService } from "../services/ValidationService";
 import routes from "./routesConfig";
-import { QueryService } from "../services/QueryService";
 const queryService = new QueryService();
 const schemaGeneratorService = new SchemaGeneratorService();
 

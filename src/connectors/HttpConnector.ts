@@ -1,29 +1,17 @@
-import axios from "axios";
-import { config } from "../configs/config";
-
-//const URL = config.druidHost + ":" + config.druidPort;
-
+import axios, { AxiosInstance } from "axios";
 export class HTTPConnector {
-  [x: string]: any;
-  constructor(url: string){
-   return axios.create({
-      url: url,
+  private url: string;
+  constructor(url: string) {
+    this.url = url
+  }
+
+  init(): AxiosInstance {
+    return axios.create({
+      url: this.url,
       timeout: 3000,
       headers: { "Content-Type": "application/json" }
     });
   }
-
-  // fetch (){
-  //   axios.create({
-  //     baseURL: URL,
-  //     timeout: 3000,
-  //     headers: { "Content-Type": "application/json" }
-  //   });
-  // }
-
 }
 
 
-// const HTTPService = 
-
-// export { HTTPService };

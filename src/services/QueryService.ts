@@ -1,15 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import errorResponse from "http-errors";
 import httpStatus from "http-status";
-import { url } from "inspector";
 import _ from "lodash";
 import { config } from "../configs/config";
 import { HTTPConnector } from "../connectors/HttpConnector";
 import { ResponseHandler } from "../helpers/ResponseHandler";
 
 const responseHandler = new ResponseHandler();
-
-const httpConnector = new HTTPConnector(`${config.query_api.druid.host}:${config.query_api.druid.port}`)
+const httpConnector = new HTTPConnector(`${config.query_api.druid.host}:${config.query_api.druid.port}`).init()
 
 export class QueryService {
   public getStatus = async (req: Request, res: Response, next: NextFunction) => {
