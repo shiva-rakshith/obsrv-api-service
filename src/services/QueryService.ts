@@ -8,7 +8,7 @@ import { ResponseHandler } from "../helpers/ResponseHandler";
 
 const responseHandler = new ResponseHandler();
 
-class DruidController {
+export class QueryService {
   public getStatus = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await HTTPService.get(config.druidStatusEndPoint);
@@ -53,4 +53,3 @@ class DruidController {
 
 }
 
-export default DruidController;

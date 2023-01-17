@@ -1,11 +1,11 @@
 import express from "express";
-import DruidController from "../controllers/druidController";
 import { ResponseHandler } from "../helpers/ResponseHandler";
-import { GeneratorService } from "../services/GeneratorService";
+import { SchemaGeneratorService } from "../services/SchemaGeneratorService";
 import { ValidationService } from "../services/ValidationService";
 import routes from "./routesConfig";
-const druidController = new DruidController();
-const generatorService = new GeneratorService();
+import { QueryService } from "../services/QueryService";
+const queryService = new QueryService();
+const schemaGeneratorService = new SchemaGeneratorService();
 
 const router = express.Router();
 const responseHandler = new ResponseHandler();
@@ -27,15 +27,22 @@ const validationService = new ValidationService("/src/configs/");
  * Query Service Routes
  */
 
-router.post(`${routes.QUERY.BASE_PATH}${routes.QUERY.API_VERSION}${routes.QUERY.NATIVE_QUERY.URL}`, responseHandler.setApiId(routes.QUERY.NATIVE_QUERY.API_ID), validationService.validateRequestBody, validationService.validateConfiguration, validationService.validateNativeQuery, druidController.executeNativeQuery);
-router.post(`${routes.QUERY.BASE_PATH}${routes.QUERY.API_VERSION}${routes.QUERY.SQL_QUERY.URL}`, responseHandler.setApiId(routes.QUERY.SQL_QUERY.API_ID), validationService.validateRequestBody, validationService.validateConfiguration, validationService.validateSqlQuery, druidController.executeSqlQuery);
+router.post(`${routes.QUERY.BASE_PATH}${routes.QUERY.API_VERSION}${routes.QUERY.NATIVE_QUERY.URL}`, responseHandler.setApiId(routes.QUERY.NATIVE_QUERY.API_ID), validationService.validateRequestBody, validationService.validateConfiguration, validationService.validateNativeQuery, queryService.executeNativeQuery);
+router.post(`${routes.QUERY.BASE_PATH}${routes.QUERY.API_VERSION}${routes.QUERY.SQL_QUERY.URL}`, responseHandler.setApiId(routes.QUERY.SQL_QUERY.API_ID), validationService.validateRequestBody, validationService.validateConfiguration, validationService.validateSqlQuery, queryService.executeSqlQuery);
 
 
 /**
  * Generator Service Routes
  */
-router.post(`${routes.SCHEMA.BASE_PATH}${routes.SCHEMA.API_VERSION}${routes.SCHEMA.INGESTION_SCHEMA.URL}`, responseHandler.setApiId(routes.SCHEMA.INGESTION_SCHEMA.API_ID), generatorService.generateIngestionSchema);
-router.post(`${routes.SCHEMA.BASE_PATH}${routes.SCHEMA.API_VERSION}${routes.SCHEMA.DATASET_SCHEMA.URL}`, responseHandler.setApiId(routes.SCHEMA.DATASET_SCHEMA.API_ID), generatorService.generateDataSetSchema);
+router.post(`${routes.SCHEMA.BASE_PATH}${routes.SCHEMA.API_VERSION}${routes.SCHEMA.INGESTION_SCHEMA.URL}`, responseHandler.setApiId(routes.SCHEMA.INGESTION_SCHEMA.API_ID), schemaGeneratorService.generateIngestionSchema);
+router.post(`${routes.SCHEMA.BASE_PATH}${routes.SCHEMA.API_VERSION}${routes.SCHEMA.DATASET_SCHEMA.URL}`, responseHandler.setApiId(routes.SCHEMA.DATASET_SCHEMA.API_ID), schemaGeneratorService.generateDataSetSchema);
+
+
+/**
+ * 
+ * Dataset service routers
+ * 
+ */
 
 
 

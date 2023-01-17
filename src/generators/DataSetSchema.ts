@@ -4,7 +4,7 @@ import { ISchemaGenerator } from "../models/IngestionModels";
 //var schema = require('generate-schema')
 import { inferSchema } from "@jsonhero/schema-infer";
 
-export class SchemaGenerator implements ISchemaGenerator {
+export class DataSetSchema implements ISchemaGenerator {
     private config: Map<string, any>;
     private dataset: string;
 
