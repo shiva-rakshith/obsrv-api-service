@@ -5,6 +5,7 @@ export class IngestionSchema implements ISchemaGenerator {
     private ingestionConfig: IngestionConfig;
     private dataSet: string;
     private indexCol: string;
+    private regex: RegExp = /\./g;
 
     constructor(dataSet: string,  config: IngestionConfig) {
         this.dataSet = dataSet
@@ -115,11 +116,11 @@ export class IngestionSchema implements ISchemaGenerator {
             "flattenSpec": {
                 "type": "path",
                 "expr": expr,
-                "name": _.replace(name.replace(/\./g, "_"), "$_", "")
+                "name": _.replace(name.replace(this.regex, "_"), "$_", "")
             },
             "dimensions": {
                 "type": objType,
-                "name": _.replace(name.replace(/\./g, "_"), "$_", "")
+                "name": _.replace(name.replace(this.regex, "_"), "$_", "")
             },
             "propert_type": objType
         }
