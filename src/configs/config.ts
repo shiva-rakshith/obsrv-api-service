@@ -1,11 +1,38 @@
-const config = {
-  apiPort: process.env.api_port || 3000,
-  druidHost: process.env.druid_host || "http://localhost",
-  druidPort: process.env.druid_port || 8888,
-  druidStatusEndPoint: process.env.druid_status_end_point || "/status",
-  druidHealthEndPoint: process.env.druid_health_end_point || "/status/health",
-  druidNativeQueryEndPoint: process.env.druid_native_query_end_point || "/druid/v2",
-  druidSqlQueryEndPoint: process.env.druid_sql_query_end_point || "/druid/v2/sql/",
-};
+export const config = {
+  "api_port": process.env.api_port || 3000,
+  "validation": {
+    "request": process.env.druid_host || "http://localhost",
+  },
+  "query_api": {
+    "druid": {
+      "host": process.env.druid_host || "http://localhost",
+      "port": process.env.druid_port || 8888,
+      "status_api": "/status",
+      "health_api": "/status/health",
+      "sql_query_path": "/druid/v2/sql/",
+      "native_query_path": "/druid/v2"
+    }
+  },
+  "rules": {
+    "storage": "local",
+    "path": ""
+  },
 
-export { config };
+  "schema_api": {
+
+  },
+
+  "manage_api": {
+
+
+  },
+
+  "dataset_api": {
+
+  }
+}
+
+
+
+
+

@@ -1,6 +1,7 @@
 
 const routes = {
   "API_ID": "obsrv.api",
+
   "QUERY": {
     "BASE_PATH": "/query",
     "API_VERSION": "/v2",
