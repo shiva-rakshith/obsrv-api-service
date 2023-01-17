@@ -35,7 +35,8 @@ export class ValidationService {
     let dataSource: string = this.getDataSource(req.body);
     let dataSourceLimits = this.getDataSourceLimits(dataSource);
     if (dataSource != req.body.context.dataSource || isUndefined(dataSourceLimits)) {
-      throw errorResponse(httpStatus.BAD_REQUEST, constants.ERROR_MESSAGE.INVALID_DATA_SOURCE, { errCode: httpStatus["400_NAME"] });
+      console.warn(`Rules not found : ${dataSource}`)
+      next();
     }
     next();
   };

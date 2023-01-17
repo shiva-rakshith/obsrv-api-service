@@ -1,17 +1,32 @@
 
-import { Client, ClientConfig } from "pg"
+import { ClientConfig, Pool, QueryResult } from "pg";
+import { IConnector } from "../models/IngestionModels";
 
-export class PostgresConnector {
-    private config : ClientConfig
-    private client: Client
+export class PostgresConnector implements IConnector {
+    private config: ClientConfig
+    private pool: Pool
 
-    constructor(config: ClientConfig){
+    constructor(config: ClientConfig) {
         this.config = config;
-        this.client = new Client(config)
+        this.pool = new Pool(this.config)
     }
 
     async connect() {
-        return await this.client.connect()
+        await this.pool.connect()
+            .then(() => console.info("Postgres Connection Established..."))
+            .catch((err) => console.error(`Postgres Connection failed ${err}`))
     }
 
+    async close() {
+        return await this.pool.end()
+    }
+
+    async execute(query: string): Promise<QueryResult<any>> {
+        try {
+            return await this.pool.query(query)
+        } catch (err: any) {
+            console.log(err.stack)
+            return err
+        }
+    }
 }

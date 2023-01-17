@@ -1,27 +1,34 @@
+import { AxiosInstance } from "axios";
 import express from "express";
+import { config } from "../configs/config";
+import { HTTPConnector } from "../connectors/HttpConnector";
+import { PostgresConnector } from "../connectors/PostgresConnector";
 import { ResponseHandler } from "../helpers/ResponseHandler";
+import { IConnector } from "../models/IngestionModels";
 import { QueryService } from "../services/QueryService";
 import { SchemaGeneratorService } from "../services/SchemaGeneratorService";
 import { ValidationService } from "../services/ValidationService";
 import routes from "./routesConfig";
-const queryService = new QueryService();
-const schemaGeneratorService = new SchemaGeneratorService();
 
+const httpConnector: IConnector = new HTTPConnector(`${config.query_api.druid.host}:${config.query_api.druid.port}`)
+const queryService = new QueryService(httpConnector);
+
+const pgConfig = {
+    host: 'localhost',
+    port: 5432,
+    database: 'postgres',
+    user: 'manjunathdavanam',
+    password: 'Manju@123',
+}
+const postgresConnector: IConnector = new PostgresConnector(pgConfig)
+const schemaGeneratorService = new SchemaGeneratorService(postgresConnector);
 const router = express.Router();
 const responseHandler = new ResponseHandler();
+
+
+
 const validationService = new ValidationService("/src/configs/");
 
-/**
- * Query Service Routers
- */
-
-// router.get(routes.GET_STATUS.URL, responseHandler.setApiId(routes.GET_STATUS.API_ID), druidController.getStatus);
-
-// router.get(routes.HEALTH_CHECK.URL, responseHandler.setApiId(routes.HEALTH_CHECK.API_ID), druidController.getHealthStatus);
-
-// router.post(routes.NATIVE_QUERY.URL, responseHandler.setApiId(routes.NATIVE_QUERY.API_ID), validationService.validateRequestBody, validationService.validateConfiguration, validationService.validateNativeQuery, druidController.executeNativeQuery);
-
-// router.post(routes.SQL_QUERY.URL, responseHandler.setApiId(routes.SQL_QUERY.API_ID), validationService.validateRequestBody, validationService.validateConfiguration, validationService.validateSqlQuery, druidController.executeSqlQuery);
 
 /**
  * Query Service Routes
