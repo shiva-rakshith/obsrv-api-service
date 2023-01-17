@@ -4,7 +4,7 @@ import { IngestionConfig, IngestionSpecModel, ISchemaGenerator } from "../models
 export class IngestionSchema implements ISchemaGenerator {
     private ingestionConfig: IngestionConfig;
     private dataSet: string;
-    private indexCol: string
+    private indexCol: string;
 
     constructor(dataSet: string,  config: IngestionConfig) {
         this.dataSet = dataSet
@@ -98,11 +98,11 @@ export class IngestionSchema implements ISchemaGenerator {
                         let mergedResult = _.assign.apply(_, value)
                         recursive(mergedResult, `${path}.${key}[*]`);
                     } else {
-                        map.set(key, this.createSpecObj(`${path}.${key}[*]`, this.getObjectType(value), _.replace(`${path}_${key}`, '.', '_')))
+                        map.set(key, this.createSpecObj(`${path}.${key}[*]`, this.getObjectType(value), `${path}_${key}`))
                     }
                 }
                 else {
-                    map.set(key, this.createSpecObj(`${path}.${key}`, this.getObjectType(value), _.replace(`${path}_${key}`, '.', '_')))
+                    map.set(key, this.createSpecObj(`${path}.${key}`, this.getObjectType(value), `${path}_${key}`))
                 }
             })
         }
@@ -115,11 +115,11 @@ export class IngestionSchema implements ISchemaGenerator {
             "flattenSpec": {
                 "type": "path",
                 "expr": expr,
-                "name": _.replace(_.replace(name, '.', '_'), "$_", "")
+                "name": _.replace(name.replace(/\./g, "_"), "$_", "")
             },
             "dimensions": {
                 "type": objType,
-                "name": _.replace(_.replace(name, '.', '_'), "$_", "")
+                "name": _.replace(name.replace(/\./g, "_"), "$_", "")
             },
             "propert_type": objType
         }
