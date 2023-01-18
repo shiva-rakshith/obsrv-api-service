@@ -1,4 +1,5 @@
 import _ from "lodash";
+import moment, { Moment } from "moment";
 import { IngestionConfig, IngestionSpecModel, ISchemaGenerator } from "../models/IngestionModels";
 
 export class IngestionSchema implements ISchemaGenerator {
@@ -94,16 +95,16 @@ export class IngestionSchema implements ISchemaGenerator {
             _.forEach(data, (value, key) => {
                 if (_.isPlainObject(value)) {
                     recursive(value, `${path}.${key}`);
-                } else if (this.getObjectType(value) === "array") {
+                } else if (this.getObjectType(value, key) === "array") {
                     if (this.isComplexArray(value)) { // defines simple array or complex array
                         let mergedResult = _.assign.apply(_, value)
                         recursive(mergedResult, `${path}.${key}[*]`);
                     } else {
-                        map.set(key, this.createSpecObj(`${path}.${key}[*]`, this.getObjectType(value), `${path}_${key}`))
+                        map.set(`${path}_${key}`, this.createSpecObj(`${path}.${key}[*]`, this.getObjectType(value, key), `${path}_${key}`))
                     }
                 }
                 else {
-                    map.set(key, this.createSpecObj(`${path}.${key}`, this.getObjectType(value), `${path}_${key}`))
+                    map.set(`${path}_${key}`, this.createSpecObj(`${path}.${key}`, this.getObjectType(value, key), `${path}_${key}`))
                 }
             })
         }
@@ -133,13 +134,13 @@ export class IngestionSchema implements ISchemaGenerator {
         return _.isEqual(obj, typeof {}) ? true : false
     }
 
-    getObjectType(obj: any): string {
+    getObjectType(obj: any, key: string): string {
         switch (typeof obj) {
             case "object": {
                 return _.isArray(obj) ? "array" : "object"
             }
             case "number": {
-                return _.isNumber(obj) ? "doubleSum" : "number"
+                return (_.isNumber(obj) && (key!= this.indexCol)) ? "doubleSum" : "timestamp"
             }
             default: {
                 return typeof obj

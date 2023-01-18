@@ -3,7 +3,6 @@ import { DataSetSchema } from "../generators/DataSetSchema";
 import { IngestionConfig, IngestionSchema } from "../generators/IngestionSchema";
 import { ResponseHandler } from "../helpers/ResponseHandler";
 import { IConnector, IngestionSchemeRequest } from "../models/IngestionModels";
-const responseHandler = new ResponseHandler();
 export class SchemaGeneratorService {
     private connector: IConnector;
     constructor(connector: IConnector) {
@@ -14,22 +13,23 @@ export class SchemaGeneratorService {
         const request = <IngestionSchemeRequest>req.body
         const schema = new IngestionSchema(request.config.dataSet, <IngestionConfig>request.config)
         const spec = schema.generate(request.data)
-        const ress =  this.connector.execute("SELECT * FROM dataset_config")
-        ress.then((resss: { rows: any; }) => {
-            console.log("data " + JSON.stringify(resss.rows))
-        })
-        responseHandler.successResponse(req, res, { status: 200, data: spec });
+        //console.log("spec " + JSON.stringify(spec))
+        //const ress =  this.connector.execute(`INSERT INTO dataset_config (dataset_name, dataset_version, ingestion_schema, dataset_schema) VALUES (${request.config.dataSet}, 'v1', ${spec}, '{}')`)
+        // ress.then((resss: { rows: any; }) => {
+        //     console.log("data " + JSON.stringify(resss.rows))
+        // })
+        ResponseHandler.successResponse(req, res, { status: 200, data: spec });
     }
 
     public generateDataSetSchema = async (req: Request, res: Response, next: NextFunction) => {
         const request = <IngestionSchemeRequest>req.body
         const schema = new DataSetSchema(request.config.dataSet, new Map())
         const spec = schema.generate(request.data)
-        const ress =  this.connector.execute("SELECT * FROM dataset_config")
-        ress.then((resss: { rows: any; }) => {
-            console.log("data " + JSON.stringify(resss.rows))
-        })
-        responseHandler.successResponse(req, res, { status: 200, data: spec });
+        // const ress =  this.connector.execute(`INSERT INTO dataset_config (dataset_name, dataset_version, ingestion_schema, dataset_schema) VALUES (${request.config.dataSet}, 'v1', {}, ${spec})`)
+        // ress.then((resss: { rows: any; }) => {
+        //     console.log("data " + JSON.stringify(resss.rows))
+        // })
+        ResponseHandler.successResponse(req, res, { status: 200, data: spec });
     }
 
 }

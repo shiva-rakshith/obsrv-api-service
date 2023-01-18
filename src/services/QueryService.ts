@@ -7,9 +7,6 @@ import { config } from "../configs/config";
 import { ResponseHandler } from "../helpers/ResponseHandler";
 import { IConnector } from "../models/IngestionModels";
 
-const responseHandler = new ResponseHandler();
-//const httpConnector: AxiosInstance = new HTTPConnector(`${config.query_api.druid.host}:${config.query_api.druid.port}`).connect()
-
 export class QueryService {
   private connector: AxiosInstance;
   constructor(connector: IConnector) {
@@ -19,7 +16,7 @@ export class QueryService {
   public getStatus = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await this.connector.get(config.query_api.druid.status_api);
-      responseHandler.successResponse(req, res, { status: result.status, data: result.data });
+      ResponseHandler.successResponse(req, res, { status: result.status, data: result.data });
     } catch (error: any) {
       next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
@@ -28,7 +25,7 @@ export class QueryService {
   public getHealthStatus = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await this.connector.get(config.query_api.druid.health_api);
-      responseHandler.successResponse(req, res, { status: result.status, data: result.data });
+      ResponseHandler.successResponse(req, res, { status: result.status, data: result.data });
     } catch (error: any) {
       next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
@@ -43,7 +40,7 @@ export class QueryService {
           return item.events;
         });
       }
-      responseHandler.successResponse(req, res, { status: result.status, data: _.flatten(mergedResult) });
+      ResponseHandler.successResponse(req, res, { status: result.status, data: _.flatten(mergedResult) });
     } catch (error: any) {
       next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
@@ -52,7 +49,7 @@ export class QueryService {
   public executeSqlQuery = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await this.connector.post(config.query_api.druid.sql_query_path, req.body.querySql);
-      responseHandler.successResponse(req, res, { status: result.status, data: result.data });
+      ResponseHandler.successResponse(req, res, { status: result.status, data: result.data });
     } catch (error: any) {
       next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
