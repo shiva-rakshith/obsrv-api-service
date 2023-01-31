@@ -30,12 +30,21 @@ export interface IngestionConfig {
 }
 
 export interface IngestionSchemeRequest {
+    data: Map<string, any>,
+    config: IngestionConfig
+}
+
+export interface DataSchemeRequest {
     data: Map<string, any>[],
     config: IngestionConfig
 }
 
 export interface ISchemaGenerator {
-    generate(sample: Map<string, any>[]): any;
+    generate: ((sample: Map<string, any>) => any) |
+    ((sample: Map<string, any>[]) => any);
+
+    // generate(sample: Map<string, any>[]): any;
+    // generate(sample: Map<string, any>): any; 
     process(sample: Map<string, any>): any;
 }
 
