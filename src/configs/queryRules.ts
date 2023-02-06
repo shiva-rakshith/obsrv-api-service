@@ -1,4 +1,4 @@
-{
+export const queryRules = {
   "common": {
     "maxResultThreshold": 100,
     "maxResultRowLimit": 100

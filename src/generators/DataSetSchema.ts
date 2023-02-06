@@ -1,8 +1,11 @@
-import _, { values } from "lodash";
-import { ISchemaGenerator } from "../models/IngestionModels";
-import { suggestions } from "../helpers/suggestions";
-
 import { inferSchema } from "@jsonhero/schema-infer";
+import _ from "lodash";
+import { suggestions } from "../helpers/suggestions";
+import { DataSetConfig } from "../models/DatasetModels";
+import { ISchemaGenerator } from "../models/IngestionModels";
+import { ConfigService } from "../services/ConfigService";
+var jsonMerger = require("json-merger");
+
 export class DataSetSchema implements ISchemaGenerator {
     private dataset: string;
 
@@ -11,20 +14,31 @@ export class DataSetSchema implements ISchemaGenerator {
     }
 
     generate(sample: Map<string, any>[]): any {
-        const generatedSchema: any[] = _.map(sample, (value, key): any => {
-            return inferSchema(value).toJSONSchema()
-        })
-        const suggestions = this.schemaComparision(generatedSchema)
-        const updatedSchema = _.reduce(generatedSchema, _.extend)
-        return {"schema": updatedSchema, "suggestions": suggestions}
+        const generatedSchema: Map<string, any>[] = _.map(sample, (value): any =>  inferSchema(value).toJSONSchema())
+        return this.process(generatedSchema)
     }
+
+    process(schema: Map<string, any>[]) {
+        const suggestions = this.schemaComparision(schema)
+        const mergedSchema: Map<string, any> = this.mergeSchema(schema)
+        const config: DataSetConfig = new ConfigService().suggestConfig()
+        return {"schema": mergedSchema, "suggestions": suggestions, "configurations": config}
+    }
+
+    mergeSchema(schema: Map<string, any>[]): Map<string, any> {
+        return jsonMerger.mergeObjects(schema);
+    }
+
+    updateSchema(schema: Map<string, any>, property:string, value:string, path:string) {
+        
+    }
+
     schemaComparision(schema: Map<string, any>[]): any {
         const result = schema.map(element => {
             const sample = new Map(Object.entries(element));
-            const response = this.generateExpression(sample);
+            const response = this.flattenSchema(sample);
             return response
         })
-        // group by property (ex: edata.type or eid)
         var groupedSchema = _.groupBy(_.flatten(result), 'path')
         const data: Map<string, any>[] = _.flatten(_.reject(Object.entries(groupedSchema).map(([key, value]) => {
             const array = new Array()
@@ -35,18 +49,16 @@ export class DataSetSchema implements ISchemaGenerator {
             const filteredData = _.flatMapDeep(occurance)
             if (!_.isEmpty(filteredData)) array.push({ "schema": filteredData, "property": key })
             return array
-
         }), _.isEmpty));
         const suggestions = this.invokeSuggestion(data)
         return suggestions
     }
-
-    invokeSuggestion(sample: any[]) {
+    invokeSuggestion(sample: any[]):any[] {
         return _.flattenDeep(sample.map(data => {
             return this.getSchemaSuggestions(data["schema"], data["property"])
         }))
     }
-    getSchemaSuggestions(data: any[], property: string) {
+    getSchemaSuggestions(data: any[], property: string):any[] {
         return data.map((res: any) => {
             const conflictMessage = `The Conflict at "${res["conflictProperty"]}" Property. Found(${this.getSubMessage(res["conflicts"])})`
             return {
@@ -61,7 +73,7 @@ export class DataSetSchema implements ISchemaGenerator {
         })
     }
 
-    getSubMessage(conflicts: any[]) {
+    getSubMessage(conflicts: any[]):string {
         return conflicts.map(con => {
             return `${con["objectType"]}:${con["occurance"]}`
         }).join(',')
@@ -90,7 +102,7 @@ export class DataSetSchema implements ISchemaGenerator {
         return Object.fromEntries(propMap)
     }
 
-    generateExpression(sample: Map<string, any>): any[] {
+    flattenSchema(sample: Map<string, any>): any[] {
         let array = new Array();
         const recursive = (data: any, path: string, requiredProps: string[]) => {
             _.forEach(data, (value, key) => {
@@ -110,7 +122,6 @@ export class DataSetSchema implements ISchemaGenerator {
                         }
                     }
                 }
-
             })
         }
         recursive(sample.get("properties"), "$", sample.get("required"))
@@ -126,8 +137,6 @@ export class DataSetSchema implements ISchemaGenerator {
         }
     }
 
-    process(sample: Map<string, any>) {
-        throw new Error("Method not implemented.");
-    }
+    
 
 }

@@ -69,11 +69,12 @@ export class IngestionSchemaV2 implements ISchemaGenerator{
                             if (_.has(value, 'items') && _.has(value["items"], 'properties')) {
                                 recursive(value["items"]['properties'], `${path}.${key}[*]`);
                             } else {
-                                console.log(`${path}_${key}`)
                                 map.set(`${path}_${key}`, this.createSpecObj(`${path}.${key}[*]`, this.getObjectType(key, value.type), `${path}_${key}`))
                             }
-                        } else {
-                            console.log(`${path}_${key}`)
+                        }else if(value.type == 'object' && (!_.has(value, 'properties'))){
+                            console.warn(`Found empty object without properties in the schema..Key: ${key}, Object: ${JSON.stringify(value)}`)
+                        }
+                         else {
                             map.set(`${path}_${key}`, this.createSpecObj(`${path}.${key}`, this.getObjectType(key, value.type), `${path}_${key}`))
                         }
                     }
@@ -125,7 +126,7 @@ export class IngestionSchemaV2 implements ISchemaGenerator{
                 },
                 "tuningConfig": {
                     "type": "kafka",
-                    "maxRowsPerSegment": this.ingestionConfig.tuningConfig.maxRowPerSegment,
+                    "maxRowsPerSegment": this.ingestionConfig.tuningConfig?.maxRowPerSegment || 1000,
                     "logParseExceptions": true
                 },
                 "ioConfig": this.getIOConfigObj(flattenSpec)
@@ -145,11 +146,11 @@ export class IngestionSchemaV2 implements ISchemaGenerator{
     getIOConfigObj(flattenSpec: any): any {
         return {
             "type": "kafka",
-            "topic": this.ingestionConfig.ioConfig.topic,
-            "consumerProperties": { "bootstrap.servers": this.ingestionConfig.ioConfig.bootstrapIp },
-            "taskCount": this.ingestionConfig.tuningConfig.taskCount,
+            "topic": this.ingestionConfig.ioConfig?.topic,
+            "consumerProperties": { "bootstrap.servers": this.ingestionConfig.ioConfig?.bootstrapIp },
+            "taskCount": this.ingestionConfig.tuningConfig?.taskCount,
             "replicas": 1,
-            "taskDuration": this.ingestionConfig.ioConfig.taskDuration,
+            "taskDuration": this.ingestionConfig.ioConfig?.taskDuration,
             "useEarliestOffset": false,
             "completionTimeout": "PT8H",
             "inputFormat": { "type": "json", "flattenSpec": { "useFieldDiscovery": true, "fields": flattenSpec } },
