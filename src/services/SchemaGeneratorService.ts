@@ -12,10 +12,8 @@ export class SchemaGeneratorService {
     }
     public generateIngestionSchema = async (req: Request, res: Response, next: NextFunction) => {
         const request = <IngestionSchemeRequest>req.body
-        console.log("request " + JSON.stringify(request.config.dataSet))
-        
         const schema = new IngestionSchemaV2(request.config.dataSet, <IngestionConfig>request.config)
-        const sample = new Map(Object.entries(request.data));
+        const sample = new Map(Object.entries(request.schema));
         const spec = schema.generate(sample)
         ResponseHandler.successResponse(req, res, { status: 200, data: spec });
     }

@@ -15,3 +15,11 @@ export interface DataSetConfig {
     ingestion: IngestionConfig,
     processing: ProcessingConfig
 }
+
+
+export interface SchemaUpdate {
+    property: string,
+    conflictType: string,
+    objectType: string
+    action: string
+}
