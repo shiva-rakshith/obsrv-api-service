@@ -44,15 +44,8 @@ export class DataSetSuggestionService {
         const minimumOccurance: number = 1
         if (_.size(occurance.dataType) > minimumOccurance) {
             const highestValueKey = Object.keys(occurance.dataType).reduce((a, b) => occurance.dataType[a] > occurance.dataType[b] ? a : b)
-            return {
-                type: constants.SCHEMA_RESOLUTION_TYPE.DATA_TYPE,
-                property: Object.keys(occurance.property)[0],
-                conflicts: occurance.dataType,
-                resolution: { "dataType": highestValueKey },
-            }
-        } else {
-            return <Conflict>{}
-        }
+            return { type: constants.SCHEMA_RESOLUTION_TYPE.DATA_TYPE, property: Object.keys(occurance.property)[0], conflicts: occurance.dataType, resolution: { "dataType": highestValueKey } }
+        } else { return <Conflict>{} }
     }
 
     private getPropertyFormateConflicts(occurance: Occurance): Conflict {
@@ -60,12 +53,7 @@ export class DataSetSuggestionService {
         const formats = ["date", "date-time", "uuid", "uri", "ipv4", "ipv6", "email", "creditcard"]
         if (!_.isEmpty(filteredFormat)) {
             const formatname = _.filter(formats, f => _.has(filteredFormat, f));
-            return {
-                type: constants.SCHEMA_RESOLUTION_TYPE.FORMATE_TYPE,
-                property: Object.keys(occurance.property)[0],
-                conflicts: filteredFormat,
-                resolution: { "format": formatname },
-            }
+            return { type: constants.SCHEMA_RESOLUTION_TYPE.FORMATE_TYPE, property: Object.keys(occurance.property)[0], conflicts: filteredFormat, resolution: { "format": formatname } }
         } else { return <Conflict>{} }
 
     }
@@ -79,15 +67,9 @@ export class DataSetSuggestionService {
         const highestValueKey = Boolean(Object.keys(occurance.isRequired).reduce((a, b) => occurance.isRequired[a] > occurance.isRequired[b] ? a : b))
         const isPropertyRequired = requiredCount <= maxOccurance ? false : true
         if (highestValueKey != isPropertyRequired) {
-            return {
-                type: constants.SCHEMA_RESOLUTION_TYPE.REQUIRED_TYPE,
-                property: Object.keys(occurance.property)[0],
-                conflicts: occurance.property,
-                resolution: { "required": (isPropertyRequired) },
-            }
-        } else {
-            return <Conflict>{}
+            return { type: constants.SCHEMA_RESOLUTION_TYPE.REQUIRED_TYPE, property: Object.keys(occurance.property)[0], conflicts: occurance.property, resolution: { "required": (isPropertyRequired) } }
         }
+        else { return <Conflict>{} }
 
     }
 
@@ -107,10 +89,8 @@ export class DataSetSuggestionService {
         if (_.isEmpty(schema)) return <Suggestion>{}
         const conflictMessage = SchemaSuggestionTemplate.getSchemaDataTypeMessage(schema["conflicts"], schema["property"])
         return <Suggestion>{
-            message: conflictMessage,
-            advice: SchemaSuggestionTemplate.TEMPLATES.SCHEMA_SUGGESTION.CREATE.DATATYPE_PROPERTY.ADVICE,
-            resolutionType: constants.SCHEMA_RESOLUTION_TYPE.DATA_TYPE,
-            priority: SchemaSuggestionTemplate.TEMPLATES.SCHEMA_SUGGESTION.CREATE.DATATYPE_PROPERTY.PRIORITY,
+            message: conflictMessage, advice: SchemaSuggestionTemplate.TEMPLATES.SCHEMA_SUGGESTION.CREATE.DATATYPE_PROPERTY.ADVICE,
+            resolutionType: constants.SCHEMA_RESOLUTION_TYPE.DATA_TYPE, priority: SchemaSuggestionTemplate.TEMPLATES.SCHEMA_SUGGESTION.CREATE.DATATYPE_PROPERTY.PRIORITY,
         }
     }
 
@@ -118,22 +98,15 @@ export class DataSetSuggestionService {
         if (_.isEmpty(schema)) return <Suggestion>{}
         const conflictMessage = SchemaSuggestionTemplate.getSchemaFormatMessage(schema["conflicts"], schema["property"])
         const adviceObj = SchemaSuggestionTemplate.getSchemaFormatAdvice(schema["conflicts"])
-        return <Suggestion>{
-            message: conflictMessage,
-            advice: adviceObj.advice,
-            resolutionType: constants.SCHEMA_RESOLUTION_TYPE.FORMATE_TYPE,
-            priority: adviceObj.priority
-        }
+        return <Suggestion>{ message: conflictMessage, advice: adviceObj.advice, resolutionType: constants.SCHEMA_RESOLUTION_TYPE.FORMATE_TYPE, priority: adviceObj.priority }
     }
 
     private getRequiredMessageTemplate(schema: any): Suggestion {
         if (_.isEmpty(schema)) return <Suggestion>{}
         const conflictMessage = SchemaSuggestionTemplate.getSchemaRequiredTypeMessage(schema["conflicts"], schema["property"])
         return <Suggestion>{
-            message: conflictMessage,
-            advice: SchemaSuggestionTemplate.TEMPLATES.SCHEMA_SUGGESTION.CREATE.REQUIRED_PROPERTY.ADVICE,
-            resolutionType: constants.SCHEMA_RESOLUTION_TYPE.REQUIRED_TYPE,
-            priority: SchemaSuggestionTemplate.TEMPLATES.SCHEMA_SUGGESTION.CREATE.REQUIRED_PROPERTY.PRIORITY,
+            message: conflictMessage, advice: SchemaSuggestionTemplate.TEMPLATES.SCHEMA_SUGGESTION.CREATE.REQUIRED_PROPERTY.ADVICE,
+            resolutionType: constants.SCHEMA_RESOLUTION_TYPE.REQUIRED_TYPE, priority: SchemaSuggestionTemplate.TEMPLATES.SCHEMA_SUGGESTION.CREATE.REQUIRED_PROPERTY.PRIORITY,
         }
     }
 
@@ -143,14 +116,7 @@ export class DataSetSuggestionService {
             .groupBy(([key, value]) => key)
             .mapValues(group => _.countBy(group, ([key, value]) => value))
             .value();
-        return {
-            property: result.property,
-            dataType: result.dataType,
-            isRequired: result.isRequired,
-            path: result.path,
-            absolutePath: result.absolutePath,
-            format: result.formate
-        };
+        return { property: result.property, dataType: result.dataType, isRequired: result.isRequired, path: result.path, absolutePath: result.absolutePath, format: result.formate };
     }
 
     private flattenSchema(sample: Map<string, any>): FlattenSchema[] {
@@ -181,14 +147,7 @@ export class DataSetSuggestionService {
     }
 
     private flattenSchem(expr: string, objType: string, isRequired: boolean, path: string, schemaPath: string, formate: string): FlattenSchema {
-        return <FlattenSchema>{
-            "property": expr,
-            "dataType": objType,
-            "isRequired": isRequired,
-            "path": path,
-            "absolutePath": schemaPath,
-            "formate": formate
-        }
+        return <FlattenSchema>{ "property": expr, "dataType": objType, "isRequired": isRequired, "path": path, "absolutePath": schemaPath, "formate": formate }
     }
 
 }

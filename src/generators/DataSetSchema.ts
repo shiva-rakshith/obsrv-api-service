@@ -24,7 +24,6 @@ export class DataSetSchema implements ISchemaGenerator {
         const mergedSchema: Map<string, any> = this.mergeSchema(schemas)
         const updatedSchema = this.resolveConflicts(mergedSchema, conflicts)
         const suggestionTemplate: SuggestionsTemplate[] = suggestionService.createSuggestionTemplate(conflicts)
-        // Configuration Suggestion
         const suggestedConfig = suggestionService.suggestConfig()
         return <DataSetSchemaResponse>{ "schema": updatedSchema, "suggestions": suggestionTemplate, "configurations": suggestedConfig }
     }
@@ -45,7 +44,7 @@ export class DataSetSchema implements ISchemaGenerator {
                         console.warn("Unsupported Conflict Type")
                         break;
                 }
-            }
+            }else{console.info(`Conflicts not found ${JSON.stringify(value)}`)}
         })
         return schema
     }

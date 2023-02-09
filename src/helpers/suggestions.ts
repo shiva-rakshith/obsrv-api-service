@@ -1,4 +1,5 @@
-import _ from "lodash";
+import constants from "../resources/constants.json";
+import _, { constant } from "lodash";
 
 export const SchemaSuggestionTemplate = {
     TEMPLATES: {
@@ -17,38 +18,38 @@ export const SchemaSuggestionTemplate = {
                 REQUIRED_PROPERTY: {
                     MESSAGE: "Conflict in the Schema Generation",
                     ADVICE: "The Property looks to be Optional. System has updated the property schema to optional",
-                    PRIORITY: "Low"
+                    PRIORITY: constants.PRIORITY.LOW
                 },
                 DATATYPE_PROPERTY: {
                     MESSAGE: "Conflict in the Schema Generation",
                     ADVICE: "System has choosen highest occurance property value",
-                    PRIORITY: "Medium"
+                    PRIORITY: constants.PRIORITY.MEDIUM
                 },
                 FORMAT_PROPERTY: {
                     MESSAGE: "The Property",
                     DATE_ADVICE: {
                         MESSAGE: "The System can index all data on this column",
-                        PRIORITY: "High"
+                        PRIORITY: constants.PRIORITY.HIGH
                     },
                     DATETIME_ADVICE: {
                         MESSAGE: "The System can index all data on this column",
-                        PRIORITY: "High"
+                        PRIORITY: constants.PRIORITY.LOW
                     },
                     UUID_ADVICE: {
                         MESSAGE: "Suggest to not to index the high cardinal columns",
-                        PRIORITY: "Low"
+                        PRIORITY: constants.PRIORITY.LOW
                     },
                     IPV4_ADVICE: {
                         MESSAGE: "Suggest to Mask the Personal Information",
-                        PRIORITY: "Low"
+                        PRIORITY: constants.PRIORITY.LOW
                     },
                     IPV6_ADVICE: {
                         MESSAGE: "Suggest to Mask the Personal Information",
-                        PRIORITY: "Low"
+                        PRIORITY: constants.PRIORITY.LOW
                     },
                     EMAIL_ADVICE: {
                         MESSAGE: "Suggest to Mask the Personal Information",
-                        PRIORITY: "Low"
+                        PRIORITY: constants.PRIORITY.LOW
                     }
                 }
             },
@@ -71,7 +72,6 @@ export const SchemaSuggestionTemplate = {
     },
 
     getSchemaFormatMessage(conflicts: any, property: string): string {
-        console.log("conflictsss" + JSON.stringify(conflicts))
         const conflictKey = _.keys(conflicts)[0];
         return `${this.TEMPLATES.SCHEMA_SUGGESTION.CREATE.FORMAT_PROPERTY.MESSAGE} '${property}' appears to be '${conflictKey}' format type.`;
     },
@@ -83,7 +83,6 @@ export const SchemaSuggestionTemplate = {
     },
 
     getSchemaFormatAdvice(conflicts: any):any {
-        const property = _.keys(conflicts)[0]
         const conflictKey = `${_.upperCase(_.replace(_.keys(conflicts)[0], "-", ""))}_ADVICE`.replace(/\s/g, "")
         return { 
             "advice": _.get(this.TEMPLATES.SCHEMA_SUGGESTION.CREATE.FORMAT_PROPERTY, `${conflictKey}.MESSAGE`),
