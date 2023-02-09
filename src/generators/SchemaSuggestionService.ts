@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { suggestions } from "../helpers/suggestions";
+import { SchemaSuggestionTemplate } from "../helpers/suggestions";
 import { ConflictSchema, DataSetConfig, Suggestions } from "../models/DatasetModels";
 import { ConfigService } from "../services/ConfigService";
 export class DataSetSuggestionService {
@@ -86,20 +86,21 @@ export class DataSetSuggestionService {
 
     private getSchemaMessageTempalte(schema: any) {
         if (_.isEmpty(schema)) return {}
-        const conflictMessage = `The Conflict at "${schema["property"]}" Property. Found ${JSON.stringify(schema["conflicts"])}})`
+        const conflictMessage = SchemaSuggestionTemplate.getSchemaDataTypeMessage(schema["conflicts"], schema["property"])
         return {
             message: conflictMessage,
-            advice: suggestions.DATATYPE_TEMPLATE.schema.create.advice.dataType,
+            advice: SchemaSuggestionTemplate.TEMPLATES.SCHEMA_SUGGESTION.CREATE.DATATYPE_PROPERTY.ADVICE,
             resolutionType: "DATA_TYPE"
         }
     }
 
     private getRequiredMessageTemplate(schema: any) {
         if (_.isEmpty(schema)) return {}
-        const conflictMessage = `The Conflict at "${schema["property"]}" Property. The Property appears to be optional`
+        //const conflictMessage = `${SchemaSuggestionTemplate.TEMPLATES.SCHEMA_SUGGESTION.MESSAGE}, Property: "${schema["property"]}". appears to be Optional`
+        const conflictMessage = SchemaSuggestionTemplate.getSchemaRequiredTypeMessage(schema["conflicts"], schema["property"])
         return {
             message: conflictMessage,
-            advice: suggestions.REQUIRED_TYPE_TEMPLATE.required.create.advice.message,
+            advice: SchemaSuggestionTemplate.TEMPLATES.SCHEMA_SUGGESTION.CREATE.REQUIRED_PROPERTY.ADVICE,
             resolutionType: "REQUIRED_TYPE"
         }
     }

@@ -28,27 +28,9 @@ export class DataSetSchema implements ISchemaGenerator {
         return { "schema": updatedSchema, "suggestions": suggestionTemplate, "configurations": suggestedConfig }
     }
 
-
     mergeSchema(schema: Map<string, any>[]): Map<string, any> {
         return jsonMerger.mergeObjects(schema);
     }
-
-    getSchemaPropToUpdate(schema: any):SchemaUpdate[] {
-        return _.flattenDeep(
-            schema.map((prop: any) => {
-            return prop["schema"].map((obj:any) => {
-                return obj.resolution.map((res:any) => {
-                    return {
-                        "property": res.fullPath.replace("$.", ""),
-                        "conflictType": obj.conflictProperty,
-                        "objectType": res.objectType,
-                        "action": "UPDATE"
-                     }
-                })
-            })
-        }))
-    }
-
     
     updateSchema(schema: any, updateProps: Suggestions[]) {
         updateProps.forEach((value: Suggestions) => {
@@ -64,7 +46,7 @@ export class DataSetSchema implements ISchemaGenerator {
                         _.set(schema, path, this.getUpdatedRequiredProps(_.get(schema, path), value.required.property, value.required.resolution.required))
                          break;   
                     default:
-                        console.warn("Unsupported Conflict Update")
+                        console.warn("Unsupported Conflict Type")
                         break;
                 }
             }
@@ -72,7 +54,7 @@ export class DataSetSchema implements ISchemaGenerator {
         return schema
     }
 
-    getUpdatedRequiredProps(original:string[], latest: string, addElement: string){
+    private getUpdatedRequiredProps(original:string[], latest: string, addElement: string){
         addElement ? _.concat(original, latest) : _.pull(original, latest)
         return original
     }
