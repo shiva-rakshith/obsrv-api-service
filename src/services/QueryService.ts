@@ -5,7 +5,7 @@ import httpStatus from "http-status";
 import _ from "lodash";
 import { config } from "../configs/config";
 import { ResponseHandler } from "../helpers/ResponseHandler";
-import { IConnector } from "../models/IngestionModels";
+import { IConnector } from "../models/DataSetModels";
 
 export class QueryService {
   private connector: AxiosInstance;

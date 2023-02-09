@@ -1,0 +1,47 @@
+import { DataSetConfig } from "./ConfigModels";
+import { IngestionConfig } from "./IngestionModels";
+
+export interface DataSetSchemaResponse {
+    schema: any;
+    suggestions: SuggestionsTemplate[];
+    configurations: DataSetConfig
+}
+
+export interface DataSetSchemeRequest {
+    data: Map<string, any>[],
+    config: IngestionConfig
+}
+
+export interface SuggestionsTemplate {
+    property: string;
+    suggestions: Suggestion[];
+}
+
+export interface Suggestion {
+    message: string;
+    advice: string;
+    resolutionType: string;
+    priority: string;
+}
+
+export interface ConflictTypes {
+    schema: Conflict;
+    required: Conflict;
+    absolutePath: string;
+}
+
+export interface Conflict {
+    property: string,
+    type: string,
+    conflicts: any,
+    resolution: any
+}
+
+export interface FlattenSchema {
+    property: string;
+    dataType: string;
+    isRequired: boolean;
+    path: string;
+    absolutePath: string;
+}
+

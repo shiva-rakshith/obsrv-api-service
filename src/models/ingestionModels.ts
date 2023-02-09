@@ -33,21 +33,3 @@ export interface IngestionSchemeRequest {
     schema: Map<string, any>[],
     config: IngestionConfig
 }
-
-export interface DataSchemeRequest {
-    data: Map<string, any>[],
-    config: IngestionConfig
-}
-
-export interface ISchemaGenerator {
-    generate: ((sample: Map<string, any>) => any) |
-    ((sample: Map<string, any>[]) => any);
-    process: ((sample: Map<string, any>) => any) |
-    ((sample: Map<string, any>[]) => any);
-}
-
-export interface IConnector {
-    connect(): any;
-    execute(sample: string): any;
-    close(): any
-}
