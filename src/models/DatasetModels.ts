@@ -23,3 +23,25 @@ export interface SchemaUpdate {
     objectType: string
     action: string
 }
+
+export interface ConflictSchema {
+    property: string,
+    type: string,
+    conflicts: any,
+    resolution:any
+
+}
+
+export interface Suggestions {
+    schema: ConflictSchema;
+    required: ConflictSchema;
+    fullPath:string;
+}
+
+export interface ObjectType {
+    property: string;
+    objectType: string;
+    isRequired: boolean;
+    path: string;
+    fullPath: string;
+  }
