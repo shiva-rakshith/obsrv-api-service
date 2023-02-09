@@ -2,7 +2,7 @@ import express from "express";
 import { config } from "../configs/config";
 import { HTTPConnector } from "../connectors/HttpConnector";
 import { PostgresConnector } from "../connectors/PostgresConnector";
-import { IngestionSchemaV2 } from "../generators/IngestionSchemaV2";
+import { IngestionSchemaV2 } from "../generators/IngestionSchema";
 import { ResponseHandler } from "../helpers/ResponseHandler";
 import { IngestionConfig } from "../models/IngestionModels";
 import { QueryService } from "../services/QueryService";

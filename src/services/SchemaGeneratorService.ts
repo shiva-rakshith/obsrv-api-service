@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { DataSetSchema } from "../generators/DataSetSchema";
-import { IngestionSchemaV2 } from "../generators/IngestionSchemaV2";
+import { IngestionSchemaV2 } from "../generators/IngestionSchema";
 import { ResponseHandler } from "../helpers/ResponseHandler";
 import { IConnector } from "../models/DataSetModels";
 import { IngestionConfig, IngestionSchemeRequest } from "../models/IngestionModels";
