@@ -27,6 +27,7 @@ export interface Suggestion {
 export interface ConflictTypes {
     schema: Conflict;
     required: Conflict;
+    formats: Conflict;
     absolutePath: string;
 }
 
@@ -38,10 +39,20 @@ export interface Conflict {
 }
 
 export interface FlattenSchema {
-    property: string;
-    dataType: string;
-    isRequired: boolean;
-    path: string;
-    absolutePath: string;
+    property: string 
+    dataType: string 
+    isRequired: boolean 
+    path: string | any;
+    absolutePath: string
+    formate: string 
+}
+
+export interface Occurance {
+    property: { [key: string]: number };
+    dataType: { [key: string]: number };
+    isRequired: { [key: string]: number };
+    path: { [key: string]: number };
+    absolutePath: { [key: string]: number };
+    format: { [key: string]: number };
 }
 
