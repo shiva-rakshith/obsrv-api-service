@@ -90,18 +90,19 @@ export class DataSetSuggestionService {
         return {
             message: conflictMessage,
             advice: SchemaSuggestionTemplate.TEMPLATES.SCHEMA_SUGGESTION.CREATE.DATATYPE_PROPERTY.ADVICE,
-            resolutionType: "DATA_TYPE"
+            resolutionType: "DATA_TYPE",
+            priority: "MEDIUM"
         }
     }
 
     private getRequiredMessageTemplate(schema: any) {
         if (_.isEmpty(schema)) return {}
-        //const conflictMessage = `${SchemaSuggestionTemplate.TEMPLATES.SCHEMA_SUGGESTION.MESSAGE}, Property: "${schema["property"]}". appears to be Optional`
         const conflictMessage = SchemaSuggestionTemplate.getSchemaRequiredTypeMessage(schema["conflicts"], schema["property"])
         return {
             message: conflictMessage,
             advice: SchemaSuggestionTemplate.TEMPLATES.SCHEMA_SUGGESTION.CREATE.REQUIRED_PROPERTY.ADVICE,
-            resolutionType: "REQUIRED_TYPE"
+            resolutionType: "REQUIRED_TYPE",
+            priority: "MEDIUM"
         }
     }
 
