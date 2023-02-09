@@ -22,12 +22,10 @@ export class IngestionSchema implements ISchemaGenerator {
         const generatedSpec: IngestionSpecModel[] = _.map(sample, (value, key): any => {
             return this.process(value)
         })
-        console.log("generatedSpec1 " + JSON.stringify(generatedSpec))
         const dims = _.uniqBy(_.flatMap(generatedSpec, (value, key) => {
             return value.dimensions
         }), "name")
         
-        console.log("dims " + JSON.stringify(dims))        
 
         const metrics = _.uniqBy(_.flatMap(generatedSpec, (value, key) => {
             return value.metrics
@@ -51,7 +49,6 @@ export class IngestionSchema implements ISchemaGenerator {
     process(sample: Map<string, any>): IngestionSpecModel {
 
         const simplifiedSpec = this.generateExpression(sample)
-        console.log("simpled.." + JSON.stringify(Object.fromEntries(simplifiedSpec)))
         const metrics = this.filterMetricsCols(simplifiedSpec)
 
         const dims = this.filterDimsCols(simplifiedSpec)

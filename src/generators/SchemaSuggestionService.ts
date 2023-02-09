@@ -1,7 +1,6 @@
-import { response } from "express";
 import _ from "lodash";
 import { suggestions } from "../helpers/suggestions";
-import { ConflictSchema, DataSetConfig, ObjectType, Suggestions } from "../models/DatasetModels";
+import { ConflictSchema, DataSetConfig, Suggestions } from "../models/DatasetModels";
 import { ConfigService } from "../services/ConfigService";
 export class DataSetSuggestionService {
     private schemas: Map<string, any>[];
@@ -29,49 +28,14 @@ export class DataSetSuggestionService {
             return this.getSchemaConflictTypes(this.countKeyValuePairs(value, key))
         })
         return _.filter(conflicts, obj => (!_.isEmpty(obj.schema) || !_.isEmpty(obj.required)))
-
-        //console.log("occurance" + JSON.stringify(_.filter(conflicts, obj => (!_.isEmpty(obj.schema) || !_.isEmpty(obj.required)) )))
-
-
-
-
-        //console.log("occ" + JSON.stringify(Object.fromEntries(occuranceValue[0])))
-        //console.log("response" + JSON.stringify(Object.fromEntries(res[0])))
-        // groupedSchema.map((value:any, key:any) => {
-        //         console.log("value" + JSON.stringify(value))
-        //         console.log("key" + JSON.stringify(value))
-        // })
-
-
-        // const data: Map<string, any>[] = _.flatten(_.reject(Object.entries(groupedSchema).map(([key, value]) => {
-        //     const array = new Array()
-        //     const props = ["objectType", "isRequired", "fullPath"]
-        //     console.log("value .." + JSON.stringify(value))
-
-        //     // const occurance = props.map((prop) => {
-        //     //     return _.filter(this.getOccurance(value, prop, key), ["suggestionRequired", true])
-        //     // })
-
-        //     console.log("occurance" + JSON.stringify(occurance))
-        //     const filteredData = _.flatMapDeep(occurance)
-        //     if (!_.isEmpty(filteredData)) array.push({ "schema": filteredData, "property": key })
-        //     return array
-        // }), _.isEmpty));
-        // return data
-        // console.log("data" + JSON.stringify(data))
-        // const suggestions = this.invokeSuggestion(data)
-        // return suggestions
     }
 
-    public getSchemaConflictTypes(occuranceObj: any):Suggestions {
-        console.log("occuranceObj" + JSON.stringify(occuranceObj))
+    public getSchemaConflictTypes(occuranceObj: any): Suggestions {
         const propertyFullPath = _.head(_.keysIn(occuranceObj.fullPath))
-        const updatedPath = propertyFullPath ? _.replace(propertyFullPath, "$.", ""): "";
-        
-        const schemaConflicts = this.getDataTypeConflict(occuranceObj, )
+        const updatedPath = propertyFullPath ? _.replace(propertyFullPath, "$.", "") : "";
+        const schemaConflicts = this.getDataTypeConflict(occuranceObj,)
         const requiredConflicts = this.getRequiredPropConflict(occuranceObj)
-
-        return { "schema": schemaConflicts, "required": requiredConflicts, "fullPath":  updatedPath}
+        return { "schema": schemaConflicts, "required": requiredConflicts, "fullPath": updatedPath }
     }
 
     private getDataTypeConflict(occurance: any): ConflictSchema {
@@ -95,8 +59,6 @@ export class DataSetSuggestionService {
         })[0]
 
         const highestValueKey = Boolean(Object.keys(occurance.isRequired).reduce((a, b) => occurance.required[a] > occurance.required[b] ? a : b))
-        console.log("highestValueKey" + highestValueKey)
-
         const isPropertyRequired = requiredCount <= 1 ? false : true
         if (highestValueKey != isPropertyRequired) {
             return {
@@ -111,73 +73,43 @@ export class DataSetSuggestionService {
 
     }
 
-
-
-    //public createSuggestionTemplate()
     public createSuggestionTemplate(sample: any[]): any[] {
-        return _.flattenDeep(sample.map(data => {
-            return this.getSchemaSuggestions(data["schema"], data["property"])
-        }))
-    }
-
-
-    private getSchemaSuggestions(data: any[], property: string): any[] {
-        return data.map((res: any) => {
-            const conflictMessage = `The Conflict at "${res["conflictProperty"]}" Property. Found(${this.getSubMessage(res["conflicts"])})`
+        return _.map(sample, (value, key) => {
+            const dataTypeSuggestions = this.getRequiredMessageTemplate(value["required"])
+            const requiredSuggestions = this.getSchemaMessageTempalte(value["schema"])
             return {
-                property: property,
-                suggestions: [{
-                    message: conflictMessage,
-                    advice: suggestions.DATATYPE_TEMPLATE.schema.create.advice.dataType,
-                    severity: "LOW",
-                    resolutionType: "DATA_TYPE"
-                }]
+                "property": value["fullPath"],
+                "suggestions": _.reject([dataTypeSuggestions, requiredSuggestions], _.isEmpty)
             }
         })
     }
 
-    private getSubMessage(conflicts: any[]): string {
-        return conflicts.map(con => {
-            return `${con["objectType"]}:${con["occurance"]}`
-        }).join(',')
+    private getSchemaMessageTempalte(schema: any) {
+        if (_.isEmpty(schema)) return {}
+        const conflictMessage = `The Conflict at "${schema["property"]}" Property. Found ${JSON.stringify(schema["conflicts"])}})`
+        return {
+            message: conflictMessage,
+            advice: suggestions.DATATYPE_TEMPLATE.schema.create.advice.dataType,
+            resolutionType: "DATA_TYPE"
+        }
+    }
+
+    private getRequiredMessageTemplate(schema: any) {
+        if (_.isEmpty(schema)) return {}
+        const conflictMessage = `The Conflict at "${schema["property"]}" Property. The Property appears to be optional`
+        return {
+            message: conflictMessage,
+            advice: suggestions.REQUIRED_TYPE_TEMPLATE.required.create.advice.message,
+            resolutionType: "REQUIRED_TYPE"
+        }
     }
 
     public countKeyValuePairs(arrayOfObjects: object[], key: string) {
-        const map = new Map()
-        const res = _(arrayOfObjects)
+        return _(arrayOfObjects)
             .flatMap(obj => _.toPairs(obj))
             .groupBy(([key, value]) => key)
             .mapValues(group => _.countBy(group, ([key, value]) => value))
             .value();
-        return res
-        //console.log("res" + JSON.stringify(res))    
-        //map.set(key, res)
-        //return map
-    }
-
-
-    private getOccurance(sample: any[], prop: string, key: string): any {
-        let propMap = new Map();
-        const properties = _(sample).countBy(prop)
-            .map(function (count, ip) {
-                let map = new Map();
-                map.set("occurance", count)
-                map.set(prop, ip)
-                map.set("fullPath", sample[0]["fullPath"])
-                return Object.fromEntries(map)
-
-            }).sortBy('-occurance')
-            .value()
-        //console.log("properties" + JSON.stringify(properties))    
-        const resolution = _.castArray(_.maxBy(properties, 'occurance'))
-        const occurance = {
-            "conflicts": properties,
-            "resolution": resolution,
-            "conflictProperty": prop,
-            "suggestionRequired": properties.length != resolution.length
-        }
-        propMap.set(prop, occurance)
-        return Object.fromEntries(propMap)
     }
 
     private flattenSchema(sample: Map<string, any>): any[] {

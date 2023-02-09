@@ -29,6 +29,21 @@ export const suggestions = {
         }
     },
 
+    "REQUIRED_TYPE_TEMPLATE": {
+        "required": {
+            "update": {
+                "advice": {
+                    "message": "Updating the schema migh required the replay of the data",
+                }
+            },
+            "create": {
+                "advice": {
+                    "message": "The System as updated the required property schema",
+                }
+            }
+        }
+    },
+
     "SCHEMA_FAILURE": {
         "schema": {
             "update": {

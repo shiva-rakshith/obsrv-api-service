@@ -21,22 +21,11 @@ export class DataSetSchema implements ISchemaGenerator {
         const suggestionService = new DataSetSuggestionService(schemas)
         const mergedSchema: Map<string, any> = this.mergeSchema(schemas)
         const suggestedSchema = suggestionService.suggestSchema()
-        console.log("suggestedSchema" + JSON.stringify(suggestedSchema))
-        // Get the Updated Schema from by comparing the merged schema and suggestedSchema
-        //const schemaToUpdate:SchemaUpdate[] = this.getSchemaPropToUpdate(suggestedSchema)
-        //const updatedSchema = this.updateSchema(mergedSchema, schemaToUpdate)
         const updatedSchema = this.updateSchema(mergedSchema, suggestedSchema)
-        // Generate the Suggestion Template
-        /**
-         * TODO - Define the templates
-         * 
-         */
-        //const suggestionTemplate = suggestionService.createSuggestionTemplate(suggestedSchema)
-
+        const suggestionTemplate = suggestionService.createSuggestionTemplate(suggestedSchema)
         // Configuration Suggestion
         const suggestedConfig = suggestionService.suggestConfig()
-
-        return { "schema": updatedSchema, "suggestions": suggestedSchema, "configurations": suggestedConfig }
+        return { "schema": updatedSchema, "suggestions": suggestionTemplate, "configurations": suggestedConfig }
     }
 
 
@@ -79,8 +68,6 @@ export class DataSetSchema implements ISchemaGenerator {
                         break;
                 }
             }
-            
-
         })
         return schema
     }
