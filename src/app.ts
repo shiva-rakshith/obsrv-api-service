@@ -1,5 +1,5 @@
 import express, { Application } from "express";
-import { config } from "./configs/config";
+import { config } from "./configs/Config";
 import { ResponseHandler } from "./helpers/ResponseHandler";
 import { router } from "./routes/router";
 const app: Application = express();

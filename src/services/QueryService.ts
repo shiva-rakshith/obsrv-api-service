@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import errorResponse from "http-errors";
 import httpStatus from "http-status";
 import _ from "lodash";
-import { config } from "../configs/config";
+import { config } from "../configs/Config";
 import { ResponseHandler } from "../helpers/ResponseHandler";
 import { IConnector } from "../models/DataSetModels";
 

@@ -1,18 +1,18 @@
 import _ from "lodash";
-import { config } from "../configs/config";
-import { DataSetConfig, ProcessingConfig } from "../models/ConfigModels";
+import { datasetIngestionDefaultConfig, datasetProcessingDefaultConfigs, datasetQueryDefaultConfig } from "../configs/schemas/DataSetConfigs";
+
+
+import { DataSetConfig, DatasetProcessing } from "../models/ConfigModels";
 import { IngestionConfig } from "../models/IngestionModels";
 import { ILimits } from "../models/QueryModels";
 import { ConflictTypes } from "../models/SchemaModels";
 
 export class ConfigService {
     /**
-     * TODO: 
-     *  1. analyse the schema and suggest rollup is required or not. - done
-     *  2. analyse the schema and suggest the dedup property field. - done
-     *  3. return the default basic druid configurations, processing configuration and querying configuration
-     *  4. analyse the schema and return dedup is required or not.
-     *  5. message size suggestion
+     * Responsiblities : 
+     *  1. Suggest rollup is required or not. - done
+     *  2. Suggest the dedup property field. - done
+     *  3. Return Basic druid configurations, processing configuration and querying configuration - done
      */
 
     public suggestConfig(conflicts: ConflictTypes[]): DataSetConfig {
@@ -23,7 +23,7 @@ export class ConfigService {
     private analyzeConflicts(conflicts: ConflictTypes[]): DataSetConfig {
         const typeFormatsConflict: ConflictTypes[] = _.filter(conflicts, (o) => !_.isEmpty(o.formats));
         const ingestionConfig: IngestionConfig = this.ingestionConfig(typeFormatsConflict)
-        const processingConfig: ProcessingConfig = this.processingConfig(typeFormatsConflict)
+        const processingConfig: DatasetProcessing = this.processingConfig(typeFormatsConflict)
         const queryingConfig: ILimits = this.queryingConfig(typeFormatsConflict)
         return <DataSetConfig>{ "querying": queryingConfig, "ingestion": ingestionConfig, "processing": processingConfig }
     }
@@ -39,13 +39,14 @@ export class ConfigService {
         return ingestionConfig
     }
 
-    private processingConfig(conflicts: ConflictTypes[]): ProcessingConfig {
+    private processingConfig(conflicts: ConflictTypes[]): DatasetProcessing {
         const dateSchemaFormat = ["uuid"]
         const dedupCol = this._getProperty(conflicts, dateSchemaFormat)
         var processingConfig = this.getDefaultProcessingConfig()
-        processingConfig.dedupProperty = dedupCol
+        processingConfig.dedup_config.dedup_key = dedupCol
         return processingConfig
     }
+
     private queryingConfig(conflicts: ConflictTypes[]): ILimits {
         return this.getDefaultQueryingConfig()
     }
@@ -59,15 +60,16 @@ export class ConfigService {
             .sortBy((obj) => -obj.formats.conflicts[Object.keys(obj.formats.conflicts)[0]])
             .value().map(key => key.formats.property)) || ""
     }
+
     private getDefaultIngestionConfig(): IngestionConfig {
-        return <IngestionConfig>config.datasetConfig.ingestion
+        return <IngestionConfig>datasetIngestionDefaultConfig
     }
 
-    private getDefaultProcessingConfig(): ProcessingConfig {
-        return <ProcessingConfig>config.datasetConfig.processing
+    private getDefaultProcessingConfig(): DatasetProcessing {
+        return <DatasetProcessing>datasetProcessingDefaultConfigs
     }
 
     private getDefaultQueryingConfig(): ILimits {
-        return <ILimits>config.datasetConfig.querying
+        return <ILimits>datasetQueryDefaultConfig
     }
 }

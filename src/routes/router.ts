@@ -1,5 +1,5 @@
 import express from "express";
-import { config } from "../configs/config";
+import { config } from "../configs/Config";
 import { HTTPConnector } from "../connectors/HttpConnector";
 import { PostgresConnector } from "../connectors/PostgresConnector";
 import { IngestionSchemaV2 } from "../generators/IngestionSchema";
