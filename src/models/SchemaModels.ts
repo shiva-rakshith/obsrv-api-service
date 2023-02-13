@@ -15,7 +15,6 @@ export interface DatasetSchemaConfig {
     dataset: string,
     isBatch?: boolean
     extractionKey: string,
-    validationMode: string
 }
 
 export interface SuggestionsTemplate {

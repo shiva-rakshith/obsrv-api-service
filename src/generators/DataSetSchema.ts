@@ -19,7 +19,7 @@ export class DataSetSchema implements ISchemaGenerator {
   }
 
   generate(sample: Map<string, any>[]): any {
-    const { isBatch, extractionKey } = this.config;
+    const { isBatch = false, extractionKey } = this.config;
     let schema = isBatch ? this.inferBatchSchema(sample, extractionKey) : this.inferSchema(sample);
     return this.process(schema);
   }
@@ -29,7 +29,7 @@ export class DataSetSchema implements ISchemaGenerator {
     const conflicts: ConflictTypes[] = suggestionService.findConflicts()
     const updatedSchema = this.resolveConflicts(this.mergeSchema(schemas), conflicts)
     const suggestionTemplate: SuggestionsTemplate[] = suggestionService.createSuggestionTemplate(conflicts)
-    const suggestedConfig:DataSetConfig = suggestionService.suggestConfig(conflicts)
+    const suggestedConfig: DataSetConfig = suggestionService.suggestConfig(conflicts)
     return <DataSetSchemaResponse>{ "schema": updatedSchema, "suggestions": suggestionTemplate, "configurations": suggestedConfig }
   }
 
@@ -49,7 +49,7 @@ export class DataSetSchema implements ISchemaGenerator {
   }
 
   private inferSchema(sample: any) {
-    return _.map(sample, (value): any => inferSchema(value).toJSONSchema({includeSchema:false}))
+    return _.map(sample, (value): any => inferSchema(value).toJSONSchema({ includeSchema: false }))
   }
 
   private mergeSchema(schema: Map<string, any>[]): Map<string, any> {
