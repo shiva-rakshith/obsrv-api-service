@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { SchemaSuggestionTemplate } from "../helpers/suggestions";
+import { SchemaSuggestionTemplate } from "../helpers/Suggestions";
 import { DataSetConfig } from "../models/ConfigModels";
 import { Conflict, ConflictTypes, FlattenSchema, Occurance, Suggestion, SuggestionsTemplate } from "../models/SchemaModels";
 import constants from "../resources/constants.json";
