@@ -3,7 +3,7 @@ import { SchemaSuggestionTemplate } from "../helpers/Suggestions";
 import { DataSetConfig } from "../models/ConfigModels";
 import { Conflict, ConflictTypes, FlattenSchema, Occurance, Suggestion, SuggestionsTemplate } from "../models/SchemaModels";
 import constants from "../resources/constants.json";
-import { ConfigService } from "../services/ConfigService";
+import { ConfigSuggestionGenerator } from "./ConfigSuggestionGenerator";
 export class DataSetSuggestionService {
     private schemas: Map<string, any>[];
     private minimumSchemas: number = 1
@@ -17,7 +17,7 @@ export class DataSetSuggestionService {
     }
 
     public suggestConfig(conflicts: ConflictTypes[]): DataSetConfig {
-        const config: DataSetConfig = new ConfigService().suggestConfig(conflicts)
+        const config: DataSetConfig = new ConfigSuggestionGenerator().suggestConfig(conflicts)
         return config
     }
 

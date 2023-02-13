@@ -12,7 +12,6 @@ import routes from "../routes/routesConfig";
 const schemaValidator = new Ajv();
 
 export class ValidationService {
-  //private requestBodySchema: Object;
   private nativeQuerySchema: Object;
   private limits: ILimits;
   private schemaBasePath: string = "/src/configs/";

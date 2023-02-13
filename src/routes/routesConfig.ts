@@ -31,8 +31,19 @@ const routes = {
       "METHOD": "POST",
       "API_ID": "obsrv.config.schema.generate"
     },
-
   },
+
+  "SYSTEM_SETTINGS": {
+    "BASE_PATH": "/system",
+    "API_VERSION": "/v2",
+    "CONFIG_LABEL": {
+      "URL": "/config/label",
+      "METHOD": "GET",
+      "API_ID": "obsrv.system.settings"
+    },
+  },
+
+
   "MANAGEMENT": {
     "BASE_PATH": "/manage",
     "API_VERSION": "/v2",

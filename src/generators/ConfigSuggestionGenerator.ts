@@ -7,7 +7,7 @@ import { IngestionConfig } from "../models/IngestionModels";
 import { ILimits } from "../models/QueryModels";
 import { ConflictTypes } from "../models/SchemaModels";
 
-export class ConfigService {
+export class ConfigSuggestionGenerator {
     /**
      * Responsiblities : 
      *  1. Suggest rollup is required or not. - done
