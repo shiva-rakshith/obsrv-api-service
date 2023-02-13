@@ -3,7 +3,7 @@ import { SchemaSuggestionTemplate } from "../helpers/Suggestions";
 import { DataSetConfig } from "../models/ConfigModels";
 import { Conflict, ConflictTypes, FlattenSchema, Occurance, Suggestion, SuggestionsTemplate } from "../models/SchemaModels";
 import constants from "../resources/constants.json";
-import { ConfigSuggestionGenerator } from "./ConfigSuggestionGenerator";
+import { ConfigSuggestionGenerator } from "./ConfigSuggestion";
 export class DataSetSuggestionService {
     private schemas: Map<string, any>[];
     private minimumSchemas: number = 1

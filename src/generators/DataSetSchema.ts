@@ -6,7 +6,7 @@ import { DataSetConfig } from "../models/ConfigModels";
 import { ISchemaGenerator } from "../models/DataSetModels";
 import { ConflictTypes, DatasetSchemaConfig, DataSetSchemaResponse, SuggestionsTemplate } from "../models/SchemaModels";
 import constants from "../resources/constants.json";
-import { DataSetSuggestionService } from "./SchemaSuggestionService";
+import { DataSetSuggestionService } from "./SchemaSuggestion";
 var jsonMerger = require("json-merger");
 
 export class DataSetSchema implements ISchemaGenerator {

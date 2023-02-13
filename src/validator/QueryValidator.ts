@@ -14,9 +14,9 @@ export class QueryValidator implements IValidator {
     }
     validate(data: any, id: string): ValidationStatus {
         switch (id) {
-            case routes.QUERY.SQL_QUERY.API_ID:
-                return this.validateNativeQuery(data)
             case routes.QUERY.NATIVE_QUERY.API_ID:
+                return this.validateNativeQuery(data)
+            case routes.QUERY.SQL_QUERY.API_ID:
                 return this.validateSqlQuery(data)
             default:
                 return <ValidationStatus>{ isValid: false }
@@ -123,11 +123,9 @@ export class QueryValidator implements IValidator {
     public validateConfiguration = (data: any): ValidationStatus => {
         let dataSource: string = this.getDataSource(data);
         let dataSourceLimits = this.getDataSourceLimits(dataSource);
-        console.log("dataSourceLimits" + JSON.stringify(dataSourceLimits))
         const rules = (dataSource != data.context.dataSource) || (_.isUndefined(dataSourceLimits))
-        console.log("rules" + JSON.stringify(rules))
         return rules ?
-            { isValid: false, message: "Data source Rules Not found", code: httpStatus[400] }
+            { isValid: false, message: "Data source Rules Not found", code: httpStatus[404] }
             : { isValid: true }
     };
 
