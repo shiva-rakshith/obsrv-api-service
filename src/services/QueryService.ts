@@ -13,24 +13,6 @@ export class QueryService {
     this.connector = connector.connect();;
   }
 
-  public getStatus = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const result = await this.connector.get(config.query_api.druid.status_api);
-      ResponseHandler.successResponse(req, res, { status: result.status, data: result.data });
-    } catch (error: any) {
-      next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
-    }
-  };
-
-  public getHealthStatus = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const result = await this.connector.get(config.query_api.druid.health_api);
-      ResponseHandler.successResponse(req, res, { status: result.status, data: result.data });
-    } catch (error: any) {
-      next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
-    }
-  };
-
   public executeNativeQuery = async (req: Request, res: Response, next: NextFunction) => {
     try {
       var result = await this.connector.post(config.query_api.druid.native_query_path, req.body.query);
