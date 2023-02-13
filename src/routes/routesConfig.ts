@@ -1,33 +1,33 @@
 
 const routes = {
   "API_ID": "obsrv.api",
-
+  
   "QUERY": {
-    "BASE_PATH": "/query",
+    "BASE_PATH": "/dataset",
     "API_VERSION": "/v2",
     "NATIVE_QUERY": {
-      "URL": "/native-query",
+      "URL": "/query/native-query",
       "METHOD": "POST",
       "API_ID": "obsrv.native.query"
     },
     "SQL_QUERY": {
-      "URL": "/sqlquery",
+      "URL": "/query/sqlquery",
       "METHOD": "POST",
       "API_ID": "obsrv.sql.query"      
     }
   },
   "SCHEMA": {
-    "BASE_PATH": "/schema",
+    "BASE_PATH": "/dataset",
     "API_VERSION": "/v2",
 
     "INGESTION_SCHEMA": {
-      "URL": "/ingestion/generate",
+      "URL": "/schema/ingestion/generate",
       "METHOD": "POST",
       "API_ID": "obsrv.config.ingestion.generate"
     },
 
     "DATASET_SCHEMA": {
-      "URL": "/generate",
+      "URL": "/schema/generate",
       "METHOD": "POST",
       "API_ID": "obsrv.config.schema.generate"
     },
