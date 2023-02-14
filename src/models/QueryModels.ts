@@ -1,5 +1,5 @@
 export interface IDataSourceRules {
-  dataSource: string;
+  dataset: string;
   queryRules: IQueryTypeRules;
 }
 

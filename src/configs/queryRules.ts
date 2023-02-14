@@ -5,7 +5,7 @@ export const queryRules = {
   },
   "rules": [
     {
-      "dataSource": "telemetry-events",
+      "dataset": "telemetry-events",
       "queryRules": {
         "groupBy": {
           "maxDateRange": 30
@@ -28,7 +28,7 @@ export const queryRules = {
       }
     },
     {
-      "dataSource": "summary-events",
+      "dataset": "summary-events",
       "queryRules": {
         "groupBy": {
           "maxDateRange": 30

@@ -4,7 +4,7 @@ import { datasetIngestionDefaultConfig, datasetProcessingDefaultConfigs, dataset
 
 import { DataSetConfig, DatasetProcessing } from "../models/ConfigModels";
 import { IngestionConfig } from "../models/IngestionModels";
-import { ILimits } from "../models/QueryModels";
+import { IDataSourceRules, ILimits } from "../models/QueryModels";
 import { ConflictTypes } from "../models/SchemaModels";
 
 export class ConfigSuggestionGenerator {
@@ -14,6 +14,10 @@ export class ConfigSuggestionGenerator {
      *  2. Suggest the dedup property field. - done
      *  3. Return Basic druid configurations, processing configuration and querying configuration - done
      */
+    private dataset: string
+    constructor(dataset: string) {
+        this.dataset = dataset
+    }
 
     public suggestConfig(conflicts: ConflictTypes[]): DataSetConfig {
         const suggestedConfig = this.analyzeConflicts(conflicts)
@@ -24,7 +28,7 @@ export class ConfigSuggestionGenerator {
         const typeFormatsConflict: ConflictTypes[] = _.filter(conflicts, (o) => !_.isEmpty(o.formats));
         const ingestionConfig: IngestionConfig = this.ingestionConfig(typeFormatsConflict)
         const processingConfig: DatasetProcessing = this.processingConfig(typeFormatsConflict)
-        const queryingConfig: ILimits = this.queryingConfig(typeFormatsConflict)
+        const queryingConfig: IDataSourceRules = this.queryingConfig(typeFormatsConflict)
         return <DataSetConfig>{ "querying": queryingConfig, "ingestion": ingestionConfig, "processing": processingConfig }
     }
 
@@ -47,8 +51,8 @@ export class ConfigSuggestionGenerator {
         return processingConfig
     }
 
-    private queryingConfig(conflicts: ConflictTypes[]): ILimits {
-        return this.getDefaultQueryingConfig()
+    private queryingConfig(conflicts: ConflictTypes[]): IDataSourceRules {
+        return this.getDefaultQueryingConfig(this.dataset)
     }
 
     private _getProperty(conflicts: ConflictTypes[], list: string[]) {
@@ -69,7 +73,8 @@ export class ConfigSuggestionGenerator {
         return <DatasetProcessing>datasetProcessingDefaultConfigs
     }
 
-    private getDefaultQueryingConfig(): ILimits {
-        return <ILimits>datasetQueryDefaultConfig
+    private getDefaultQueryingConfig(dataset: string): IDataSourceRules {
+        const rules = _.filter(datasetQueryDefaultConfig.rules, { dataset: dataset });
+        return _.head(rules) || <IDataSourceRules>{}
     }
 }

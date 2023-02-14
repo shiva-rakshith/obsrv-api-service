@@ -25,7 +25,7 @@ export class DatasetSchema implements ISchemaGenerator {
   }
 
   process(schemas: Map<string, any>[]): DatasetSchemaResponse {
-    const suggestionService = new SchemaSuggestion(schemas)
+    const suggestionService = new SchemaSuggestion(schemas, this.dataset)
     const conflicts: ConflictTypes[] = suggestionService.findConflicts()
     const updatedSchema = this.resolveConflicts(this.mergeSchema(schemas), conflicts)
     const suggestionTemplate: SuggestionsTemplate[] = suggestionService.createSuggestionTemplate(conflicts)

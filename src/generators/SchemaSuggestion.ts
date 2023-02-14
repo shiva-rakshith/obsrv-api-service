@@ -7,9 +7,11 @@ import { ConfigSuggestionGenerator } from "./ConfigSuggestion";
 export class SchemaSuggestion {
     private schemas: Map<string, any>[];
     private minimumSchemas: number = 1
+    private dataset: string
 
-    constructor(schemas: Map<string, any>[]) {
+    constructor(schemas: Map<string, any>[], dataset: string) {
         this.schemas = schemas;
+        this.dataset = dataset
     }
 
     public findConflicts(): ConflictTypes[] {
@@ -17,7 +19,7 @@ export class SchemaSuggestion {
     }
 
     public suggestConfig(conflicts: ConflictTypes[]): DataSetConfig {
-        const config: DataSetConfig = new ConfigSuggestionGenerator().suggestConfig(conflicts)
+        const config: DataSetConfig = new ConfigSuggestionGenerator(this.dataset).suggestConfig(conflicts)
         return config
     }
 

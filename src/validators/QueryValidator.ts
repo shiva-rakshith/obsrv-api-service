@@ -75,7 +75,7 @@ export class QueryValidator implements IValidator {
 
     private getDataSourceLimits(datasource: string): any {
         for (var index = 0; index < this.limits.rules.length; index++) {
-            if (this.limits.rules[index].dataSource == datasource) {
+            if (this.limits.rules[index].dataset == datasource) {
                 return this.limits.rules[index];
             }
         }
