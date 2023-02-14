@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import errorResponse from "http-errors";
 import httpStatus from "http-status";
-import { SchemaGenerationException } from "../configs/Exceptions/CustomExceptions";
+import { SchemaGenerationException } from "../configs/exceptions/CustomExceptions";
 import { DatasetSchema } from "../generators/DatasetSchema";
 import { IngestionSchema } from "../generators/IngestionSchema";
 import { ResponseHandler } from "../helpers/ResponseHandler";

@@ -1,7 +1,7 @@
 import httpStatus from "http-status";
 import _ from "lodash";
 import moment, { Moment } from "moment";
-import { queryRules } from "../configs/queryRules";
+import { queryRules } from "../configs/QueryRules";
 import { IValidator } from "../models/DatasetModels";
 import { ICommonRules, ILimits, IQuery, IQueryTypeRules, IRules } from "../models/QueryModels";
 import { ValidationStatus } from "../models/ValidationModels";

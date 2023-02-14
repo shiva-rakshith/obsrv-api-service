@@ -1,7 +1,7 @@
 import { inferSchema } from "@jsonhero/schema-infer";
 import httpStatus from "http-status";
 import _ from "lodash";
-import { SchemaGenerationException } from "../configs/Exceptions/CustomExceptions";
+import { SchemaGenerationException } from "../configs/exceptions/CustomExceptions";
 import { DataSetConfig } from "../models/ConfigModels";
 import { ISchemaGenerator } from "../models/DatasetModels";
 import { ConflictTypes, DatasetSchemaConfig, DatasetSchemaResponse, SuggestionsTemplate } from "../models/SchemaModels";

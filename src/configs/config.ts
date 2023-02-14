@@ -1,4 +1,4 @@
-import { queryRules } from "./queryRules";
+import { queryRules } from "./QueryRules";
 
 export const config = {
   "api_port": process.env.api_port || 3000,

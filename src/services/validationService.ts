@@ -3,8 +3,8 @@ import errorResponse from "http-errors";
 import httpStatus from "http-status";
 import { IValidator } from "../models/DatasetModels";
 import { ValidationStatus } from "../models/ValidationModels";
-import { QueryValidator } from "../validator/QueryValidator";
-import { RequestsValidator } from "../validator/RequestsValidator";
+import { QueryValidator } from "../validators/QueryValidator";
+import { RequestsValidator } from "../validators/RequestsValidator";
 
 export class ValidationService {
 
