@@ -1,4 +1,3 @@
-import { NextFunction } from "express";
 import { ValidationStatus } from "./ValidationModels";
 
 export interface ISchemaGenerator {

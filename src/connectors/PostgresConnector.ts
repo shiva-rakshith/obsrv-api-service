@@ -1,6 +1,6 @@
 
 import { ClientConfig, Pool, QueryResult } from "pg";
-import { IConnector } from "../models/DataSetModels";
+import { IConnector } from "../models/DatasetModels";
 export class PostgresConnector implements IConnector {
     private config: ClientConfig
     private pool: Pool

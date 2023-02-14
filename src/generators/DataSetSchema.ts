@@ -3,10 +3,10 @@ import httpStatus from "http-status";
 import _ from "lodash";
 import { SchemaGenerationException } from "../configs/Exceptions/CustomExceptions";
 import { DataSetConfig } from "../models/ConfigModels";
-import { ISchemaGenerator } from "../models/DataSetModels";
+import { ISchemaGenerator } from "../models/DatasetModels";
 import { ConflictTypes, DatasetSchemaConfig, DatasetSchemaResponse, SuggestionsTemplate } from "../models/SchemaModels";
 import constants from "../resources/Constants.json";
-import { DataSetSuggestionService } from "./SchemaSuggestion";
+import { SchemaSuggestion } from "./SchemaSuggestion";
 var jsonMerger = require("json-merger");
 
 export class DatasetSchema implements ISchemaGenerator {
@@ -25,7 +25,7 @@ export class DatasetSchema implements ISchemaGenerator {
   }
 
   process(schemas: Map<string, any>[]): DatasetSchemaResponse {
-    const suggestionService = new DataSetSuggestionService(schemas)
+    const suggestionService = new SchemaSuggestion(schemas)
     const conflicts: ConflictTypes[] = suggestionService.findConflicts()
     const updatedSchema = this.resolveConflicts(this.mergeSchema(schemas), conflicts)
     const suggestionTemplate: SuggestionsTemplate[] = suggestionService.createSuggestionTemplate(conflicts)

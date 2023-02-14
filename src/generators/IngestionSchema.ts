@@ -1,7 +1,7 @@
 import _ from "lodash";
-import { ISchemaGenerator } from "../models/DataSetModels";
+import { ISchemaGenerator } from "../models/DatasetModels";
 import { IngestionConfig, IngestionSpecModel } from "../models/IngestionModels";
-export class IngestionSchemaV2 implements ISchemaGenerator{
+export class IngestionSchema implements ISchemaGenerator{
     private regex: RegExp = /\./g;
     private ingestionConfig: IngestionConfig;
     private dataSet: string;

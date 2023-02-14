@@ -1,7 +1,7 @@
 import express, { Application } from "express";
 import { config } from "./configs/Config";
 import { ResponseHandler } from "./helpers/ResponseHandler";
-import { router } from "./routes/router";
+import { router } from "./routes/Router";
 const app: Application = express();
 
 app.use(express.json());

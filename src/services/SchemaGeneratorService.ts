@@ -3,9 +3,9 @@ import errorResponse from "http-errors";
 import httpStatus from "http-status";
 import { SchemaGenerationException } from "../configs/Exceptions/CustomExceptions";
 import { DatasetSchema } from "../generators/DatasetSchema";
-import { IngestionSchemaV2 } from "../generators/IngestionSchema";
+import { IngestionSchema } from "../generators/IngestionSchema";
 import { ResponseHandler } from "../helpers/ResponseHandler";
-import { IConnector } from "../models/DataSetModels";
+import { IConnector } from "../models/DatasetModels";
 import { IngestionConfig, IngestionSchemeRequest } from "../models/IngestionModels";
 import { DatasetSchemeRequest } from "../models/SchemaModels";
 export class SchemaGeneratorService {
@@ -17,7 +17,7 @@ export class SchemaGeneratorService {
     public generateIngestionSchema = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const request = <IngestionSchemeRequest>req.body
-            const schema = new IngestionSchemaV2(request.config.dataset, <IngestionConfig>request.config)
+            const schema = new IngestionSchema(request.config.dataset, <IngestionConfig>request.config)
             const sample = new Map(Object.entries(request.schema));
             const spec = schema.generate(sample)
             ResponseHandler.successResponse(req, res, { status: 200, data: spec });
