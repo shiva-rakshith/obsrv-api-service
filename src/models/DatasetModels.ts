@@ -15,3 +15,21 @@ export interface IConnector {
 export interface IValidator {
     validate(data: any, id?: string): ValidationStatus;
 }
+
+export interface Params {
+    status: string,
+    errmsg: string
+}
+export interface IResponse {
+    id: string,
+    ts: number,
+    ver: string,
+    params: Params,
+    responseCode: string,
+    result: any
+}
+
+export interface Result {
+    data: object;
+    status: number;
+}

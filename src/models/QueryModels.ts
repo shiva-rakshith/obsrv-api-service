@@ -29,11 +29,6 @@ export interface IFilter {
   dimensions?: string[];
 }
 
-export interface IResponse {
-  data: object;
-  status: number;
-}
-
 interface ISqlQueryObject {
   query: string;
 }
