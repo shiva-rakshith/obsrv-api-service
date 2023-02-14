@@ -1,8 +1,8 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import { IResponse } from "../models/QueryModels";
-import constants from "../resources/constants.json";
-import routes from "../routes/routesConfig";
+import constants from "../resources/Constants.json";
+import routes from "../routes/RoutesConfig";
 
 type extendedErrorRequestHandler = ErrorRequestHandler & {
   statusCode: number;

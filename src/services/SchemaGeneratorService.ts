@@ -2,12 +2,12 @@ import { NextFunction, Request, Response } from "express";
 import errorResponse from "http-errors";
 import httpStatus from "http-status";
 import { SchemaGenerationException } from "../configs/Exceptions/CustomExceptions";
-import { DataSetSchema } from "../generators/DataSetSchema";
+import { DatasetSchema } from "../generators/DatasetSchema";
 import { IngestionSchemaV2 } from "../generators/IngestionSchema";
 import { ResponseHandler } from "../helpers/ResponseHandler";
 import { IConnector } from "../models/DataSetModels";
 import { IngestionConfig, IngestionSchemeRequest } from "../models/IngestionModels";
-import { DataSetSchemeRequest } from "../models/SchemaModels";
+import { DatasetSchemeRequest } from "../models/SchemaModels";
 export class SchemaGeneratorService {
     private connector: IConnector;
     constructor(connector: IConnector) {
@@ -32,8 +32,8 @@ export class SchemaGeneratorService {
 
     public generateDataSetSchema = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const request = <DataSetSchemeRequest>req.body
-            const schema = new DataSetSchema(request.config.dataset, request.config)
+            const request = <DatasetSchemeRequest>req.body
+            const schema = new DatasetSchema(request.config.dataset, request.config)
             const spec = schema.generate(request.data)
             ResponseHandler.successResponse(req, res, { status: 200, data: spec });
         } catch (error) {

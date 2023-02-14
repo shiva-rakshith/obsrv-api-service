@@ -1,12 +1,12 @@
 import { DataSetConfig } from "./ConfigModels";
 
-export interface DataSetSchemaResponse {
+export interface DatasetSchemaResponse {
     schema: any;
     suggestions: SuggestionsTemplate[];
     configurations: DataSetConfig
 }
 
-export interface DataSetSchemeRequest {
+export interface DatasetSchemeRequest {
     data: Map<string, any>[],
     config: DatasetSchemaConfig
 }

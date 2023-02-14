@@ -6,7 +6,7 @@ import httpStatus from "http-status";
 import TestDruidQuery from "./testquery";
 import { config } from "./config";
 import constants from "../resources/constants.json";
-import routes from "../routes/routesConfig";
+import routes from "../routes/RoutesConfig";
 chai.should();
 chai.use(chaiHttp);
 

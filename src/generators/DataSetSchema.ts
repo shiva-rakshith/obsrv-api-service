@@ -4,12 +4,12 @@ import _ from "lodash";
 import { SchemaGenerationException } from "../configs/Exceptions/CustomExceptions";
 import { DataSetConfig } from "../models/ConfigModels";
 import { ISchemaGenerator } from "../models/DataSetModels";
-import { ConflictTypes, DatasetSchemaConfig, DataSetSchemaResponse, SuggestionsTemplate } from "../models/SchemaModels";
-import constants from "../resources/constants.json";
+import { ConflictTypes, DatasetSchemaConfig, DatasetSchemaResponse, SuggestionsTemplate } from "../models/SchemaModels";
+import constants from "../resources/Constants.json";
 import { DataSetSuggestionService } from "./SchemaSuggestion";
 var jsonMerger = require("json-merger");
 
-export class DataSetSchema implements ISchemaGenerator {
+export class DatasetSchema implements ISchemaGenerator {
   private dataset: string;
   private config: DatasetSchemaConfig;
 
@@ -24,13 +24,13 @@ export class DataSetSchema implements ISchemaGenerator {
     return this.process(schema);
   }
 
-  process(schemas: Map<string, any>[]): DataSetSchemaResponse {
+  process(schemas: Map<string, any>[]): DatasetSchemaResponse {
     const suggestionService = new DataSetSuggestionService(schemas)
     const conflicts: ConflictTypes[] = suggestionService.findConflicts()
     const updatedSchema = this.resolveConflicts(this.mergeSchema(schemas), conflicts)
     const suggestionTemplate: SuggestionsTemplate[] = suggestionService.createSuggestionTemplate(conflicts)
     const suggestedConfig: DataSetConfig = suggestionService.suggestConfig(conflicts)
-    return <DataSetSchemaResponse>{ "schema": updatedSchema, "suggestions": suggestionTemplate, "configurations": suggestedConfig }
+    return <DatasetSchemaResponse>{ "schema": updatedSchema, "suggestions": suggestionTemplate, "configurations": suggestedConfig }
   }
 
   private inferBatchSchema(sample: Map<string, any>[], extractionKey: string) {

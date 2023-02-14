@@ -6,7 +6,7 @@ import { ResponseHandler } from "../helpers/ResponseHandler";
 import { QueryService } from "../services/QueryService";
 import { SchemaGeneratorService } from "../services/SchemaGeneratorService";
 import { ValidationService } from "../services/ValidationService";
-import routes from "./routesConfig";
+import routes from "./RoutesConfig";
 
 const validationService = new ValidationService();
 

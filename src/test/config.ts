@@ -1,4 +1,4 @@
-import routes from "../routes/routesConfig"
+import routes from "../routes/RoutesConfig"
 const config = {
   apiStatusEndPoint: "/obsrv/status",
   apiHealthEndPoint: "/obsrv/health",

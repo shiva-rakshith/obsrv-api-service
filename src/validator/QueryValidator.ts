@@ -5,8 +5,8 @@ import { queryRules } from "../configs/queryRules";
 import { IValidator } from "../models/DataSetModels";
 import { ICommonRules, ILimits, IQuery, IQueryTypeRules, IRules } from "../models/QueryModels";
 import { ValidationStatus } from "../models/ValidationModels";
-import constants from "../resources/constants.json";
-import routes from "../routes/routesConfig";
+import constants from "../resources/Constants.json";
+import routes from "../routes/RoutesConfig";
 export class QueryValidator implements IValidator {
     private limits: ILimits;
     constructor() {

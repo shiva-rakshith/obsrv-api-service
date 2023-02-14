@@ -3,7 +3,7 @@ import fs from "fs";
 import httpStatus from "http-status";
 import { IValidator } from "../models/DataSetModels";
 import { ValidationStatus } from "../models/ValidationModels";
-import routes from "../routes/routesConfig";
+import routes from "../routes/RoutesConfig";
 export class RequestsValidator implements IValidator {
     private schemaBasePath: string = "/src/configs/";
     private reqSchemaMap = new Map<string, string>([
