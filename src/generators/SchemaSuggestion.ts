@@ -18,8 +18,8 @@ export class SchemaSuggestion {
         this.dataset = dataset
     }
 
-    public findConflicts(): ConflictTypes[] {
-        return this.analyseSchema()
+    public analyseSchema(): ConflictTypes[] {
+        return this.findConflicts()
     }
 
     public suggestConfig(conflicts: ConflictTypes[]): DataSetConfig {
@@ -27,7 +27,7 @@ export class SchemaSuggestion {
         return config
     }
 
-    private analyseSchema(): ConflictTypes[] {
+    private findConflicts(): ConflictTypes[] {
         const result: FlattenSchema[] = _.flatten(this.schemas.map(element => {
             return this.flattenSchema(new Map(Object.entries(element)));
         }))

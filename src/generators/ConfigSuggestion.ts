@@ -4,7 +4,7 @@ import { datasetIngestionDefaultConfig, datasetProcessingDefaultConfigs, dataset
 
 import { DataSetConfig, DatasetProcessing } from "../models/ConfigModels";
 import { IngestionConfig } from "../models/IngestionModels";
-import { IDataSourceRules, ILimits } from "../models/QueryModels";
+import { IDataSourceRules } from "../models/QueryModels";
 import { ConflictTypes } from "../models/SchemaModels";
 
 export class ConfigSuggestionGenerator {

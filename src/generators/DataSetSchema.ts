@@ -6,7 +6,6 @@ import { DataSetConfig } from "../models/ConfigModels";
 import { ISchemaGenerator } from "../models/DatasetModels";
 import { ConflictTypes, DatasetSchemaConfig, DatasetSchemaResponse, SuggestionsTemplate } from "../models/SchemaModels";
 import constants from "../resources/Constants.json";
-import { SchemaGeneratorService } from "../services/SchemaGeneratorService";
 import { SchemaSuggestion } from "./SchemaSuggestion";
 var jsonMerger = require("json-merger");
 
@@ -28,11 +27,11 @@ export class DatasetSchema implements ISchemaGenerator {
 
   process(schemas: Map<string, any>[]): DatasetSchemaResponse {
     this.suggestionService = new SchemaSuggestion(schemas, this.dataset)
-    const conflicts: ConflictTypes[] = this.suggestionService.findConflicts()
-    const resolvedSchema = this.resolveConflicts(this.mergeSchema(schemas), conflicts)
-    const suggestionTemplate: SuggestionsTemplate[] = this.suggestionService.createSuggestionTemplate(conflicts)
+    const report: ConflictTypes[] = this.suggestionService.analyseSchema()
+    const resolvedSchema = this.resolveConflicts(this.mergeSchema(schemas), report)
+    const suggestionTemplate: SuggestionsTemplate[] = this.suggestionService.createSuggestionTemplate(report)
     const updatedSchema = this.updateSchema(resolvedSchema, suggestionTemplate)
-    const suggestedConfig: DataSetConfig = this.suggestionService.suggestConfig(conflicts)
+    const suggestedConfig: DataSetConfig = this.suggestionService.suggestConfig(report)
     return <DatasetSchemaResponse>{ "schema": updatedSchema, "configurations": suggestedConfig }
   }
 
