@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { ISchemaGenerator } from "../models/DatasetModels";
 import { IngestionConfig, IngestionSpecModel } from "../models/IngestionModels";
-export class IngestionSchema implements ISchemaGenerator{
+export class IngestionSchema implements ISchemaGenerator {
     private regex: RegExp = /\./g;
     private ingestionConfig: IngestionConfig;
     private dataSet: string;
@@ -18,7 +18,7 @@ export class IngestionSchema implements ISchemaGenerator{
         const ingestionSpec = this.getIngestionTemplate(generatedSpec.flattenSpec, generatedSpec.dimensions, generatedSpec.metrics)
         return ingestionSpec
     }
-    
+
     process(sample: Map<string, any>): IngestionSpecModel {
         const metrics = this.filterMetricsCols(sample)
         const dims = this.filterDimsCols(sample)
@@ -68,10 +68,10 @@ export class IngestionSchema implements ISchemaGenerator{
                             } else {
                                 map.set(`${path}_${key}`, this.createSpecObj(`${path}.${key}[*]`, this.getObjectType(key, value.type), `${path}_${key}`))
                             }
-                        }else if(value.type == 'object' && (!_.has(value, 'properties'))){
+                        } else if (value.type == 'object' && (!_.has(value, 'properties'))) {
                             console.warn(`Found empty object without properties in the schema..Key: ${key}, Object: ${JSON.stringify(value)}`)
                         }
-                         else {
+                        else {
                             map.set(`${path}_${key}`, this.createSpecObj(`${path}.${key}`, this.getObjectType(key, value.type), `${path}_${key}`))
                         }
                     }

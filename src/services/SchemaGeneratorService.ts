@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import errorResponse from "http-errors";
 import httpStatus from "http-status";
-import { SchemaGenerationException } from "../configs/exceptions/CustomExceptions";
+import { SchemaGenerationException } from "../exceptions/CustomExceptions";
 import { DatasetSchema } from "../generators/DatasetSchema";
 import { IngestionSchema } from "../generators/IngestionSchema";
 import { ResponseHandler } from "../helpers/ResponseHandler";
@@ -42,7 +42,7 @@ export class SchemaGeneratorService {
             } else {
                 next(errorResponse((httpStatus.INTERNAL_SERVER_ERROR, (<Error>error).message)));
             }
-           
+
         }
     }
 

@@ -10,15 +10,13 @@ export const datasetIngestionDefaultConfig = {
     }
 }
 export const datasetProcessingDefaultConfigs = {
-    //topic: "",
+    topic: "",
     extraction: {
-        // is_batch_event: false,
-        // extraction_key: "events",
-        // dedup_config: {
-        //     drop_duplicates: true,
-        //     dedup_key: "",
-        //     dedup_period: 1400
-        // }
+        dedup_config: {
+            drop_duplicates: true,
+            dedup_key: "",
+            dedup_period: 1400
+        }
     },
     dedup_config: {
         drop_duplicates: true,

@@ -2,7 +2,6 @@ import { DataSetConfig } from "./ConfigModels";
 
 export interface DatasetSchemaResponse {
     schema: any;
-    suggestions: SuggestionsTemplate[];
     configurations: DataSetConfig
 }
 
@@ -26,7 +25,7 @@ export interface Suggestion {
     message: string;
     advice: string;
     resolutionType: string;
-    priority: string;
+    severity: string;
 }
 
 export interface ConflictTypes {
@@ -40,8 +39,11 @@ export interface Conflict {
     property: string,
     type: string,
     conflicts: any,
-    resolution: any
+    values: any[],
+    resolution: any,
+    severity: string
 }
+
 
 export interface FlattenSchema {
     property: string

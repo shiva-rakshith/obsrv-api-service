@@ -1,17 +1,19 @@
 import { inferSchema } from "@jsonhero/schema-infer";
 import httpStatus from "http-status";
 import _ from "lodash";
-import { SchemaGenerationException } from "../configs/exceptions/CustomExceptions";
+import { SchemaGenerationException } from "../exceptions/CustomExceptions";
 import { DataSetConfig } from "../models/ConfigModels";
 import { ISchemaGenerator } from "../models/DatasetModels";
 import { ConflictTypes, DatasetSchemaConfig, DatasetSchemaResponse, SuggestionsTemplate } from "../models/SchemaModels";
 import constants from "../resources/Constants.json";
+import { SchemaGeneratorService } from "../services/SchemaGeneratorService";
 import { SchemaSuggestion } from "./SchemaSuggestion";
 var jsonMerger = require("json-merger");
 
 export class DatasetSchema implements ISchemaGenerator {
   private dataset: string;
   private config: DatasetSchemaConfig;
+  private suggestionService: SchemaSuggestion = <SchemaSuggestion>{}
 
   constructor(dataset: string, config: DatasetSchemaConfig) {
     this.dataset = dataset
@@ -25,12 +27,20 @@ export class DatasetSchema implements ISchemaGenerator {
   }
 
   process(schemas: Map<string, any>[]): DatasetSchemaResponse {
-    const suggestionService = new SchemaSuggestion(schemas, this.dataset)
-    const conflicts: ConflictTypes[] = suggestionService.findConflicts()
-    const updatedSchema = this.resolveConflicts(this.mergeSchema(schemas), conflicts)
-    const suggestionTemplate: SuggestionsTemplate[] = suggestionService.createSuggestionTemplate(conflicts)
-    const suggestedConfig: DataSetConfig = suggestionService.suggestConfig(conflicts)
-    return <DatasetSchemaResponse>{ "schema": updatedSchema, "suggestions": suggestionTemplate, "configurations": suggestedConfig }
+    this.suggestionService = new SchemaSuggestion(schemas, this.dataset)
+    const conflicts: ConflictTypes[] = this.suggestionService.findConflicts()
+    const resolvedSchema = this.resolveConflicts(this.mergeSchema(schemas), conflicts)
+    const suggestionTemplate: SuggestionsTemplate[] = this.suggestionService.createSuggestionTemplate(conflicts)
+    const updatedSchema = this.updateSchema(resolvedSchema, suggestionTemplate)
+    const suggestedConfig: DataSetConfig = this.suggestionService.suggestConfig(conflicts)
+    return <DatasetSchemaResponse>{ "schema": updatedSchema, "configurations": suggestedConfig }
+  }
+
+  private updateSchema(schema: any, suggestedTemplate: SuggestionsTemplate[]): any {
+    suggestedTemplate.forEach(({ property, suggestions }) => {
+      _.set(schema, `${property}.suggestions`, suggestions);
+    });
+    return schema;
   }
 
   private inferBatchSchema(sample: Map<string, any>[], extractionKey: string) {
@@ -57,13 +67,15 @@ export class DatasetSchema implements ISchemaGenerator {
   }
 
   private resolveConflicts(schema: any, updateProps: ConflictTypes[]): any {
-    updateProps.forEach((value: ConflictTypes) => {
+    updateProps.map((value: ConflictTypes) => {
       if (!_.isEmpty(value.schema) || !_.isEmpty(value.required)) {
         switch (value.schema.type || value.required.type) {
           case constants.SCHEMA_RESOLUTION_TYPE.DATA_TYPE:
             return this.updateSchemaDataTypes(schema, value)
-          case constants.SCHEMA_RESOLUTION_TYPE.REQUIRED_TYPE:
+          case constants.SCHEMA_RESOLUTION_TYPE.OPTIONAL_TYPE:
             return this.updateSchemaRequiredProp(schema, value)
+          // case constants.SCHEMA_RESOLUTION_TYPE.FORMATE_TYPE:
+          //   return this.updateSchemaRequiredProp(schema, value)
           default:
             console.warn("Unsupported Conflict Type")
             break;
@@ -73,8 +85,19 @@ export class DatasetSchema implements ISchemaGenerator {
     return schema
   }
 
-  private updateSchemaDataTypes(schema: any, value: ConflictTypes): any {
-    return _.set(schema, `${value.absolutePath}.type`, value.schema.resolution.dataType);
+  private updateSchemaDataTypes(schema: any, conflict: ConflictTypes): any {
+    const { absolutePath, schema: { resolution: { value } } } = conflict;
+    return _.set(schema, `${absolutePath}`, {
+      ...schema[absolutePath],
+      ...{
+        type: conflict.schema.resolution["value"],
+        oneof: this.convert(conflict.schema.values),
+      }
+    });
+  }
+
+  private convert(obj: any[]): any[] {
+    return obj.map(key => ({ type: key }));
   }
 
   private updateSchemaRequiredProp(schema: any, value: ConflictTypes): any {
@@ -83,7 +106,7 @@ export class DatasetSchema implements ISchemaGenerator {
     const path: string = _.isEmpty(subString) ? "required" : `${subString}.required`
     const requiredList: string[] = _.get(schema, path)
     const newProperty: string = value.required.property
-    value.required.resolution.required ? _.concat(_.get(schema, path), value.required.property) : _.pull(requiredList, newProperty)
+    value.required.resolution.value ? _.concat(_.get(schema, path), value.required.property) : _.pull(requiredList, newProperty)
     return _.set(schema, path, _.uniq(requiredList))
   }
 

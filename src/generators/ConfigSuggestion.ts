@@ -28,27 +28,18 @@ export class ConfigSuggestionGenerator {
         const typeFormatsConflict: ConflictTypes[] = _.filter(conflicts, (o) => !_.isEmpty(o.formats));
         const ingestionConfig: IngestionConfig = this.ingestionConfig(typeFormatsConflict)
         const processingConfig: DatasetProcessing = this.processingConfig(typeFormatsConflict)
-        const queryingConfig: IDataSourceRules = this.queryingConfig(typeFormatsConflict)
-        return <DataSetConfig>{ "querying": queryingConfig, "ingestion": ingestionConfig, "processing": processingConfig }
+        return <DataSetConfig>{ "ingestion": ingestionConfig, "processing": processingConfig }
     }
 
-    private ingestionConfig(conflicts: ConflictTypes[]): IngestionConfig {
-        const uuidConflicts = _.filter(conflicts, (o) => !_.isEmpty(o.formats.conflicts) && o.formats.conflicts.hasOwnProperty('uuid'));
-        const isRollupRequired = _.isEmpty(uuidConflicts) ? true : false
-        const dateSchemaFormat = ["date", "date-time"]
-        const indexCol = this._getProperty(conflicts, dateSchemaFormat)
-        var ingestionConfig = this.getDefaultIngestionConfig()
-        ingestionConfig.granularitySpec.rollup = isRollupRequired
-        if (!_.isEmpty(indexCol)) ingestionConfig.indexCol = indexCol;
-        return ingestionConfig
+    private ingestionConfig(conflicts: ConflictTypes[]): any {
+        const indexCols = _.filter(conflicts, (o) => o.formats.resolution["type"] === "INDEX").map(v => v.formats.property)
+        const isRollupRequired = _.isEmpty(_.filter(conflicts, (o) => o.formats.resolution["type"] === "DEDUP")) ? true : false
+        return { "index": indexCols, "rollup": [isRollupRequired] }
     }
 
-    private processingConfig(conflicts: ConflictTypes[]): DatasetProcessing {
-        const dateSchemaFormat = ["uuid"]
-        const dedupCol = this._getProperty(conflicts, dateSchemaFormat)
-        var processingConfig = this.getDefaultProcessingConfig()
-        processingConfig.dedup_config.dedup_key = dedupCol
-        return processingConfig
+    private processingConfig(conflicts: ConflictTypes[]): any {
+        const dedup = _.filter(conflicts, (o) => o.formats.resolution["type"] === "DEDUP").map(v => v.formats.property)
+        return { "dedupKeys": dedup, dropDuplicates: ["yes", "no"] }
     }
 
     private queryingConfig(conflicts: ConflictTypes[]): IDataSourceRules {
