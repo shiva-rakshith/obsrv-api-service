@@ -1,30 +1,22 @@
 import _ from "lodash";
-import { SchemaSuggestionTemplate } from "../helpers/suggestions";
-import { DataSetConfig } from "../models/ConfigModels";
-import { Conflict, ConflictTypes, FlattenSchema, Occurance, Suggestion, SuggestionsTemplate } from "../models/SchemaModels";
-import constants from "../resources/Constants.json";
-import { ConfigSuggestionGenerator } from "./ConfigSuggestion";
-export class SchemaSuggestion {
+import { Conflict, ConflictTypes, FlattenSchema, Occurance } from "../../models/SchemaModels";
+import constants from "../../resources/Constants.json";
+
+export class SchemaAnalyser {
     private transformationCols = ["email", "creditcard", "ipv4", "ipv6"]
     private dateFormatCols = ["date", "date-time"]
     private cardinalCols = ["uuid"]
 
     private schemas: Map<string, any>[];
     private minimumSchemas: number = 1
-    private dataset: string
 
-    constructor(schemas: Map<string, any>[], dataset: string) {
+
+    constructor(schemas: Map<string, any>[]) {
         this.schemas = schemas;
-        this.dataset = dataset
     }
 
     public analyseSchema(): ConflictTypes[] {
         return this.findConflicts()
-    }
-
-    public suggestConfig(conflicts: ConflictTypes[]): DataSetConfig {
-        const config: DataSetConfig = new ConfigSuggestionGenerator(this.dataset).suggestConfig(conflicts)
-        return config
     }
 
     private findConflicts(): ConflictTypes[] {
@@ -113,53 +105,6 @@ export class SchemaSuggestion {
         }
         else { return <Conflict>{} }
 
-    }
-
-    public createSuggestionTemplate(sample: any[]): SuggestionsTemplate[] {
-        return _.map(sample, (value, key) => {
-            const dataTypeSuggestions = this.getSchemaMessageTempalte(value["schema"])
-            const requiredSuggestions = this.getRequiredMessageTemplate(value["required"])
-            const formatSuggestions = this.getPropertyFormatTemplate(value["formats"])
-            return <SuggestionsTemplate>{
-                "property": value.absolutePath,
-                "suggestions": _.reject([dataTypeSuggestions, requiredSuggestions, formatSuggestions], _.isEmpty)
-            }
-        })
-    }
-
-    public getSchemaMessageTempalte(object: Conflict): Suggestion {
-        if (_.isEmpty(object)) return <Suggestion>{}
-        const conflictMessage = SchemaSuggestionTemplate.getSchemaDataTypeMessage(object.conflicts, object.property)
-        return <Suggestion>{
-            message: conflictMessage, advice: SchemaSuggestionTemplate.TEMPLATES.SCHEMA_SUGGESTION.CREATE.DATATYPE_PROPERTY.ADVICE,
-            resolutionType: object.resolution["type"],
-            severity: object.severity
-        }
-    }
-
-    public getPropertyFormatTemplate(object: Conflict): Suggestion {
-        if (_.isEmpty(object)) return <Suggestion>{}
-        const conflictMessage = SchemaSuggestionTemplate.getSchemaFormatMessage(object.conflicts, object.property)
-        const adviceObj = SchemaSuggestionTemplate.getSchemaFormatAdvice(object.conflicts)
-        return <Suggestion>{
-            message: conflictMessage,
-            advice: adviceObj.advice,
-            resolutionType: object.resolution["type"],
-            severity: object.severity
-        }
-    }
-
-    public getRequiredMessageTemplate(object: Conflict): Suggestion {
-        if (_.isEmpty(object)) return <Suggestion>{}
-        const conflictMessage = SchemaSuggestionTemplate.getSchemaRequiredTypeMessage(object.conflicts, object.property)
-        console.log("object" + JSON.stringify(object))
-        return <Suggestion>{
-            message: conflictMessage,
-            advice: SchemaSuggestionTemplate.TEMPLATES.SCHEMA_SUGGESTION.CREATE.OPTIONAL_PROPERTY.ADVICE,
-            resolutionType: object.resolution["type"],
-            severity: object.severity
-
-        }
     }
 
     private countKeyValuePairs(arrayOfObjects: object[], key: string): Occurance {

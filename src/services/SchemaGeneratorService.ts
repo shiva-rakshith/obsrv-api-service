@@ -2,8 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import errorResponse from "http-errors";
 import httpStatus from "http-status";
 import { SchemaGenerationException } from "../exceptions/CustomExceptions";
-import { DatasetSchema } from "../generators/DatasetSchema";
 import { IngestionSchema } from "../generators/IngestionSchema";
+import { DatasetSchemaGenerator } from "../generators/schema/DatasetSchemaGenerator";
 import { ResponseHandler } from "../helpers/ResponseHandler";
 import { IConnector } from "../models/DatasetModels";
 import { IngestionConfig, IngestionSchemeRequest } from "../models/IngestionModels";
@@ -30,10 +30,26 @@ export class SchemaGeneratorService {
         }
     }
 
+    // public generateDataSetSchema = async (req: Request, res: Response, next: NextFunction) => {
+    //     try {
+    //         const request = <DatasetSchemeRequest>req.body
+    //         const schema = new DatasetSchema(request.config.dataset, request.config)
+    //         const spec = schema.generate(request.data)
+    //         ResponseHandler.successResponse(req, res, { status: 200, data: spec });
+    //     } catch (error) {
+    //         if (error instanceof SchemaGenerationException) {
+    //             next(errorResponse((<SchemaGenerationException>error).statusCode, error.message));
+    //         } else {
+    //             next(errorResponse((httpStatus.INTERNAL_SERVER_ERROR, (<Error>error).message)));
+    //         }
+
+    //     }
+    // }
+
     public generateDataSetSchema = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const request = <DatasetSchemeRequest>req.body
-            const schema = new DatasetSchema(request.config.dataset, request.config)
+            const schema = new DatasetSchemaGenerator(request.config.dataset, request.config)
             const spec = schema.generate(request.data)
             ResponseHandler.successResponse(req, res, { status: 200, data: spec });
         } catch (error) {
@@ -45,5 +61,6 @@ export class SchemaGeneratorService {
 
         }
     }
+
 
 }

@@ -1,19 +1,9 @@
-import constants from "../resources/Constants.json";
-import _, { constant } from "lodash";
+import _ from "lodash";
 import { Conflict } from "../models/SchemaModels";
+import constants from "../resources/Constants.json";
 
 export const SchemaSuggestionTemplate = {
     TEMPLATES: {
-        "CONFIG_SUGGESTION": {
-            "MESSAGE": "Conflict in the Configurations",
-            "UPDATE": {
-                "PROCESSING": {
-                    "DEDUP_PROPERTY": {
-                        "ADVICE": "Could be the chance of duplicating higer volume of data"
-                    }
-                }
-            }
-        },
         SCHEMA_SUGGESTION: {
             CREATE: {
                 OPTIONAL_PROPERTY: {
@@ -87,7 +77,6 @@ export const SchemaSuggestionTemplate = {
         const conflictKey = `${_.upperCase(_.replace(_.keys(conflicts)[0], "-", ""))}_ADVICE`.replace(/\s/g, "")
         return {
             "advice": _.get(this.TEMPLATES.SCHEMA_SUGGESTION.CREATE.FORMAT_PROPERTY, `${conflictKey}.MESSAGE`),
-            "severity": _.get(this.TEMPLATES.SCHEMA_SUGGESTION.CREATE.FORMAT_PROPERTY, `${conflictKey}.SEVERITY`)
         }
     }
 

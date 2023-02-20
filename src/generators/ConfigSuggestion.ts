@@ -1,18 +1,13 @@
 import _ from "lodash";
-import { datasetIngestionDefaultConfig, datasetProcessingDefaultConfigs, datasetQueryDefaultConfig } from "../configs/schemas/DataSetConfigs";
-
-
 import { DataSetConfig, DatasetProcessing } from "../models/ConfigModels";
 import { IngestionConfig } from "../models/IngestionModels";
-import { IDataSourceRules } from "../models/QueryModels";
 import { ConflictTypes } from "../models/SchemaModels";
 
 export class ConfigSuggestionGenerator {
     /**
      * Responsiblities : 
      *  1. Suggest rollup is required or not. - done
-     *  2. Suggest the dedup property field. - done
-     *  3. Return Basic druid configurations, processing configuration and querying configuration - done
+     *  2. Suggest the dedup property fields. - done
      */
     private dataset: string
     constructor(dataset: string) {
@@ -39,33 +34,6 @@ export class ConfigSuggestionGenerator {
 
     private processingConfig(conflicts: ConflictTypes[]): any {
         const dedup = _.filter(conflicts, (o) => o.formats.resolution["type"] === "DEDUP").map(v => v.formats.property)
-        return { "dedupKeys": dedup, dropDuplicates: ["yes", "no"] }
-    }
-
-    private queryingConfig(conflicts: ConflictTypes[]): IDataSourceRules {
-        return this.getDefaultQueryingConfig(this.dataset)
-    }
-
-    private _getProperty(conflicts: ConflictTypes[], list: string[]) {
-        return _.first(_(conflicts)
-            .filter((obj) => {
-                const conflictKey = Object.keys(obj.formats.conflicts)[0];
-                return _.includes(list, conflictKey);
-            })
-            .sortBy((obj) => -obj.formats.conflicts[Object.keys(obj.formats.conflicts)[0]])
-            .value().map(key => key.formats.property)) || ""
-    }
-
-    private getDefaultIngestionConfig(): IngestionConfig {
-        return <IngestionConfig>datasetIngestionDefaultConfig
-    }
-
-    private getDefaultProcessingConfig(): DatasetProcessing {
-        return <DatasetProcessing>datasetProcessingDefaultConfigs
-    }
-
-    private getDefaultQueryingConfig(dataset: string): IDataSourceRules {
-        const rules = _.filter(datasetQueryDefaultConfig.rules, { dataset: dataset });
-        return _.head(rules) || <IDataSourceRules>{}
+        return { "dedupKeys": dedup, dropDuplicates: ["Yes", "No"] }
     }
 }
