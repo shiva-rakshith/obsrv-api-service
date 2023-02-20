@@ -19,14 +19,14 @@ export class ValidationService {
         const status: ValidationStatus = this.request.validate(req.body, (req as any).id)
         status.isValid ?
             next()
-            : next(next(errorResponse((httpStatus.BAD_REQUEST, status?.message || ""))))
+            : next(errorResponse((httpStatus.BAD_REQUEST, status?.message || "")))
     };
 
     public validateQuery = (req: Request, res: Response, next: NextFunction) => {
         const status: ValidationStatus = this.query.validate(req.body, (req as any).id)
         status.isValid ?
             next()
-            : next(next(errorResponse((httpStatus.BAD_REQUEST, status?.message || ""))))
+            : next(errorResponse((httpStatus.BAD_REQUEST, status?.message || "")))
     }
 
 }
