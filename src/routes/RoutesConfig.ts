@@ -71,12 +71,12 @@ const routes = {
     "API_ID": "obsrv.health"
   },
   "DATASET": {
-    "BASE_PATH": "/data",
+    "BASE_PATH": "/dataset/data",
     "API_VERSION": "/v2",
     "CREATE": {
-      "URL": "/create",
+      "URL": "/in/*",
       "METHOD": "POST",
-      "API_ID": "obsrv.data.create"
+      "API_ID": "obsrv.dataset.data.in"
     }
   },
   "CONFIG_OPERATIONS": {
