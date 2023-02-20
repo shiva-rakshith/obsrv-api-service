@@ -1,6 +1,6 @@
 FROM node:14.19.0
-RUN mkdir -p /opt/obsrv-query-api/
-WORKDIR /opt/obsrv-query-api/
+RUN mkdir -p /opt/obsrv-api-service
+WORKDIR /opt/obsrv-api-service/
 COPY package*.json ./
 RUN npm install
 RUN npm install -g typescript@4.8.4

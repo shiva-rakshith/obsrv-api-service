@@ -1,7 +1,7 @@
 
 export interface DbConfig {
     host: string;
-    port: number;
+    port: string | number;
     database: string;
     user: string;
     password: string;
@@ -10,10 +10,4 @@ export interface DbConfig {
 export interface DbConnectorConfig {
     client: string;
     connection: DbConfig;
-}
-
-export interface IRelation {
-    getValues(): object;
-    setValues(): object;
-    removeNullValues: object;
 }

@@ -8,7 +8,7 @@ import { SchemaGeneratorService } from "../services/SchemaGeneratorService";
 import { ValidationService } from "../services/ValidationService";
 import { DatasetService } from "../services/DatasetService";
 import { KafkaConnector } from "../connectors/KafkaConnector";
-import { DatabaseService } from "../services/DatabaseService";
+import { DataSourceService } from "../services/DataSourceService";
 import { DbConnector } from "../connectors/DbConnector";
 import routes from "./RoutesConfig";
 
@@ -24,9 +24,9 @@ export const postgresConnector = new PostgresConnector(config.postgres.pg_config
 
 export const dbConnector = new DbConnector(config.db_connector_config)
 
-export const databaseService = new DatabaseService(dbConnector);
+export const dataSourceService = new DataSourceService(dbConnector);
 
-export const datasetService = new DatasetService(kafkaConnector);
+export const datasetService = new DatasetService(dbConnector, kafkaConnector);
 
 const router = express.Router();
 
@@ -61,12 +61,12 @@ router.post(`${routes.DATASET.BASE_PATH}${routes.DATASET.API_VERSION}${routes.DA
 /**
  * Config API(s)
  */
-router.post(`${routes.CONFIG_OPERATIONS.BASE_PATH}${routes.CONFIG_OPERATIONS.API_VERSION}${routes.CONFIG_OPERATIONS.DATASET.SAVE.URL}`, ResponseHandler.setApiId(routes.CONFIG_OPERATIONS.DATASET.SAVE.API_ID), databaseService.saveDataset);
-router.patch(`${routes.CONFIG_OPERATIONS.BASE_PATH}${routes.CONFIG_OPERATIONS.API_VERSION}${routes.CONFIG_OPERATIONS.DATASET.SAVE.URL}`, ResponseHandler.setApiId(routes.CONFIG_OPERATIONS.DATASET.SAVE.API_ID), databaseService.updateDataset);
-router.get(`${routes.CONFIG_OPERATIONS.BASE_PATH}${routes.CONFIG_OPERATIONS.API_VERSION}${routes.CONFIG_OPERATIONS.DATASET.READ.URL}`, ResponseHandler.setApiId(routes.CONFIG_OPERATIONS.DATASET.READ.API_ID), databaseService.readDataset);
-router.post(`${routes.CONFIG_OPERATIONS.BASE_PATH}${routes.CONFIG_OPERATIONS.API_VERSION}${routes.CONFIG_OPERATIONS.DATASOURCE.SAVE.URL}`, ResponseHandler.setApiId(routes.CONFIG_OPERATIONS.DATASOURCE.SAVE.API_ID), databaseService.saveDatasource);
-router.patch(`${routes.CONFIG_OPERATIONS.BASE_PATH}${routes.CONFIG_OPERATIONS.API_VERSION}${routes.CONFIG_OPERATIONS.DATASOURCE.SAVE.URL}`, ResponseHandler.setApiId(routes.CONFIG_OPERATIONS.DATASOURCE.SAVE.API_ID), databaseService.updateDatasource);
-router.get(`${routes.CONFIG_OPERATIONS.BASE_PATH}${routes.CONFIG_OPERATIONS.API_VERSION}${routes.CONFIG_OPERATIONS.DATASOURCE.READ.URL}`, ResponseHandler.setApiId(routes.CONFIG_OPERATIONS.DATASOURCE.READ.API_ID), databaseService.readDatasource);
+router.post(`${routes.CONFIG_OPERATIONS.BASE_PATH}${routes.CONFIG_OPERATIONS.API_VERSION}${routes.CONFIG_OPERATIONS.DATASET.SAVE.URL}`, ResponseHandler.setApiId(routes.CONFIG_OPERATIONS.DATASET.SAVE.API_ID), datasetService.save);
+router.patch(`${routes.CONFIG_OPERATIONS.BASE_PATH}${routes.CONFIG_OPERATIONS.API_VERSION}${routes.CONFIG_OPERATIONS.DATASET.SAVE.URL}`, ResponseHandler.setApiId(routes.CONFIG_OPERATIONS.DATASET.SAVE.API_ID), datasetService.update);
+router.get(`${routes.CONFIG_OPERATIONS.BASE_PATH}${routes.CONFIG_OPERATIONS.API_VERSION}${routes.CONFIG_OPERATIONS.DATASET.READ.URL}`, ResponseHandler.setApiId(routes.CONFIG_OPERATIONS.DATASET.READ.API_ID), datasetService.read);
+router.post(`${routes.CONFIG_OPERATIONS.BASE_PATH}${routes.CONFIG_OPERATIONS.API_VERSION}${routes.CONFIG_OPERATIONS.DATASOURCE.SAVE.URL}`, ResponseHandler.setApiId(routes.CONFIG_OPERATIONS.DATASOURCE.SAVE.API_ID), dataSourceService.save);
+router.patch(`${routes.CONFIG_OPERATIONS.BASE_PATH}${routes.CONFIG_OPERATIONS.API_VERSION}${routes.CONFIG_OPERATIONS.DATASOURCE.SAVE.URL}`, ResponseHandler.setApiId(routes.CONFIG_OPERATIONS.DATASOURCE.SAVE.API_ID), dataSourceService.update);
+router.get(`${routes.CONFIG_OPERATIONS.BASE_PATH}${routes.CONFIG_OPERATIONS.API_VERSION}${routes.CONFIG_OPERATIONS.DATASOURCE.READ.URL}`, ResponseHandler.setApiId(routes.CONFIG_OPERATIONS.DATASOURCE.READ.API_ID), dataSourceService.read);
 
 
 

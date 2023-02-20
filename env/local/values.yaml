@@ -1,7 +1,7 @@
-namespace: "obsrv-query-engine"
+namespace: "obsrv-api-service"
 dockerhub: "gayathrisrividya"
 replicaCount: 1
-repository: "obsrv-query-api"
+repository: "obsrv-api-service"
 env: "local"
 image_tag: 1.0.0
 network:
@@ -10,3 +10,13 @@ network:
 druid_service:
     DRUID_HOST: http://host.docker.internal
     DRUID_PORT: 8888
+kafka_service:
+    KAFKA_HOST: host.docker.internal
+    KAFKA_PORT: 9092
+    KAFKA_TOPIC_CREATE: "telemetry.ingest"
+postgres_service:
+    POSTGRES_HOST: host.docker.internal
+    POSTGRES_PORT: 5432
+    POSTGRES_DATABASE: 'postgres'
+    POSTGRES_USERNAME: 'manjunathdavanam'
+    POSTGRES_PASSWORD: 'Manju@123'

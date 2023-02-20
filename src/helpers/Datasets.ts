@@ -1,14 +1,13 @@
 import _ from 'lodash'
-import { IRelation } from '../models/DatabaseOperationModels'
-
-export class Datasets implements IRelation {
+import { ValidationConfig, ExtractionConfig, DedupConfig, DenormConfig, RouterConfig } from '../models/ConfigModels'
+export class Datasets  {
     private id: string
-    private validation_config: object
-    private extraction_config: object
-    private dedup_config: object
+    private validation_config: ValidationConfig
+    private extraction_config: ExtractionConfig
+    private dedup_config: DedupConfig
     private data_schema: object
-    private router_config: object
-    private denorm_config: object
+    private router_config: RouterConfig
+    private denorm_config: DenormConfig
     private status: string
     private created_by: string
     private updated_by: string

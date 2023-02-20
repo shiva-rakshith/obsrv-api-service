@@ -1,7 +1,6 @@
 import _ from 'lodash'
-import { IRelation } from '../models/DatabaseOperationModels'
-
-export class Datasources implements IRelation {
+ 
+export class Datasources {
     private dataset_id: string
     private ingestion_spec: object
     private datasource: string
@@ -39,7 +38,7 @@ export class Datasources implements IRelation {
         })
         return payload
     }
-    
+
     public getDataSourceId() {
         return `${this.dataset_id}_${this.datasource}`
     }
