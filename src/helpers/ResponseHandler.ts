@@ -27,7 +27,7 @@ const ResponseHandler = {
   errorResponse: (error: extendedErrorRequestHandler, req: Request, res: Response, next: NextFunction) => {
     const { statusCode, message, errCode } = error;
     const { id } = req as any;
-    res.status(statusCode).json(ResponseHandler.refactorResponse({ id: id, params: { status: httpStatus[400], errmsg: message, }, responseCode: errCode || httpStatus["500_NAME"] }));
+    res.status(statusCode || httpStatus.INTERNAL_SERVER_ERROR).json(ResponseHandler.refactorResponse({ id: id, params: { status: httpStatus[400], errmsg: message, }, responseCode: errCode || httpStatus["500_NAME"] }));
   },
 
   setApiId: (id: string) => (req: Request, res: Response, next: NextFunction) => {

@@ -86,7 +86,7 @@ export class QueryValidator implements IValidator {
         const isValidDates = (differenceInDays > allowedRange) ? false : true
         return isValidDates
             ? { isValid: true, code: httpStatus[200] }
-            : { isValid: false, message: constants.ERROR_MESSAGE.INVALID_DATE_RANGE.replace("${allowedRange}", ""), code: httpStatus[200] };
+            : { isValid: false, message: constants.ERROR_MESSAGE.INVALID_DATE_RANGE.replace("${allowedRange}", allowedRange.toString()), code: httpStatus[200] };
     };
 
     private getLimit(queryLimit: number, maxRowLimit: number) {

@@ -1,5 +1,5 @@
 import _ from "lodash"
-import { SchemaSuggestionTemplate } from "../../helpers/suggestions"
+import { SchemaSuggestionTemplate } from "../../helpers/Suggestions"
 import { SuggestionsTemplate, Conflict, Suggestion } from "../../models/SchemaModels"
 
 export class SuggestionTemplate {

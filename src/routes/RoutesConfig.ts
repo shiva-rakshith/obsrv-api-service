@@ -1,7 +1,7 @@
 
 const routes = {
   "API_ID": "obsrv.api",
-  
+
   "QUERY": {
     "BASE_PATH": "/dataset",
     "API_VERSION": "/v2",
@@ -13,7 +13,7 @@ const routes = {
     "SQL_QUERY": {
       "URL": "/query/sqlquery",
       "METHOD": "POST",
-      "API_ID": "obsrv.sql.query"      
+      "API_ID": "obsrv.sql.query"
     }
   },
   "SCHEMA": {
@@ -69,6 +69,43 @@ const routes = {
     "URL": "/obsrv/health",
     "METHOD": "GET",
     "API_ID": "obsrv.health"
+  },
+  "DATASET": {
+    "BASE_PATH": "/data",
+    "API_VERSION": "/v2",
+    "CREATE": {
+      "URL": "/create",
+      "METHOD": "POST",
+      "API_ID": "obsrv.data.create"
+    }
+  },
+  "CONFIG_OPERATIONS": {
+    "BASE_PATH": "/config",
+    "API_VERSION": "/v2",
+    "DATASET": {
+      "SAVE": {
+        "URL": "/dataset/save",
+        "METHOD": ["POST", "PATCH"],
+        "API_ID": "obsrv.config.dataset.save"
+      },
+      "READ": {
+        "URL": "/dataset/read",
+        "METHOD": "GET",
+        "API_ID": "obsrv.config.dataset.read"
+      }
+    },
+    "DATASOURCE": {
+      "SAVE": {
+        "URL": "/datasource/save",
+        "METHOD": ["POST", "PATCH"],
+        "API_ID": "obsrv.config.datasource.save"
+      },
+      "READ": {
+        "URL": "/datasource/read",
+        "METHOD": "GET",
+        "API_ID": "obsrv.config.datasource.read"
+      }
+    }
   }
 }
 
