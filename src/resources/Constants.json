@@ -23,5 +23,16 @@
     "MEDIUM": "MEDIUM",
     "HIGH": "HIGH",
     "LOW": "LOW"
+  },
+  "DATASET": {
+    "CREATED": "The data has been successfully ingested",
+    "UPDATED": "The request has been successfully submitted for update",
+    "DELETED": "The request has been successfully submitted for deletion"
+  },
+  "CONFIG": {
+    "DATASET_SAVED":"The dataset configuration has been saved successfully",
+    "DATASET_UPDATED":"The dataset configuration has been updated successfully",
+    "DATASOURCE_SAVED": "The datasource configuration has been saved successfully",
+    "DATASOURCE_UPDATED": "The datasource configuration has been updated successfully"
   }
 }
