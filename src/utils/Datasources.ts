@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { IRelation } from '../models/SchemaModels'
+import { IRelation } from '../models/DatabaseOperationModels'
 
 export class Datasources implements IRelation {
     private dataset_id: string

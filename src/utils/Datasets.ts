@@ -1,7 +1,7 @@
 import _ from 'lodash'
-import { IRelation } from '../models/SchemaModels'
- 
-export class Datasets implements IRelation{
+import { IRelation } from '../models/DatabaseOperationModels'
+
+export class Datasets implements IRelation {
     private id: string
     private validation_config: object
     private extraction_config: object
