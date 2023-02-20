@@ -1,19 +1,17 @@
 import express, { Application } from "express";
-import { config } from "./configs/config";
-import { router } from "./routes/router";
+import { config } from "./configs/Config";
+import { ResponseHandler } from "./helpers/ResponseHandler";
+import { router } from "./routes/Router";
 const app: Application = express();
-import { ResponseHandler } from "./helpers/responseHandler";
-const responseHandler = new ResponseHandler();
-const globalErrorHandler = responseHandler.errorResponse;
 
 app.use(express.json());
 
 app.use("/", router);
-app.use("*", responseHandler.routeNotFound);
-app.use(globalErrorHandler);
+app.use("*", ResponseHandler.routeNotFound);
+app.use(ResponseHandler.errorResponse);
 
-app.listen(config.apiPort, () => {
-  console.log(`listening on port ${config.apiPort}`);
+app.listen(config.api_port, () => {
+  console.log(`listening on port ${config.api_port}`);
 });
 
 export default app;

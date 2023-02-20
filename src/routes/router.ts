@@ -1,19 +1,47 @@
 import express from "express";
-import DruidController from "../controllers/druidController";
-import routes from "../resources/routes.json";
-import { ValidationService } from "../services/validationService";
-import { ResponseHandler } from "../helpers/responseHandler";
-const druidController = new DruidController();
+import { config } from "../configs/Config";
+import { HTTPConnector } from "../connectors/HttpConnector";
+import { PostgresConnector } from "../connectors/PostgresConnector";
+import { ResponseHandler } from "../helpers/ResponseHandler";
+import { QueryService } from "../services/QueryService";
+import { SchemaGeneratorService } from "../services/SchemaGeneratorService";
+import { ValidationService } from "../services/ValidationService";
+import routes from "./RoutesConfig";
+
+const validationService = new ValidationService();
+
+const queryService = new QueryService(new HTTPConnector(`${config.query_api.druid.host}:${config.query_api.druid.port}`));
+
+const schemaGeneratorService = new SchemaGeneratorService(new PostgresConnector(config.postgres.pg_config));
+
 const router = express.Router();
-const responseHandler = new ResponseHandler();
-const validationService = new ValidationService("/src/configs/");
 
-router.get(routes.GET_STATUS.URL, responseHandler.setApiId(routes.GET_STATUS.API_ID), druidController.getStatus);
 
-router.get(routes.HEALTH_CHECK.URL, responseHandler.setApiId(routes.HEALTH_CHECK.API_ID), druidController.getHealthStatus);
+/**
+ * Query API(s)
+ */
 
-router.post(routes.NATIVE_QUERY.URL, responseHandler.setApiId(routes.NATIVE_QUERY.API_ID), validationService.validateRequestBody, validationService.validateConfiguration, validationService.validateNativeQuery, druidController.executeNativeQuery);
+router.post(`${routes.QUERY.BASE_PATH}${routes.QUERY.API_VERSION}${routes.QUERY.NATIVE_QUERY.URL}`, ResponseHandler.setApiId(routes.QUERY.NATIVE_QUERY.API_ID), validationService.validateRequestBody, validationService.validateQuery, queryService.executeNativeQuery);
+router.post(`${routes.QUERY.BASE_PATH}${routes.QUERY.API_VERSION}${routes.QUERY.SQL_QUERY.URL}`, ResponseHandler.setApiId(routes.QUERY.SQL_QUERY.API_ID), validationService.validateRequestBody, validationService.validateQuery, queryService.executeSqlQuery);
 
-router.post(routes.SQL_QUERY.URL, responseHandler.setApiId(routes.SQL_QUERY.API_ID), validationService.validateRequestBody, validationService.validateConfiguration, validationService.validateSqlQuery, druidController.executeSqlQuery);
+
+/**
+ * Schema Generator API(s)
+ */
+router.post(`${routes.SCHEMA.BASE_PATH}${routes.SCHEMA.API_VERSION}${routes.SCHEMA.INGESTION_SCHEMA.URL}`, ResponseHandler.setApiId(routes.SCHEMA.INGESTION_SCHEMA.API_ID), validationService.validateRequestBody, schemaGeneratorService.generateIngestionSchema);
+router.post(`${routes.SCHEMA.BASE_PATH}${routes.SCHEMA.API_VERSION}${routes.SCHEMA.DATASET_SCHEMA.URL}`, ResponseHandler.setApiId(routes.SCHEMA.DATASET_SCHEMA.API_ID), validationService.validateRequestBody, schemaGeneratorService.generateDataSetSchema);
+
+/**
+ * System Configuration labels API
+ */
+
+router.post(`${routes.SCHEMA.BASE_PATH}${routes.SCHEMA.API_VERSION}${routes.SYSTEM_SETTINGS.CONFIG_LABEL.URL}`, ResponseHandler.setApiId(routes.SYSTEM_SETTINGS.CONFIG_LABEL.API_ID),);
+
+
+
+/**
+ * Config API(s)
+ */
+
 
 export { router };
