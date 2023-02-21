@@ -32,7 +32,7 @@ export class DatasetService {
     }
     public save = (req: Request, res: Response, next: NextFunction) => {
         const dataset = new Datasets(req.body)
-        this.DBConnector.execute("INSERT", { "table": 'datasets', "values": dataset.setValues() })
+        this.DBConnector.execute("insert", { "table": 'datasets', "fields": dataset.setValues() })
             .then(() => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_SAVED, "dataset_id": req.body.id } })
             }).catch((error: any) => {
@@ -41,7 +41,7 @@ export class DatasetService {
     }
     public update = (req: Request, res: Response, next: NextFunction) => {
         const dataset = new Datasets(req.body)
-        this.DBConnector.execute("UPDATE", { "table": 'datasets', "filters": { "id": req.body.id }, "values": dataset.setValues() })
+        this.DBConnector.execute("update", { "table": 'datasets', "fields": { "filters": { "id": req.body.id }, "values": dataset.setValues() } })
             .then(() => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_UPDATED, "dataset_id": req.body.id } })
             }).catch((error: any) => {
@@ -49,7 +49,7 @@ export class DatasetService {
             });
     }
     public read = (req: Request, res: Response, next: NextFunction) => {
-        this.DBConnector.execute("READ", { "table": 'datasets', "filters": req.query })
+        this.DBConnector.execute("read", { "table": 'datasets', "fields": req.query })
             .then((data: any) => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: data })
             }).catch((error: any) => {
