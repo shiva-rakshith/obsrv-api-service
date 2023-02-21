@@ -63,7 +63,7 @@ export class SchemaAnalyser {
             const suggestedFormat = this.suggestFormat(formatName[0])
             return {
                 type: formatName[0],
-                property: Object.keys(occurance.property)[0],
+                property: (Object.keys(occurance.path)[0]).replace("$.", ""),
                 conflicts: filteredFormat,
                 resolution: { "value": formatName, "type": suggestedFormat.type },
                 values: _.keys(filteredFormat),

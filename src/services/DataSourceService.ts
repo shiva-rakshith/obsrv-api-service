@@ -31,9 +31,9 @@ export class DataSourceService {
             });
     }
     public read = (req: Request, res: Response, next: NextFunction) => {
-        this.connector.execute("read", { "table": 'datasources', "fields": req.query })
+        this.connector.execute("read", { "table": 'datasources', "fields": { "filters": req.query } })
             .then((data: any) => {
-                ResponseHandler.successResponse(req, res, { status: 200, data: data })
+                ResponseHandler.successResponse(req, res, { status: 200, data: data[0] })
             }).catch((error: any) => {
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });

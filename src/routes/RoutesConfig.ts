@@ -92,6 +92,11 @@ const routes = {
         "URL": "/dataset/read",
         "METHOD": "GET",
         "API_ID": "obsrv.config.dataset.read"
+      },
+      "LIST": {
+        "URL": "/dataset/list",
+        "METHOD": "POST",
+        "API_ID": "obsrv.config.dataset.list"
       }
     },
     "DATASOURCE": {
