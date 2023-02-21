@@ -29,17 +29,6 @@ export class DbConnector implements IConnector {
     execute(type: keyof typeof this.typeToMethod, property: any) {
         this.method = this.typeToMethod[type]
         return this.method(property["table"], property["fields"])
-
-        // switch (type) {
-        //     case 'insert':
-        //         return this.insertRecord(property["table"], property["fields"])
-        //     case "update":
-        //         return this.updateRecord(property["table"], property["fields"])
-        //     case 'READ':
-        //         return this.readRecord(property["table"], property["fields"])
-        //     default:
-        //         throw new Error("invalid Query type")
-        // }
     }
 
     private async insertRecord(table: string, fields: any) {
