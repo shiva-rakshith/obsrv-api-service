@@ -37,7 +37,7 @@ router.post(`${routesConfig.query.sql_query.path}`, ResponseHandler.setApiId(rou
 /***
  * Dataset APIs
  */
-router.post(`${routesConfig.data_ingest.path}`, ResponseHandler.setApiId(routesConfig.data_ingest.api_id), datasetService.create);
+router.post(`${routesConfig.data_ingest.path}`, ResponseHandler.setApiId(routesConfig.data_ingest.api_id), validationService.validateRequestBody, datasetService.create);
 
 
 /**
