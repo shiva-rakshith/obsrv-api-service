@@ -1,9 +1,9 @@
-import routes from "../routes/RoutesConfig"
+import { routesConfig } from "../configs/RoutesConfig"
 const config = {
   apiStatusEndPoint: "/obsrv/status",
   apiHealthEndPoint: "/obsrv/health",
-  apiDruidEndPoint: `${routes.QUERY.BASE_PATH}${routes.QUERY.API_VERSION}${routes.QUERY.NATIVE_QUERY.URL}`,
-  apiDruidSqlEndPoint: `${routes.QUERY.BASE_PATH}${routes.QUERY.API_VERSION}${routes.QUERY.SQL_QUERY.URL}`,
+  apiDruidEndPoint: `${routesConfig.query.native_query.path}`,
+  apiDruidSqlEndPoint: `${routesConfig.query.sql_query.path}`,
 
   druidHost: "http://localhost",
   druidPort: 8888,

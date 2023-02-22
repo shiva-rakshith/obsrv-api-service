@@ -49,7 +49,15 @@ export class DatasetService {
             });
     }
     public read = (req: Request, res: Response, next: NextFunction) => {
-        this.DBConnector.execute("read", { "table": 'datasets', "fields": req.query })
+        this.DBConnector.execute("read", { "table": 'datasets', "fields": { "filters": req.query } })
+            .then((data: any) => {
+                ResponseHandler.successResponse(req, res, { status: 200, data: data[0] })
+            }).catch((error: any) => {
+                next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
+            });
+    }
+    public list = (req: Request, res: Response, next: NextFunction) => {
+        this.DBConnector.execute("read", { "table": 'datasets', "fields": req.body })
             .then((data: any) => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: data })
             }).catch((error: any) => {

@@ -3,14 +3,12 @@ import fs from "fs";
 import httpStatus from "http-status";
 import { IValidator } from "../models/DatasetModels";
 import { ValidationStatus } from "../models/ValidationModels";
-import routes from "../routes/RoutesConfig";
+import { routesConfig } from "../configs/RoutesConfig";
 export class RequestsValidator implements IValidator {
     private schemaBasePath: string = "/src/configs/";
     private reqSchemaMap = new Map<string, string>([
-        [routes.SCHEMA.INGESTION_SCHEMA.API_ID, "IngestionSchemaReq.json"],
-        [routes.SCHEMA.DATASET_SCHEMA.API_ID, "DataSetSchemaReq.json"],
-        [routes.QUERY.NATIVE_QUERY.API_ID, "QueryRequest.json"],
-        [routes.QUERY.SQL_QUERY.API_ID, "QueryRequest.json"]
+        [routesConfig.query.native_query.api_id, "QueryRequest.json"],
+        [routesConfig.query.sql_query.api_id, "QueryRequest.json"]
     ]);
     private validator: Ajv;
 

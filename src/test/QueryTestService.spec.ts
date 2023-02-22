@@ -6,7 +6,7 @@ import httpStatus from "http-status";
 import { TestDruidQuery } from "./Fixtures";
 import { config } from "./Config";
 import constants from "../resources/Constants.json";
-import routes from "../routes/RoutesConfig";
+import { routesConfig } from "../configs/RoutesConfig";
 chai.should();
 chai.use(chaiHttp);
 
@@ -53,7 +53,7 @@ describe("QUERY API", () => {
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.should.have.property("result");
           res.body.result.length.should.be.lessThan(101);
-          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routesConfig.query.native_query.api_id);
           done();
         });
     });
@@ -63,12 +63,12 @@ describe("QUERY API", () => {
         .post(config.apiDruidEndPoint)
         .send(JSON.parse(TestDruidQuery.HIGH_DATE_RANGE_GIVEN_AS_LIST))
         .end((err, res) => {
-           res.should.have.status(httpStatus.BAD_REQUEST);
+          res.should.have.status(httpStatus.BAD_REQUEST);
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routesConfig.query.native_query.api_id);
           done();
         });
     });
@@ -83,7 +83,7 @@ describe("QUERY API", () => {
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routesConfig.query.native_query.api_id);
           done();
         });
     });
@@ -97,7 +97,7 @@ describe("QUERY API", () => {
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.result.length.should.be.lessThan(101); // default is 100
-          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routesConfig.query.native_query.api_id);
           done();
         });
     });
@@ -111,7 +111,7 @@ describe("QUERY API", () => {
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.result.length.should.be.lessThan(101); // default is 100
-          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routesConfig.query.native_query.api_id);
           done();
         });
     });
@@ -125,7 +125,7 @@ describe("QUERY API", () => {
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.result.length.should.be.lessThan(101); // default is 100
-          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routesConfig.query.native_query.api_id);
           done();
         });
     });
@@ -140,7 +140,7 @@ describe("QUERY API", () => {
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routesConfig.query.native_query.api_id);
           done();
         });
     });
@@ -156,7 +156,7 @@ describe("QUERY API", () => {
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routesConfig.query.native_query.api_id);
           done();
         });
     });
@@ -171,7 +171,7 @@ describe("QUERY API", () => {
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routesConfig.query.native_query.api_id);
           done();
         });
     });
@@ -186,7 +186,7 @@ describe("QUERY API", () => {
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq(routes.QUERY.NATIVE_QUERY.API_ID);
+          res.body.id.should.be.eq(routesConfig.query.native_query.api_id);
           done();
         });
     });
@@ -197,7 +197,7 @@ describe("QUERY API", () => {
         .end((err, res) => {
           res.should.have.status(httpStatus.NOT_FOUND);
           res.body.should.be.a("object");
-          res.body.id.should.be.eq(routes.API_ID);
+          res.body.id.should.be.eq(routesConfig.default.api_id);
           res.body.responseCode.should.be.eq(httpStatus["404_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
@@ -221,7 +221,7 @@ describe("QUERY API", () => {
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.result.length.should.be.lessThan(101);
-          res.body.id.should.be.eq(routes.QUERY.SQL_QUERY.API_ID);
+          res.body.id.should.be.eq(routesConfig.query.sql_query.api_id);
           done();
         });
     });
@@ -235,7 +235,7 @@ describe("QUERY API", () => {
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.result.length.should.be.lessThan(101); // default is 100
-          res.body.id.should.be.eq(routes.QUERY.SQL_QUERY.API_ID);
+          res.body.id.should.be.eq(routesConfig.query.sql_query.api_id);
           done();
         });
     });
@@ -249,7 +249,7 @@ describe("QUERY API", () => {
           res.body.should.be.a("object");
           res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
           res.body.result.length.should.be.lessThan(101); // default is 100
-          res.body.id.should.be.eq(routes.QUERY.SQL_QUERY.API_ID);
+          res.body.id.should.be.eq(routesConfig.query.sql_query.api_id);
           done();
         });
     });
@@ -264,7 +264,7 @@ describe("QUERY API", () => {
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq(routes.QUERY.SQL_QUERY.API_ID);
+          res.body.id.should.be.eq(routesConfig.query.sql_query.api_id);
           done();
         });
     });
@@ -279,7 +279,7 @@ describe("QUERY API", () => {
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq(routes.QUERY.SQL_QUERY.API_ID);
+          res.body.id.should.be.eq(routesConfig.query.sql_query.api_id);
           done();
         });
     });
@@ -294,7 +294,7 @@ describe("QUERY API", () => {
           res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
           res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
           res.body.result.should.be.empty;
-          res.body.id.should.be.eq(routes.QUERY.SQL_QUERY.API_ID);
+          res.body.id.should.be.eq(routesConfig.query.sql_query.api_id);
           done();
         });
     });

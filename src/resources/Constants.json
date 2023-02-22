@@ -9,25 +9,8 @@
     "SUCCESS": "SUCCESS",
     "FAILURE": "FAILED"
   },
-  "SCHEMA_RESOLUTION_TYPE": {
-    "OPTIONAL_TYPE": "OPTIONAL_TYPE",
-    "FORMAT_TYPE": "FORMAT_TYPE",
-    "DATA_TYPE": "DATA_TYPE",
-    "INDEX": "INDEX",
-    "TRANSFORM": "TRANSFORM",
-    "DROP": "DROP",
-    "DEDUP": "DEDUP"
-  },
-  "SEVERITY": {
-    "CRITICAL": "CRITICAL",
-    "MEDIUM": "MEDIUM",
-    "HIGH": "HIGH",
-    "LOW": "LOW"
-  },
   "DATASET": {
-    "CREATED": "The data has been successfully ingested",
-    "UPDATED": "The request has been successfully submitted for update",
-    "DELETED": "The request has been successfully submitted for deletion"
+    "CREATED": "The data has been successfully ingested"
   },
   "CONFIG": {
     "DATASET_SAVED":"The dataset configuration has been saved successfully",

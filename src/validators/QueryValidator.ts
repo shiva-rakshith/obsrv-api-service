@@ -6,7 +6,7 @@ import { IValidator } from "../models/DatasetModels";
 import { ICommonRules, ILimits, IQuery, IQueryTypeRules, IRules } from "../models/QueryModels";
 import { ValidationStatus } from "../models/ValidationModels";
 import constants from "../resources/Constants.json";
-import routes from "../routes/RoutesConfig";
+import { routesConfig } from "../configs/RoutesConfig";
 export class QueryValidator implements IValidator {
     private limits: ILimits;
     constructor() {
@@ -14,9 +14,9 @@ export class QueryValidator implements IValidator {
     }
     validate(data: any, id: string): ValidationStatus {
         switch (id) {
-            case routes.QUERY.NATIVE_QUERY.API_ID:
+            case routesConfig.query.native_query.api_id:
                 return this.validateNativeQuery(data)
-            case routes.QUERY.SQL_QUERY.API_ID:
+            case routesConfig.query.sql_query.api_id:
                 return this.validateSqlQuery(data)
             default:
                 return <ValidationStatus>{ isValid: false }

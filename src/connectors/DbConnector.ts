@@ -8,7 +8,7 @@ export class DbConnector implements IConnector {
     private typeToMethod = {
         insert: this.insertRecord,
         update: this.updateRecord,
-        read: this.readRecord
+        read: this.readRecord 
     }
     public method: any
     constructor(config: DbConnectorConfig) {
@@ -40,6 +40,8 @@ export class DbConnector implements IConnector {
     }
 
     private async readRecord(table: string, fields: any) {
-        return await this.pool.from(table).select().where(fields)
+        return await this.pool.from(table).select().where(fields.filters).offset(fields.offset).limit(fields.limit || 1)
     }
+    
+
 }
