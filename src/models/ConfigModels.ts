@@ -1,5 +1,5 @@
 import { IngestionConfig } from "./IngestionModels";
-import { IDataSourceRules, ILimits } from "./QueryModels";
+import { IDataSourceRules } from "./QueryModels";
 
 export interface ProcessingConfig {
   checkpointingInterval: number,

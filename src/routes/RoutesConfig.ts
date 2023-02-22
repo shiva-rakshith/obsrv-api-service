@@ -16,22 +16,6 @@ const routes = {
       "API_ID": "obsrv.sql.query"
     }
   },
-  "SCHEMA": {
-    "BASE_PATH": "/dataset",
-    "API_VERSION": "/v2",
-
-    "INGESTION_SCHEMA": {
-      "URL": "/schema/ingestion/generate",
-      "METHOD": "POST",
-      "API_ID": "obsrv.config.ingestion.generate"
-    },
-
-    "DATASET_SCHEMA": {
-      "URL": "/schema/generate",
-      "METHOD": "POST",
-      "API_ID": "obsrv.config.schema.generate"
-    },
-  },
 
   "SYSTEM_SETTINGS": {
     "BASE_PATH": "/system",
@@ -42,7 +26,6 @@ const routes = {
       "API_ID": "obsrv.system.settings"
     },
   },
-
 
   "MANAGEMENT": {
     "BASE_PATH": "/manage",

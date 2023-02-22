@@ -7,8 +7,6 @@ import routes from "../routes/RoutesConfig";
 export class RequestsValidator implements IValidator {
     private schemaBasePath: string = "/src/configs/";
     private reqSchemaMap = new Map<string, string>([
-        [routes.SCHEMA.INGESTION_SCHEMA.API_ID, "IngestionSchemaReq.json"],
-        [routes.SCHEMA.DATASET_SCHEMA.API_ID, "DataSetSchemaReq.json"],
         [routes.QUERY.NATIVE_QUERY.API_ID, "QueryRequest.json"],
         [routes.QUERY.SQL_QUERY.API_ID, "QueryRequest.json"]
     ]);

@@ -44,14 +44,9 @@ class TestDatasetSchema {
 
 }
 
-class TestDatasetSchemaGeneration {
-  public static SIMPLE_JSON_INPUT = { "data": [{ "eid": "SEARCH", "ver": "3.0", "syncts": 1595184155380, "ets": 1595184155380, "number": 124, "flags": { "pp_validation_processed": true, "pp_duplicate": false, "device_denorm": false, "dialcode_denorm": true, "content_denorm": false } }], "config": { "dataSet": "obsrv-telemetry-events" } };
-  public static NESTED_JSON_INPUT = { "data": [{ "eid": "SEARCH", "ver": "3.0", "syncts": 1595184155380, "ets": 1595184155380, "number": 124, "flags": { "pp_validation_processed": true, "pp_duplicate": false, "device_denorm": false, "dialcode_denorm": true, "content_denorm": false }, "tags": ["kp-events"], "edata": { "topn": [{ "identifier": "do_312528046917705728246886" }], "limits": "resource", "size": 7, "type": "content", "filters": { "contentType": ["TextBookUnit", "Resource", "TextBook", "Collection", "Course"], "dialcodes": "KLQ2G7", "compatibilityLevel": { "max": 4, "min": 1 }, "channel": { "ne": ["0124433024890224640", "0124446042259128320"] } } } }], "config": { "dataSet": "obsrv-telemetry-events" } }
-}
-
 class TestIngestionSchema {
   public static SIMPLE_JSON_INPUT = { "data": { "type": "object", "properties": { "eid": { "type": "string" }, "ver": { "type": "string" }, "syncts": { "type": "integer" }, "ets": { "type": "integer" }, "number": { "type": "integer" }, "channel": { "type": "object", "properties": { "ne": { "type": "array", "items": { "type": "string" } } }, "required": ["ne"] } }, "required": ["eid", "ver", "syncts", "ets", "number", "channel"] }, "config": { "dataSet": "obsrv-telemetry-events", "indexCol": "ets", "granularitySpec": { "segmentGranularity": "DAY", "queryGranularity": "HOUR", "rollup": false }, "tuningConfig": { "maxRowPerSegment": 50000, "taskCount": 1 }, "ioConfig": { "topic": "obsrv.telemetry.input", "bootstrapIp": "localhost:9092", "taskDuration": "PT8H" } } };
   public static NESTED_JSON_INPUT = { "data": { "type": "object", "properties": { "eid": { "type": "string" }, "ver": { "type": "string" }, "syncts": { "type": "integer" }, "ets": { "type": "integer" }, "number": { "type": "integer" }, "channel": { "type": "object", "properties": { "ne": { "type": "array", "items": { "type": "object", "properties": { "type": "string" } } } }, "required": ["ne"] }, "sort": { "type": "object" } }, "required": ["eid", "ver", "syncts", "ets", "number", "channel"] }, "config": { "dataSet": "obsrv-telemetry-events", "indexCol": "ets", "granularitySpec": { "segmentGranularity": "DAY", "queryGranularity": "HOUR", "rollup": false }, "tuningConfig": { "taskCount": 1 }, "ioConfig": { "topic": "obsrv.telemetry.input", "bootstrapIp": "localhost:9092", "taskDuration": "PT8H" } } };
 }
 
-export { TestDruidQuery, TestDataset, TestDatasetSchema, TestDatasetSchemaGeneration, TestIngestionSchema };
+export { TestDruidQuery, TestDataset, TestDatasetSchema, TestIngestionSchema };
