@@ -26,10 +26,10 @@ export const config = {
         "brokers": [`${process.env.kafka_host || 'localhost'}:${process.env.kafka_port || 9092}`],
         "clientId": "obsrv-apis",
         "retry": {
-          "initialRetryTime": 1000,
-          "retries": 3
+          "initialRetryTime": 3000,
+          "retries": 5
         },
-        "connectionTimeout": 3000
+        "connectionTimeout": 5000
       },
       "topics": {
         "create": process.env.kafka_topic_create || "telemetry.ingest",
