@@ -17,7 +17,6 @@ export class DataSourceService {
             .then(() => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASOURCE_SAVED, "id": datasource.getDataSourceId() } })
             }).catch((error: any) => {
-                console.log(error)
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
     }
