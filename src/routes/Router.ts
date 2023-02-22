@@ -1,7 +1,6 @@
 import express from "express";
 import { config } from "../configs/Config";
 import { HTTPConnector } from "../connectors/HttpConnector";
-import { PostgresConnector } from "../connectors/PostgresConnector";
 import { ResponseHandler } from "../helpers/ResponseHandler";
 import { QueryService } from "../services/QueryService";
 import { ValidationService } from "../services/ValidationService";
@@ -16,8 +15,6 @@ const validationService = new ValidationService();
 const queryService = new QueryService(new HTTPConnector(`${config.query_api.druid.host}:${config.query_api.druid.port}`));
 
 export const kafkaConnector = new KafkaConnector(config.dataset_api.kafka.config)
-
-export const postgresConnector = new PostgresConnector(config.postgres.pg_config)
 
 export const dbConnector = new DbConnector(config.db_connector_config)
 

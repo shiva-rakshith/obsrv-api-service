@@ -8,7 +8,7 @@
     "test": "nyc mocha ./src/test/*.spec.ts --exit",
     "build": "tsc -P ."
   },
-  "author": "",
+  "author": "GayathriSrividya",
   "license": "ISC",
   "dependencies": {
     "@types/moment": "^2.13.0",
