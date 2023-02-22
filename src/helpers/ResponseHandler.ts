@@ -2,7 +2,7 @@ import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import { IResponse, Result } from "../models/DatasetModels";
 import constants from "../resources/Constants.json";
-import routes from "../routes/RoutesConfig";
+import { routesConfig } from "../configs/RoutesConfig";
 
 type extendedErrorRequestHandler = ErrorRequestHandler & {
   statusCode: number;
@@ -20,7 +20,7 @@ const ResponseHandler = {
     next({ statusCode: httpStatus.NOT_FOUND, message: constants.ERROR_MESSAGE.ROUTE_NOT_FOUND, errCode: httpStatus['404_NAME'] });
   },
 
-  refactorResponse: ({ id = routes.API_ID, ver = "v2", params = { status: httpStatus[200], errmsg: "" }, responseCode = httpStatus[200], result = {} }): IResponse => {
+  refactorResponse: ({ id = routesConfig.default.api_id, ver = "v2", params = { status: httpStatus[200], errmsg: "" }, responseCode = httpStatus[200], result = {} }): IResponse => {
     return <IResponse>{ id, ver, ts: Date.now(), params, responseCode, result }
   },
 

@@ -8,7 +8,7 @@ import { DatasetService } from "../services/DatasetService";
 import { KafkaConnector } from "../connectors/KafkaConnector";
 import { DataSourceService } from "../services/DataSourceService";
 import { DbConnector } from "../connectors/DbConnector";
-import routes from "./RoutesConfig";
+import { routesConfig } from "../configs/RoutesConfig";
 
 const validationService = new ValidationService();
 
@@ -29,27 +29,27 @@ const router = express.Router();
  * Query API(s)
  */
 
-router.post(`${routes.QUERY.BASE_PATH}${routes.QUERY.API_VERSION}${routes.QUERY.NATIVE_QUERY.URL}`, ResponseHandler.setApiId(routes.QUERY.NATIVE_QUERY.API_ID), validationService.validateRequestBody, validationService.validateQuery, queryService.executeNativeQuery);
-router.post(`${routes.QUERY.BASE_PATH}${routes.QUERY.API_VERSION}${routes.QUERY.SQL_QUERY.URL}`, ResponseHandler.setApiId(routes.QUERY.SQL_QUERY.API_ID), validationService.validateRequestBody, validationService.validateQuery, queryService.executeSqlQuery);
+router.post(`${routesConfig.query.native_query.path}`, ResponseHandler.setApiId(routesConfig.query.native_query.api_id), validationService.validateRequestBody, validationService.validateQuery, queryService.executeNativeQuery);
+router.post(`${routesConfig.query.sql_query.path}`, ResponseHandler.setApiId(routesConfig.query.sql_query.api_id), validationService.validateRequestBody, validationService.validateQuery, queryService.executeSqlQuery);
 
 
 
 /***
  * Dataset APIs
  */
-router.post(`${routes.DATASET.BASE_PATH}${routes.DATASET.API_VERSION}${routes.DATASET.CREATE.URL}`, ResponseHandler.setApiId(routes.DATASET.CREATE.API_ID), datasetService.create);
+router.post(`${routesConfig.data_ingest.path}`, ResponseHandler.setApiId(routesConfig.data_ingest.api_id), datasetService.create);
 
 
 /**
  * Config API(s)
  */
-router.post(`${routes.CONFIG_OPERATIONS.BASE_PATH}${routes.CONFIG_OPERATIONS.API_VERSION}${routes.CONFIG_OPERATIONS.DATASET.SAVE.URL}`, ResponseHandler.setApiId(routes.CONFIG_OPERATIONS.DATASET.SAVE.API_ID), datasetService.save);
-router.patch(`${routes.CONFIG_OPERATIONS.BASE_PATH}${routes.CONFIG_OPERATIONS.API_VERSION}${routes.CONFIG_OPERATIONS.DATASET.SAVE.URL}`, ResponseHandler.setApiId(routes.CONFIG_OPERATIONS.DATASET.SAVE.API_ID), datasetService.update);
-router.get(`${routes.CONFIG_OPERATIONS.BASE_PATH}${routes.CONFIG_OPERATIONS.API_VERSION}${routes.CONFIG_OPERATIONS.DATASET.READ.URL}`, ResponseHandler.setApiId(routes.CONFIG_OPERATIONS.DATASET.READ.API_ID), datasetService.read);
-router.post(`${routes.CONFIG_OPERATIONS.BASE_PATH}${routes.CONFIG_OPERATIONS.API_VERSION}${routes.CONFIG_OPERATIONS.DATASET.LIST.URL}`, ResponseHandler.setApiId(routes.CONFIG_OPERATIONS.DATASET.LIST.API_ID), datasetService.list);
-router.post(`${routes.CONFIG_OPERATIONS.BASE_PATH}${routes.CONFIG_OPERATIONS.API_VERSION}${routes.CONFIG_OPERATIONS.DATASOURCE.SAVE.URL}`, ResponseHandler.setApiId(routes.CONFIG_OPERATIONS.DATASOURCE.SAVE.API_ID), dataSourceService.save);
-router.patch(`${routes.CONFIG_OPERATIONS.BASE_PATH}${routes.CONFIG_OPERATIONS.API_VERSION}${routes.CONFIG_OPERATIONS.DATASOURCE.SAVE.URL}`, ResponseHandler.setApiId(routes.CONFIG_OPERATIONS.DATASOURCE.SAVE.API_ID), dataSourceService.update);
-router.get(`${routes.CONFIG_OPERATIONS.BASE_PATH}${routes.CONFIG_OPERATIONS.API_VERSION}${routes.CONFIG_OPERATIONS.DATASOURCE.READ.URL}`, ResponseHandler.setApiId(routes.CONFIG_OPERATIONS.DATASOURCE.READ.API_ID), dataSourceService.read);
+router.post(`${routesConfig.config.dataset.save.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.save.api_id), datasetService.save);
+router.patch(`${routesConfig.config.dataset.update.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.update.api_id), datasetService.update);
+router.get(`${routesConfig.config.dataset.read.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.read.api_id), datasetService.read);
+router.post(`${routesConfig.config.dataset.list.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.list.api_id), datasetService.list);
+router.post(`${routesConfig.config.datasource.save.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.save.api_id), dataSourceService.save);
+router.patch(`${routesConfig.config.datasource.update.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.update.api_id), dataSourceService.update);
+router.get(`${routesConfig.config.datasource.read.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.read.api_id), dataSourceService.read);
 
 
 
