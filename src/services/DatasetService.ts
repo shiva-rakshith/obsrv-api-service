@@ -4,6 +4,7 @@ import { config } from "../configs/Config";
 import constants from "../resources/Constants.json"
 import errorResponse from "http-errors";
 import httpStatus from "http-status";
+import _ from 'lodash'
 import { Datasets } from "../helpers/Datasets";
 import { IConnector } from "../models/IngestionModels";
 const responseHandler = ResponseHandler;
@@ -23,6 +24,7 @@ export class DatasetService {
             .catch((err: Error) => console.error(`Kafka Connection failed ${err.message}`))
     }
     public create = (req: Request, res: Response, next: NextFunction) => {
+        req.body.data = Object.assign(req.body.data, { "dataset": this.getDatasetId(req.url) })
         this.KafkaConnector.execute(config.dataset_api.kafka.topics.create, { "value": JSON.stringify(req.body.data) })
             .then(() => {
                 responseHandler.successResponse(req, res, { status: 200, data: { "message": constants.DATASET.CREATED } })
@@ -63,5 +65,10 @@ export class DatasetService {
             }).catch((error: any) => {
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
+    }
+    private getDatasetId(payload: any) {
+        let dataset_id = payload.substring(payload.lastIndexOf('/') + 1)
+        if (!_.isEmpty(dataset_id)) return dataset_id
+        throw new Error("dataset parameter in url cannot be empty")
     }
 }

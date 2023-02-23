@@ -8,7 +8,7 @@ export class DbConnector implements IConnector {
     private typeToMethod = {
         insert: this.insertRecord,
         update: this.updateRecord,
-        read: this.readRecord 
+        read: this.readRecord
     }
     public method: any
     constructor(config: DbConnectorConfig) {
@@ -36,12 +36,13 @@ export class DbConnector implements IConnector {
     }
 
     private async updateRecord(table: string, fields: any) {
-        await this.pool(table).where(fields.filters).update(fields.values)
+        let rowsUpdated = await this.pool(table).where(fields.filters).update(fields.values)
+        if (rowsUpdated == 0) { throw new Error("Failed to update Record") }
     }
 
     private async readRecord(table: string, fields: any) {
         return await this.pool.from(table).select().where(fields.filters).offset(fields.offset).limit(fields.limit || 1)
     }
-    
+
 
 }

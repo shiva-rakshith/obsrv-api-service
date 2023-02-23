@@ -1,0 +1,127 @@
+{
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "string"
+        },
+        "extraction_config": {
+            "type": "object",
+            "properties": {
+                "is_batch_event": {
+                    "type": "boolean"
+                },
+                "extraction_key": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "is_batch_event",
+                "extraction_key"
+            ]
+        },
+        "validation_config": {
+            "type": "object",
+            "properties": {
+                "validate": {
+                    "type": "boolean"
+                },
+                "mode": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "validate",
+                "mode"
+            ]
+        },
+        "dedup_config": {
+            "type": "object",
+            "properties": {
+                "drop_duplicates": {
+                    "type": "boolean"
+                },
+                "dedup_key": {
+                    "type": "string"
+                },
+                "dedup_period": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "drop_duplicates",
+                "dedup_key",
+                "dedup_period"
+            ]
+        },
+        "data_schema": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
+            ]
+        },
+        "denorm_config": {
+            "type": "object",
+            "properties": {
+                "redis_db_host": {
+                    "type": "string"
+                },
+                "redis_db_port": {
+                    "type": "string"
+                },
+                "denorm_fields": {
+                    "type": "object",
+                    "properties": {
+                        "denorm_key": {
+                            "type": "string"
+                        },
+                        "redis_db": {
+                            "type": "integer"
+                        },
+                        "denorm_out_field": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "denorm_key",
+                        "redis_db",
+                        "denorm_out_field"
+                    ]
+                }
+            },
+            "required": [
+                "redis_db_host",
+                "redis_db_port",
+                "denorm_fields"
+            ]
+        },
+        "router_config": {
+            "type": "object",
+            "properties": {
+                "topic": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "topic"
+            ]
+        },
+        "status": {
+            "type": "string"
+        },
+        "created_by": {
+            "type": "string"
+        },
+        "updated_by": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "id"
+    ],
+    "additionalProperties": false
+}
