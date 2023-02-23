@@ -24,7 +24,8 @@ export class DatasetService {
             .catch((err: Error) => console.error(`Kafka Connection failed ${err.message}`))
     }
     public create = (req: Request, res: Response, next: NextFunction) => {
-        this.KafkaConnector.execute(config.dataset_api.kafka.topics.create, { "value": JSON.stringify({ "data": req.body.data, "dataset": this.getDatasetId(req.url) }) })
+        req.body.data = Object.assign(req.body.data, { "dataset": this.getDatasetId(req.url) })
+        this.KafkaConnector.execute(config.dataset_api.kafka.topics.create, { "value": JSON.stringify(req.body.data) })
             .then(() => {
                 responseHandler.successResponse(req, res, { status: 200, data: { "message": constants.DATASET.CREATED } })
             }).catch((error: any) => {
