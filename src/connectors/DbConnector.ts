@@ -1,7 +1,6 @@
 import knex, { Knex } from "knex";
 import { IConnector } from "../models/DatasetModels";
 import { DbConnectorConfig } from "../models/ConnectionModels";
-import _ from "lodash";
 
 export class DbConnector implements IConnector {
     public pool: Knex
