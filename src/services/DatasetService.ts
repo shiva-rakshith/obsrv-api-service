@@ -66,6 +66,15 @@ export class DatasetService {
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
     }
+    public preset = (req: Request, res: Response, next: NextFunction) => {
+        try {
+            let dataset = new Datasets({})
+            let configDefault = dataset.getDefaults()
+            ResponseHandler.successResponse(req, res, { status: 200, data: configDefault })
+        } catch (error: any) {
+            next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
+        }
+    }
     private getDatasetId(payload: any) {
         let dataset_id = payload.substring(payload.lastIndexOf('/') + 1)
         if (!_.isEmpty(dataset_id)) return dataset_id

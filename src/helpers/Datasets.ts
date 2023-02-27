@@ -1,6 +1,9 @@
 import _ from 'lodash'
 import { ValidationConfig, ExtractionConfig, DedupConfig, DenormConfig, RouterConfig } from '../models/ConfigModels'
-export class Datasets  {
+import configDefault from '../resources/schemas/DatasetConfigDefault.json'
+import { SchemaMerger } from '../generators/SchemaMerger'
+let schemaMerger = new SchemaMerger()
+export class Datasets {
     private id: string
     private validation_config: ValidationConfig
     private extraction_config: ExtractionConfig
@@ -30,7 +33,7 @@ export class Datasets  {
     }
 
     public setValues() {
-        return Object.assign(this.removeNullValues(this.getValues()), { "updated_date": new Date })
+        return schemaMerger.mergeSchema(this.getDefaults(), Object.assign(this.removeNullValues(this.getValues()), { "updated_date": new Date }))
     }
 
     public removeNullValues(payload: any) {
@@ -38,5 +41,9 @@ export class Datasets  {
             if (_.isEmpty(payload[value])) delete payload[value]
         })
         return payload
+    }
+    
+    public getDefaults() {
+        return configDefault
     }
 }

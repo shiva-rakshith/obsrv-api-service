@@ -1,5 +1,8 @@
 import _ from 'lodash'
- 
+import configDefault from '../resources/schemas/DatasourceConfigDefault.json'
+import { SchemaMerger } from '../generators/SchemaMerger'
+let schemaMerger = new SchemaMerger
+
 export class Datasources {
     private dataset_id: string
     private ingestion_spec: object
@@ -29,7 +32,7 @@ export class Datasources {
     }
 
     public setValues() {
-        return Object.assign(this.removeNullValues(this.getValues()), { "updated_date": new Date })
+        return schemaMerger.mergeSchema(this.getDefaults(), Object.assign(this.removeNullValues(this.getValues()), { "updated_date": new Date }))
     }
 
     public removeNullValues(payload: any) {
@@ -37,6 +40,9 @@ export class Datasources {
             if (_.isEmpty(payload[value])) delete payload[value]
         })
         return payload
+    }
+    public getDefaults() {
+        return configDefault
     }
 
     public getDataSourceId() {
