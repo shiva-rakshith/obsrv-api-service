@@ -40,13 +40,12 @@ export class DbConnector implements IConnector {
         if (rowsUpdated == 0) { throw new Error("Failed to update Record") }
     }
 
-    private async readRecord(table: string, fields: any) {
+    private readRecord(table: string, fields: any) {
         const query = this.pool.from(table).select().where(fields.filters)
         const { offset, limit } = fields
         if (offset && limit) {
             return query.offset(offset).limit(limit)
         }
-
         return query
     }
 
