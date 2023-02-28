@@ -1,7 +1,9 @@
 import knex, { Knex } from "knex";
 import { IConnector } from "../models/DatasetModels";
 import { DbConnectorConfig } from "../models/ConnectionModels";
-
+import { SchemaMerger } from "../generators/SchemaMerger";
+import _ from 'lodash'
+const schemaMerger = new SchemaMerger()
 export class DbConnector implements IConnector {
     public pool: Knex
     private config: DbConnectorConfig
@@ -36,12 +38,15 @@ export class DbConnector implements IConnector {
     }
 
     private async updateRecord(table: string, fields: any) {
-        let rowsUpdated = await this.pool(table).where(fields.filters).update(fields.values)
-        if (rowsUpdated == 0) { throw new Error("Failed to update Record") }
+        const { filters, values } = fields
+        const currentRecord = await this.pool(table).select(Object.keys(values)).where(filters).first()
+        if (_.isUndefined(currentRecord)) { throw new Error("Failed to update Record") }
+        const updatedRecordValues = schemaMerger.mergeSchema(currentRecord, values)
+        await this.pool(table).where(filters).update(updatedRecordValues)
     }
 
     private readRecord(table: string, fields: any) {
-        const query = this.pool.from(table).select().where(fields.filtersz)
+        const query = this.pool.from(table).select().where(fields.filters)
         const { offset, limit } = fields
         if (offset && limit) {
             return query.offset(offset).limit(limit)

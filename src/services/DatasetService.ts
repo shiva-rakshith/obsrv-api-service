@@ -43,7 +43,7 @@ export class DatasetService {
     }
     public update = (req: Request, res: Response, next: NextFunction) => {
         const dataset = new Datasets(req.body)
-        this.DBConnector.execute("update", { "table": 'datasets', "fields": { "filters": { "id": req.body.id }, "values": dataset.setValues() } })
+        this.DBConnector.execute("update", { "table": 'datasets', "fields": { "filters": { "id": req.body.id }, "values": dataset.getValues() } })
             .then(() => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_UPDATED, "dataset_id": req.body.id } })
             }).catch((error: any) => {

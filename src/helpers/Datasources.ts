@@ -28,11 +28,11 @@ export class Datasources {
         this.updated_by = payload.updated_by
     }
     public getValues() {
-        return { id: this.getDataSourceId(), dataset_id: this.dataset_id, ingestion_spec: this.ingestion_spec, datasource: this.datasource, retention_period: this.retention_period, archival_policy: this.archival_policy, purge_policy: this.purge_policy, backup_config: this.backup_config, status: this.status, created_by: this.created_by, updated_by: this.updated_by }
+        return Object.assign(this.removeNullValues({ id: this.getDataSourceId(), dataset_id: this.dataset_id, ingestion_spec: this.ingestion_spec, datasource: this.datasource, retention_period: this.retention_period, archival_policy: this.archival_policy, purge_policy: this.purge_policy, backup_config: this.backup_config, status: this.status, created_by: this.created_by, updated_by: this.updated_by }), { "updated_date": new Date })
     }
 
     public setValues() {
-        return schemaMerger.mergeSchema(this.getDefaults(), Object.assign(this.removeNullValues(this.getValues()), { "updated_date": new Date }))
+        return schemaMerger.mergeSchema(this.getDefaults(), this.getValues())
     }
 
     public removeNullValues(payload: any) {
