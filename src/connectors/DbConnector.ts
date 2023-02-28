@@ -39,9 +39,11 @@ export class DbConnector implements IConnector {
 
     private async updateRecord(table: string, fields: any) {
         const { filters, values } = fields
-        const currentRecord = await this.pool(table).select(Object.keys(values)).where(filters).first()
-        if (_.isUndefined(currentRecord)) { throw new Error("Failed to update Record") }
-        const updatedRecordValues = schemaMerger.mergeSchema(currentRecord, values)
+        const updatedRecordValues = await this.pool.transaction(async (dbTransaction) => {
+            const currentRecord = await dbTransaction(table).select(Object.keys(values)).where(filters).first()
+            if (_.isUndefined(currentRecord)) { throw new Error('Failed to update record') }
+            return schemaMerger.mergeSchema(currentRecord, values)
+        })
         await this.pool(table).where(filters).update(updatedRecordValues)
     }
 
