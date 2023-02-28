@@ -2,7 +2,8 @@
     "type": "object",
     "properties": {
         "filters": {
-            "type": "object"
+            "type": "object",
+            "default": {}
         },
         "offset": {
             "type": "integer"
@@ -11,5 +12,5 @@
             "type": "integer"
         }
     },
-    "required":[]
+    "required": []
 }

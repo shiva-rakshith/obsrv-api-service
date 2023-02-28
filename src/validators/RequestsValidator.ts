@@ -17,14 +17,15 @@ export class RequestsValidator implements IValidator {
     private validator: Ajv;
 
     constructor() {
-        this.validator = new Ajv()
+        this.validator = new Ajv({ useDefaults: true })
     }
     validate(data: any, id: string): ValidationStatus {
         return this.validateRequest(data, id)
     }
 
     private validateRequest(data: any, id: string): ValidationStatus {
-        let validRequestObj = this.validator.validate(this.getReqSchema(id), data);
+        const validate = this.validator.compile(this.getReqSchema(id))
+        let validRequestObj = validate(data);
         if (!validRequestObj) {
             let error = this.validator.errors;
             let errorMessage = error![0].instancePath.replace("/", "") + " " + error![0].message;

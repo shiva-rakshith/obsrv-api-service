@@ -41,7 +41,7 @@ export class DbConnector implements IConnector {
     }
 
     private readRecord(table: string, fields: any) {
-        const query = this.pool.from(table).select().where(fields.filters)
+        const query = this.pool.from(table).select().where(fields.filtersz)
         const { offset, limit } = fields
         if (offset && limit) {
             return query.offset(offset).limit(limit)
