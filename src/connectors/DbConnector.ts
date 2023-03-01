@@ -56,5 +56,4 @@ export class DbConnector implements IConnector {
         return query
     }
 
-
 }

@@ -30,9 +30,17 @@ export class DataSourceService {
             });
     }
     public read = (req: Request, res: Response, next: NextFunction) => {
-        this.connector.execute("read", { "table": 'datasources', "fields": { "filters": req.query } })
+        this.connector.execute("read", { "table": 'datasources', "fields": { "filters": { "id": req.params.datasourceId } } })
             .then((data: any) => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: data[0] })
+            }).catch((error: any) => {
+                next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
+            });
+    }
+    public list = (req: Request, res: Response, next: NextFunction) => {
+        this.connector.execute("read", { "table": 'datasources', "fields": req.body })
+            .then((data: any) => {
+                ResponseHandler.successResponse(req, res, { status: 200, data: data })
             }).catch((error: any) => {
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
