@@ -44,5 +44,4 @@ export class DbConnector implements IConnector {
         return await this.pool.from(table).select().where(fields.filters).offset(fields.offset).limit(fields.limit || 1)
     }
 
-
 }

@@ -7,12 +7,12 @@ export const routesConfig = {
     native_query: {
       api_id: "obsrv.native.query",
       method: "post",
-      path: "/dataset/v2/query/native-query"
+      path: "/obsrv/v1/query"
     },
     sql_query: {
       api_id: "obsrv.sql.query",
       method: "post",
-      path: "/dataset/v2/query/sql-query"
+      path: "/obsrv/v1/sql-query"
     }
   },
   config: {
@@ -20,46 +20,51 @@ export const routesConfig = {
       save: {
         api_id: "obsrv.config.dataset.save",
         method: "post",
-        path: "/config/v2/dataset/save"
+        path: "/obsrv/v1/datasets"
       },
       read: {
         api_id: "obsrv.config.dataset.read",
         method: "get",
-        path: "/config/v2/dataset/read"
+        path: "/obsrv/v1/datasets/:datasetId"
       },
       update: {
         api_id: "obsrv.config.dataset.save",
         method: "patch",
-        path: "/config/v2/dataset/save"
+        path: "/obsrv/v1/datasets"
       },
       list: {
         api_id: "obsrv.config.dataset.list",
         method: "post",
-        path: "/config/v2/dataset/list"
+        path: "/obsrv/v1/datasets/list"
       }
     },
     datasource: {
       save: {
         api_id: "obsrv.config.datasource.save",
         method: "post",
-        path: "/config/v2/datasource/save"
+        path: "/obsrv/v1/datasources"
       },
       read: {
         api_id: "obsrv.config.datasource.read",
         method: "get",
-        path: "/config/v2/datasource/read"
+        path: "/obsrv/v1/datasources/:datasourceId"
       },
       update: {
         api_id: "obsrv.config.datasource.save",
         method: "patch",
-        path: "/config/v2/datasource/save"
+        path: "/obsrv/v1/datasources"
+      },
+      list: {
+        api_id: "obsrv.config.datasource.list",
+        method: "post",
+        path: "/obsrv/v1/datasources/list"
       }
     }
   },
   data_ingest: {
     api_id: "obsrv.dataset.data.in",
     method: "post",
-    path: "/dataset/data/v2/in/*"
+    path: "/obsrv/v1/data/:datasetId"
   }
 }
 

@@ -1,4 +1,4 @@
-import { Kafka, Producer, KafkaConfig } from 'kafkajs'
+import { Kafka, Producer, KafkaConfig, CompressionTypes } from 'kafkajs'
 import { IConnector } from "../models/IngestionModels"
 
 export class KafkaConnector implements IConnector {
@@ -6,6 +6,7 @@ export class KafkaConnector implements IConnector {
     public producer: Producer;
     constructor(config: KafkaConfig) {
         this.kafka = new Kafka(config)
+        // TODO: Optimize the producer config
         this.producer = this.kafka.producer({
         })
     }
@@ -13,11 +14,13 @@ export class KafkaConnector implements IConnector {
        return await this.producer.connect()
     }
     async execute(topic: string, config: any) {
+        // TODO: Handle acks (which should be 3 for durability) and compression types
         return await this.producer.send({
             topic: topic,
             messages: [{
                 value: config.value
-            }]
+            }],
+            compression: CompressionTypes.Snappy
         })
     }
     async close() {

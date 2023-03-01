@@ -1,3 +1,4 @@
+/** TODO: Delete this file and read query rules from database. Create a schema accordingly */
 export const queryRules = {
   "common": {
     "maxResultThreshold": 100,
