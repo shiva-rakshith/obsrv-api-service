@@ -22,7 +22,7 @@ export class DataSourceService {
     }
     public update = (req: Request, res: Response, next: NextFunction) => {
         const datasource = new Datasources(req.body)
-        this.connector.execute("update", { "table": 'datasources', "fields": { "filters": { "id": datasource.getDataSourceId() }, "values": datasource.setValues() } })
+        this.connector.execute("update", { "table": 'datasources', "fields": { "filters": { "id": datasource.getDataSourceId() }, "values": datasource.getValues() } })
             .then(() => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASOURCE_UPDATED, "id": datasource.getDataSourceId() } })
             }).catch((error: any) => {
@@ -30,7 +30,7 @@ export class DataSourceService {
             });
     }
     public read = (req: Request, res: Response, next: NextFunction) => {
-        this.connector.execute("read", { "table": 'datasources', "fields": { "filters": req.query } })
+        this.connector.execute("read", { "table": 'datasources', "fields": { "filters": { "id": req.params.datasourceId } } })
             .then((data: any) => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: data[0] })
             }).catch((error: any) => {
@@ -44,5 +44,15 @@ export class DataSourceService {
             }).catch((error: any) => {
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
+    }
+    public preset = (req: Request, res: Response, next: NextFunction) => {
+        try {
+            let datasource = new Datasources({})
+            let configDefault = datasource.getDefaults()
+            ResponseHandler.successResponse(req, res, { status: 200, data: configDefault })
+        }
+        catch (error: any) {
+            next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
+        }
     }
 }

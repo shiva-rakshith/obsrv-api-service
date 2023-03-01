@@ -1,6 +1,9 @@
 import _ from 'lodash'
 import { ValidationConfig, ExtractionConfig, DedupConfig, DenormConfig, RouterConfig } from '../models/ConfigModels'
-export class Datasets  {
+import configDefault from '../resources/schemas/DatasetConfigDefault.json'
+import { SchemaMerger } from '../generators/SchemaMerger'
+let schemaMerger = new SchemaMerger()
+export class Datasets {
     private id: string
     private validation_config: ValidationConfig
     private extraction_config: ExtractionConfig
@@ -26,11 +29,11 @@ export class Datasets  {
     }
 
     public getValues() {
-        return { id: this.id, validation_config: this.validation_config, extraction_config: this.extraction_config, dedup_config: this.dedup_config, data_schema: this.data_schema, router_config: this.router_config, denorm_config: this.denorm_config, status: this.status, created_by: this.created_by, updated_by: this.updated_by }
+        return Object.assign(this.removeNullValues({ id: this.id, validation_config: this.validation_config, extraction_config: this.extraction_config, dedup_config: this.dedup_config, data_schema: this.data_schema, router_config: this.router_config, denorm_config: this.denorm_config, status: this.status, created_by: this.created_by, updated_by: this.updated_by }), { "updated_date": new Date })
     }
 
     public setValues() {
-        return Object.assign(this.removeNullValues(this.getValues()), { "updated_date": new Date })
+        return schemaMerger.mergeSchema(this.getDefaults(), this.getValues())
     }
 
     public removeNullValues(payload: any) {
@@ -38,5 +41,9 @@ export class Datasets  {
             if (_.isEmpty(payload[value])) delete payload[value]
         })
         return payload
+    }
+
+    public getDefaults() {
+        return configDefault
     }
 }

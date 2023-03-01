@@ -1,4 +1,3 @@
-
 export const routesConfig = {
   default: {
     api_id: "obsrv.api"
@@ -36,6 +35,11 @@ export const routesConfig = {
         api_id: "obsrv.config.dataset.list",
         method: "post",
         path: "/obsrv/v1/datasets/list"
+      },
+      preset:{
+        api_id: "obsrv.config.dataset.preset",
+        method: "get",
+        path: "/obsrv/v1/datasets/preset"
       }
     },
     datasource: {
@@ -58,6 +62,11 @@ export const routesConfig = {
         api_id: "obsrv.config.datasource.list",
         method: "post",
         path: "/obsrv/v1/datasources/list"
+      },
+      preset:{
+        api_id: "obsrv.config.datasource.preset",
+        method: "get",
+        path: "/obsrv/v1/datasources/preset"
       }
     }
   },

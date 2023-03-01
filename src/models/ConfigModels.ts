@@ -1,30 +1,3 @@
-import { IngestionConfig } from "./IngestionModels";
-import { IDataSourceRules } from "./QueryModels";
-
-export interface ProcessingConfig {
-  checkpointingInterval: number,
-  dedupProperty: string,
-  dedupRetentionPeriod: number,
-  consumerParallelism: number,
-  downstreamParallelism: number,
-  dataSize: number
-}
-
-export interface DataSetConfig {
-  querying: IDataSourceRules
-  ingestion: IngestionConfig,
-  processing: DatasetProcessing
-}
-
-export interface DatasetProcessing {
-  topic: string;
-  extraction: ExtractionConfig;
-  dedup_config: DedupConfig;
-  validation_config: ValidationConfig;
-  denorm_config: DenormConfig;
-  router_config: RouterConfig;
-}
-
 export interface ExtractionConfig {
   is_batch_event: boolean;
   extraction_key: string;
