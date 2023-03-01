@@ -10,16 +10,6 @@ export const config = {
     }
   },
 
-  "postgres": {
-    "pg_config": {
-      host: process.env.postgres_host || 'localhost',
-      port: 5432,
-      database: process.env.postgres_database || 'postgres',
-      user: process.env.postgres_username || 'manjunathdavanam',
-      password: process.env.postgres_password || 'Manju@123',
-    }
-  },
-
   "dataset_api": {
     "kafka": {
       "config": {
