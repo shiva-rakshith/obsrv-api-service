@@ -13,11 +13,7 @@
                 "extraction_key": {
                     "type": "string"
                 }
-            },
-            "required": [
-                "is_batch_event",
-                "extraction_key"
-            ]
+            }
         },
         "validation_config": {
             "type": "object",
@@ -28,11 +24,7 @@
                 "mode": {
                     "type": "string"
                 }
-            },
-            "required": [
-                "validate",
-                "mode"
-            ]
+            }
         },
         "dedup_config": {
             "type": "object",
@@ -46,12 +38,7 @@
                 "dedup_period": {
                     "type": "integer"
                 }
-            },
-            "required": [
-                "drop_duplicates",
-                "dedup_key",
-                "dedup_period"
-            ]
+            }
         },
         "data_schema": {
             "type": "object",
@@ -59,10 +46,7 @@
                 "type": {
                     "type": "string"
                 }
-            },
-            "required": [
-                "type"
-            ]
+            }
         },
         "denorm_config": {
             "type": "object",
@@ -85,19 +69,9 @@
                         "denorm_out_field": {
                             "type": "string"
                         }
-                    },
-                    "required": [
-                        "denorm_key",
-                        "redis_db",
-                        "denorm_out_field"
-                    ]
+                    }
                 }
-            },
-            "required": [
-                "redis_db_host",
-                "redis_db_port",
-                "denorm_fields"
-            ]
+            }
         },
         "router_config": {
             "type": "object",
@@ -105,10 +79,7 @@
                 "topic": {
                     "type": "string"
                 }
-            },
-            "required": [
-                "topic"
-            ]
+            }
         },
         "status": {
             "type": "string"

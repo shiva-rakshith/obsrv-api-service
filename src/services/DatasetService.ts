@@ -43,7 +43,7 @@ export class DatasetService {
     }
     public update = (req: Request, res: Response, next: NextFunction) => {
         const dataset = new Datasets(req.body)
-        this.DBConnector.execute("update", { "table": 'datasets', "fields": { "filters": { "id": req.body.id }, "values": dataset.setValues() } })
+        this.DBConnector.execute("update", { "table": 'datasets', "fields": { "filters": { "id": req.body.id }, "values": dataset.getValues() } })
             .then(() => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_UPDATED, "dataset_id": req.body.id } })
             }).catch((error: any) => {
@@ -65,6 +65,15 @@ export class DatasetService {
             }).catch((error: any) => {
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
+    }
+    public preset = (req: Request, res: Response, next: NextFunction) => {
+        try {
+            let dataset = new Datasets({})
+            let configDefault = dataset.getDefaults()
+            ResponseHandler.successResponse(req, res, { status: 200, data: configDefault })
+        } catch (error: any) {
+            next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
+        }
     }
     private getDatasetId(payload: any) {
         let dataset_id = payload.substring(payload.lastIndexOf('/') + 1)

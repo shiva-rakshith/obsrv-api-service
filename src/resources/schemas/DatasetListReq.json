@@ -11,5 +11,5 @@
             "type": "integer"
         }
     },
-    "required":[]
+    "required": ["filters"]
 }
