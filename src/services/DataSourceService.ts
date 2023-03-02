@@ -59,7 +59,7 @@ export class DataSourceService {
     public publish = (req: Request, res: Response, next: NextFunction) => {
         this.connector.execute("update", { "table": 'datasources', "fields": { "filters": { "id": req.params.datasourceId }, "values": { "status": "LIVE", "updated_date": new Date, "published_date": new Date } } })
             .then(() => {
-                ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_UPDATED, "dataset_id": req.body.id } })
+                ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASOURCE_PUBLISHED, "dataset_id": req.body.id } })
             }).catch((error: any) => {
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });

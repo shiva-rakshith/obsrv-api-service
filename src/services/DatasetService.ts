@@ -63,7 +63,7 @@ export class DatasetService {
     public publish = (req: Request, res: Response, next: NextFunction) => {
         this.dbConnector.execute("update", { "table": 'datasets', "fields": { "filters": { "id": req.params.datasetId }, "values": { "status": "LIVE", "updated_date": new Date, "published_date": new Date } } })
             .then(() => {
-                ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_UPDATED, "dataset_id": req.body.id } })
+                ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_PUBLISHED, "dataset_id": req.body.id } })
             }).catch((error: any) => {
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
