@@ -19,6 +19,7 @@
     "http-status": "^1.5.3",
     "json-merger": "^1.1.9",
     "kafkajs": "^2.2.3",
+    "kafkajs-snappy": "^1.1.0",
     "knex": "^2.4.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
