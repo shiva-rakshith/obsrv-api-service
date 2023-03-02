@@ -4,6 +4,9 @@
         "id": {
             "type": "string"
         },
+        "dataset_name":{
+            "type": "string"
+        },
         "extraction_config": {
             "type": "object",
             "properties": {
@@ -88,6 +91,9 @@
             "type": "string"
         },
         "updated_by": {
+            "type": "string"
+        },
+        "published_date": {
             "type": "string"
         }
     },

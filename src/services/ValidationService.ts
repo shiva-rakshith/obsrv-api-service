@@ -27,6 +27,7 @@ export class ValidationService {
         status.isValid ?
             next()
             : next(errorResponse((httpStatus.BAD_REQUEST, status?.message || "")))
-    }
+    };
+
 
 }

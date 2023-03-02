@@ -1,15 +1,9 @@
 {
     "retention_period": {},
-    "archival_policy": {
-        "enabled": false
-    },
-    "purge_policy": {
-        "enabled": false
-    },
-    "backup_config": {
-        "enabled": false
-    },
-    "status": "ACTIVE",
+    "archival_policy": {},
+    "purge_policy": {},
+    "backup_config": {},
+    "status": "DRAFT",
     "created_by": "SYSTEM",
     "updated_by": "SYSTEM"
 }

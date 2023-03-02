@@ -14,6 +14,7 @@ export class Datasources {
     private status: string
     private created_by: string
     private updated_by: string
+    private published_date: Date
 
     constructor(payload: any) {
         this.dataset_id = payload.dataset_id
@@ -26,9 +27,10 @@ export class Datasources {
         this.status = payload.status
         this.created_by = payload.created_by
         this.updated_by = payload.updated_by
+        this.published_date = payload.published_date
     }
     public getValues() {
-        return Object.assign(this.removeNullValues({ id: this.getDataSourceId(), dataset_id: this.dataset_id, ingestion_spec: this.ingestion_spec, datasource: this.datasource, retention_period: this.retention_period, archival_policy: this.archival_policy, purge_policy: this.purge_policy, backup_config: this.backup_config, status: this.status, created_by: this.created_by, updated_by: this.updated_by }), { "updated_date": new Date })
+        return Object.assign(this.removeNullValues({ id: this.getDataSourceId(), dataset_id: this.dataset_id, ingestion_spec: this.ingestion_spec, datasource: this.datasource, retention_period: this.retention_period, archival_policy: this.archival_policy, purge_policy: this.purge_policy, backup_config: this.backup_config, status: this.status, created_by: this.created_by, updated_by: this.updated_by, published_date: this.published_date }), { "updated_date": new Date })
     }
 
     public setValues() {

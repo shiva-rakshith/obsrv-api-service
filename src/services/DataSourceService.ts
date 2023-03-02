@@ -5,6 +5,7 @@ import errorResponse from "http-errors"
 import httpStatus from "http-status";
 import { IConnector } from "../models/IngestionModels";
 import { Datasources } from "../helpers/Datasources";
+import _ from "lodash";
 
 export class DataSourceService {
     private connector: any;
@@ -31,8 +32,8 @@ export class DataSourceService {
     }
     public read = (req: Request, res: Response, next: NextFunction) => {
         this.connector.execute("read", { "table": 'datasources', "fields": { "filters": { "id": req.params.datasourceId } } })
-            .then((data: any) => {
-                ResponseHandler.successResponse(req, res, { status: 200, data: data[0] })
+            .then((data: any[]) => {
+                ResponseHandler.successResponse(req, res, { status: 200, data: _.first(data) })
             }).catch((error: any) => {
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
@@ -54,5 +55,13 @@ export class DataSourceService {
         catch (error: any) {
             next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
         }
+    }
+    public publish = (req: Request, res: Response, next: NextFunction) => {
+        this.connector.execute("update", { "table": 'datasources', "fields": { "filters": { "id": req.params.datasourceId }, "values": { "status": "LIVE", "updated_date": new Date, "published_date": new Date } } })
+            .then(() => {
+                ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASOURCE_PUBLISHED, "dataset_id": req.body.id } })
+            }).catch((error: any) => {
+                next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
+            });
     }
 }
