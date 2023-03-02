@@ -47,13 +47,14 @@ export class DbConnector implements IConnector {
         })
     }
 
-    private readRecord(table: string, fields: any) {
+    private async readRecord(table: string, fields: any) {
         const query = this.pool.from(table).select().where(fields.filters)
         const { offset, limit } = fields
         if (offset && limit) {
             return query.offset(offset).limit(limit)
         }
-        return query
+        const fetchedRecords = await query
+        return fetchedRecords.length > 0 ? fetchedRecords : (() => { throw new Error('No records found') })()
     }
 
 }

@@ -40,6 +40,11 @@ export const routesConfig = {
         api_id: "obsrv.config.dataset.preset",
         method: "get",
         path: "/obsrv/v1/datasets/preset"
+      },
+      publish:{
+        api_id: "obsrv.config.dataset.publish",
+        method: "get",
+        path: "/obsrv/v1/datasets/publish/:datasetId"
       }
     },
     datasource: {
@@ -67,6 +72,11 @@ export const routesConfig = {
         api_id: "obsrv.config.datasource.preset",
         method: "get",
         path: "/obsrv/v1/datasources/preset"
+      },
+      publish:{
+        api_id: "obsrv.config.datasource.publish",
+        method: "get",
+        path: "/obsrv/v1/datasources/publish/:datasourceId"
       }
     }
   },

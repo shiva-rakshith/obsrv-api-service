@@ -11,7 +11,7 @@ export class KafkaConnector implements IConnector {
         })
     }
     async connect() {
-       return await this.producer.connect()
+        return await this.producer.connect()
     }
     async execute(topic: string, config: any) {
         // TODO: Handle acks (which should be 3 for durability) and compression types
@@ -20,7 +20,6 @@ export class KafkaConnector implements IConnector {
             messages: [{
                 value: config.value
             }],
-            compression: CompressionTypes.Snappy
         })
     }
     async close() {

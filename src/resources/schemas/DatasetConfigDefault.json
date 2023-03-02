@@ -29,7 +29,7 @@
     "router_config": {
         "topic": ""
     },
-    "status": "ACTIVE",
+    "status": "DRAFT",
     "created_by": "SYSTEM",
     "updated_by": "SYSTEM"
 }

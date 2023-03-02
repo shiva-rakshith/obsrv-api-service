@@ -7,8 +7,6 @@ import _ from 'lodash'
 import { Datasets } from "../helpers/Datasets";
 import { IConnector } from "../models/IngestionModels";
 
-const responseHandler = ResponseHandler;
-
 export class DatasetService {
     private dbConnector: IConnector;
     constructor(dbConnector: IConnector) {
@@ -30,7 +28,7 @@ export class DatasetService {
     }
     public update = (req: Request, res: Response, next: NextFunction) => {
         const dataset = new Datasets(req.body)
-        this.dbConnector.execute("update", { "table": 'datasets', "fields": { "filters": { "id": req.body.id }, "values": dataset.setValues() } })
+        this.dbConnector.execute("update", { "table": 'datasets', "fields": { "filters": { "id": req.body.id }, "values": dataset.getValues() } })
             .then(() => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_UPDATED, "dataset_id": req.body.id } })
             }).catch((error: any) => {
@@ -38,9 +36,9 @@ export class DatasetService {
             });
     }
     public read = (req: Request, res: Response, next: NextFunction) => {
-        this.dbConnector.execute("read", { "table": 'datasets', "fields": { "filters": {"id": req.params.datasetId} } })
-            .then((data: any) => {
-                ResponseHandler.successResponse(req, res, { status: 200, data: data[0] })
+        this.dbConnector.execute("read", { "table": 'datasets', "fields": { "filters": { "id": req.params.datasetId } } })
+            .then((data: any[]) => {
+                ResponseHandler.successResponse(req, res, { status: 200, data: _.first(data) })
             }).catch((error: any) => {
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
@@ -61,5 +59,13 @@ export class DatasetService {
         } catch (error: any) {
             next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
         }
+    }
+    public publish = (req: Request, res: Response, next: NextFunction) => {
+        this.dbConnector.execute("update", { "table": 'datasets', "fields": { "filters": { "id": req.params.datasetId }, "values": { "status": "LIVE", "updated_date": new Date, "published_date": new Date } } })
+            .then(() => {
+                ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_UPDATED, "dataset_id": req.body.id } })
+            }).catch((error: any) => {
+                next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
+            });
     }
 }

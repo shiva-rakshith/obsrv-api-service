@@ -41,6 +41,6 @@ export class IngestorService {
     private getDatasetId(req: Request) {
         let datasetId = req.params.datasetId
         if (!_.isEmpty(datasetId)) return datasetId
-        throw new Error("dataset parameter in url cannot be empty")
+        throw new Error("datasetId parameter in url cannot be empty")
     }
 }

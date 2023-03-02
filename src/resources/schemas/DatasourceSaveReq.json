@@ -1,6 +1,9 @@
 {
     "type": "object",
     "properties": {
+        "id": {
+            "type": "string"
+        },
         "dataset_id": {
             "type": "string"
         },
@@ -29,6 +32,9 @@
             "type": "string"
         },
         "updated_by": {
+            "type": "string"
+        },
+        "published_date": {
             "type": "string"
         }
     },
