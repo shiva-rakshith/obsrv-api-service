@@ -34,7 +34,8 @@ export class DbConnector implements IConnector {
     }
 
     private async insertRecord(table: string, fields: any) {
-        await this.pool(table).insert(fields)
+        let fetchedRecords = await this.pool(table).select().where('id', '=', fields.id)
+        return fetchedRecords.length > 0 ? (() => { throw new Error('Record already exists') })() : await this.pool(table).insert(fields)
     }
 
     private async updateRecord(table: string, fields: any) {
