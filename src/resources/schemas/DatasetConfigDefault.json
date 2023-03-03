@@ -26,6 +26,7 @@
             "denorm_out_field": "metadata"
         }
     },
+    "client_state": {},
     "router_config": {
         "topic": ""
     },

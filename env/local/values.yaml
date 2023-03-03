@@ -7,6 +7,7 @@ image_tag: 1.0.0
 network:
   port: 3000
   targetport: 3000
+SYSTEM_ENV:
 druid_service:
     DRUID_HOST: http://host.docker.internal
     DRUID_PORT: 8888

@@ -19,6 +19,16 @@ spec:
         image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
         imagePullPolicy: Always
         env:
+        - name: system_env 
+          valueFrom:
+            configMapKeyRef:
+              name: "{{ .Chart.Name }}-config"
+              key: SYSTEM_ENV
+        - name: client_id
+          valueFrom:
+            configMapKeyRef:
+              name: "{{ .Chart.Name }}-config"
+              key: CLIENT_ID
         - name: druid_host
           valueFrom:
             configMapKeyRef:
@@ -39,11 +49,21 @@ spec:
             configMapKeyRef:
               name: "{{ .Chart.Name }}-config"
               key: KAFKA_PORT
-        - name: kafka_topic_create 
+        - name: kafka_initial_retry_time
           valueFrom:
             configMapKeyRef:
               name: "{{ .Chart.Name }}-config"
-              key: KAFKA_TOPIC_CREATE
+              key: KAFKA_INITIAL_RETRY_TIME
+        - name: kafka_retries 
+          valueFrom:
+            configMapKeyRef:
+              name: "{{ .Chart.Name }}-config"
+              key: KAFKA_RETRIES
+        - name: kafka_connection_timeout 
+          valueFrom:
+            configMapKeyRef:
+              name: "{{ .Chart.Name }}-config"
+              key: KAFKA_CONNECTION_TIMEOUT
         - name: postgres_host
           valueFrom:
             configMapKeyRef:

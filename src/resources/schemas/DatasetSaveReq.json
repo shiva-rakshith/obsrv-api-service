@@ -4,7 +4,7 @@
         "id": {
             "type": "string"
         },
-        "dataset_name":{
+        "dataset_name": {
             "type": "string"
         },
         "extraction_config": {
@@ -75,6 +75,9 @@
                     }
                 }
             }
+        },
+        "client_state": {
+            "type": "object"
         },
         "router_config": {
             "type": "object",
