@@ -14,6 +14,7 @@ export class Datasets {
     private denorm_config: DenormConfig
     private client_state: object
     private status: string
+    private version: string
     private created_by: string
     private updated_by: string
     private published_date: Date
@@ -29,13 +30,14 @@ export class Datasets {
         this.denorm_config = payload.denorm_config
         this.client_state = payload.client_state
         this.status = payload.status
+        this.version = payload.version
         this.created_by = payload.created_by
         this.updated_by = payload.updated_by
         this.published_date = payload.published_date
     }
 
     public getValues() {
-        return Object.assign(this.removeNullValues({ id: this.id, dataset_name: this.dataset_name, validation_config: this.validation_config, extraction_config: this.extraction_config, dedup_config: this.dedup_config, data_schema: this.data_schema, router_config: this.router_config, denorm_config: this.denorm_config, client_state: this.client_state, status: this.status, created_by: this.created_by, updated_by: this.updated_by, published_date: this.published_date }), { "updated_date": new Date })
+        return Object.assign(this.removeNullValues({ id: this.id, dataset_name: this.dataset_name, validation_config: this.validation_config, extraction_config: this.extraction_config, dedup_config: this.dedup_config, data_schema: this.data_schema, router_config: this.router_config, denorm_config: this.denorm_config, client_state: this.client_state, status: this.status, version: this.version, created_by: this.created_by, updated_by: this.updated_by, published_date: this.published_date }), { "updated_date": new Date })
     }
 
     public setValues() {

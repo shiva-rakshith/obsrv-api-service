@@ -88,6 +88,10 @@
             }
         },
         "status": {
+            "type": "string",
+            "enum":["ACTIVE", "DISABLED", "PUBLISHED", "READY_FOR_PUBLISH", "DRAFT"]
+        },
+        "version": {
             "type": "string"
         },
         "created_by": {
@@ -96,8 +100,15 @@
         "updated_by": {
             "type": "string"
         },
-        "published_date": {
+        "created_date": {
             "type": "string"
+        },
+        "updated_date": {
+            "type": "string"
+        },
+        "published_date": {
+            "type": "string",
+            "nullable": true
         }
     },
     "required": [

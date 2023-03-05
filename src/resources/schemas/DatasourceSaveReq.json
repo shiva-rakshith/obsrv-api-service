@@ -26,7 +26,9 @@
             "type": "object"
         },
         "status": {
-            "type": "string"
+            "type": "string",
+            "enum":["ACTIVE", "DISABLED", "PUBLISHED", "READY_FOR_PUBLISH", "DRAFT"]
+
         },
         "created_by": {
             "type": "string"

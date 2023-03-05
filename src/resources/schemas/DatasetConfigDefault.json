@@ -31,6 +31,7 @@
         "topic": ""
     },
     "status": "DRAFT",
+    "version":"v1",
     "created_by": "SYSTEM",
     "updated_by": "SYSTEM"
 }
