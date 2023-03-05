@@ -81,8 +81,17 @@ export class DataSourceService {
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
     }
-    private getTableName(status: string): string {
-        let table = this.tableNameMap.get(status);
-        return table || 'datasources_draft'
+    private getTableName(status: string | string[]): string {
+        let table;
+        if (Array.isArray(status)) {
+            if (status.includes("ACTIVE") || status.includes("DISABLED")) {
+                table = "datasources";
+            } else {
+                table = "datasources_draft";
+            }
+        } else {
+            table = this.tableNameMap.get(status) || "datasources_draft";
+        }
+        return table;
     }
 }

@@ -85,8 +85,17 @@ export class DatasetService {
             });
     }
 
-    private getTableName(status: string): string {
-        let table = this.tableNameMap.get(status);
-        return table || 'datasets_draft'
+    private getTableName(status: string | string[]): string {
+        let table;
+        if (Array.isArray(status)) {
+            if (status.includes("ACTIVE") || status.includes("DISABLED")) {
+                table = "datasets";
+            } else {
+                table = "datasets_draft";
+            }
+        } else {
+            table = this.tableNameMap.get(status) || "datasets_draft";
+        }
+        return table;
     }
 }

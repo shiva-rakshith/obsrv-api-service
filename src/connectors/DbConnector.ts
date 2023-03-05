@@ -49,7 +49,18 @@ export class DbConnector implements IConnector {
     }
 
     private async readRecord(table: string, fields: any) {
-        const query = this.pool.from(table).select().where(fields.filters)
+        // const query = this.pool.from(table).select().where(fields.filters)
+        const query = this.pool.from(table).select().where((builder) => {
+            const filters = fields.filters || {};
+            if (filters.id) {
+                builder.where("id", "=", filters.id);
+            }
+            console.log(filters.status)
+            const status = filters.status ? filters.status : [];
+            if (status.length > 0) {
+                builder.whereIn("status", status);
+            }
+        });
         const { offset, limit } = fields
         if (offset && limit) {
             return query.offset(offset).limit(limit)
