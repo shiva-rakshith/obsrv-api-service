@@ -55,7 +55,6 @@ export class DbConnector implements IConnector {
             if (filters.id) {
                 builder.where("id", "=", filters.id);
             }
-            console.log(filters.status)
             const status = filters.status ? filters.status : [];
             if (status.length > 0) {
                 builder.whereIn("status", status);
