@@ -30,6 +30,7 @@ export class DatasetService {
             .then(() => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_SAVED, "dataset_id": req.body.id } })
             }).catch((error: any) => {
+                console.error(error)
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
     }
@@ -41,6 +42,7 @@ export class DatasetService {
             .then(() => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: { "message": message, "dataset_id": req.body.id } })
             }).catch((error: any) => {
+                console.error(error)
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
     }
@@ -50,6 +52,7 @@ export class DatasetService {
             .then((data: any[]) => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: _.first(data) })
             }).catch((error: any) => {
+                console.error(error)
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
     }
@@ -58,6 +61,7 @@ export class DatasetService {
             .then((data: any) => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: data })
             }).catch((error: any) => {
+                console.error(error)
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
     }
@@ -67,6 +71,7 @@ export class DatasetService {
             let configDefault = dataset.getDefaults()
             ResponseHandler.successResponse(req, res, { status: 200, data: configDefault })
         } catch (error: any) {
+            console.error(error)
             next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
         };
     }
@@ -75,6 +80,7 @@ export class DatasetService {
             .then(() => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_PUBLISHED, "dataset_id": req.body.id } })
             }).catch((error: any) => {
+                console.error(error)
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
     }

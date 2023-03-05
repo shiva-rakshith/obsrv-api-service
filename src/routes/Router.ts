@@ -26,8 +26,8 @@ export const ingestorService = new IngestorService(kafkaConnector);
 const router = express.Router();
 
 /** Query API(s) */
-router.post(`${routesConfig.query.native_query.path}`, ResponseHandler.setApiId(routesConfig.query.native_query.api_id), validationService.validateRequestBody, validationService.validateQuery, queryService.executeNativeQuery);
-router.post(`${routesConfig.query.sql_query.path}`, ResponseHandler.setApiId(routesConfig.query.sql_query.api_id), validationService.validateRequestBody, validationService.validateQuery, queryService.executeSqlQuery);
+router.post(`${routesConfig.query.native_query.path}`, ResponseHandler.setApiId(routesConfig.query.native_query.api_id), validationService.validateRequestBody, queryService.executeNativeQuery);
+router.post(`${routesConfig.query.sql_query.path}`, ResponseHandler.setApiId(routesConfig.query.sql_query.api_id), validationService.validateRequestBody, queryService.executeSqlQuery);
 
 /** Ingestor API */
 router.post(`${routesConfig.data_ingest.path}`, ResponseHandler.setApiId(routesConfig.data_ingest.api_id), validationService.validateRequestBody, ingestorService.create);

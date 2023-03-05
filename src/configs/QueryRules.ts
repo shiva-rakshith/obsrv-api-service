@@ -50,6 +50,29 @@ export const queryRules = {
           "maxDateRange": 30
         }
       }
+    },
+    {
+      "dataset": "",
+      "queryRules": {
+        "groupBy": {
+          "maxDateRange": 30
+        },
+        "scan": {
+          "maxDateRange": 30
+        },
+        "search": {
+          "maxDateRange": 30
+        },
+        "timeBoundary": {
+          "maxDateRange": 30
+        },
+        "timeseries": {
+          "maxDateRange": 30
+        },
+        "topN": {
+          "maxDateRange": 30
+        }
+      }
     }
   ]
 }

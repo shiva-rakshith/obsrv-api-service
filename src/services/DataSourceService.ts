@@ -26,6 +26,7 @@ export class DataSourceService {
             .then(() => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASOURCE_SAVED, "id": datasource.getDataSourceId() } })
             }).catch((error: any) => {
+                console.error(error)
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
     }
@@ -37,6 +38,7 @@ export class DataSourceService {
             .then(() => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: { "message": message, "id": datasource.getDataSourceId() } })
             }).catch((error: any) => {
+                console.error(error)
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
     }
@@ -46,6 +48,7 @@ export class DataSourceService {
             .then((data: any[]) => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: _.first(data) })
             }).catch((error: any) => {
+                console.error(error)
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
     }
@@ -54,6 +57,7 @@ export class DataSourceService {
             .then((data: any) => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: data })
             }).catch((error: any) => {
+                console.error(error)
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
     }
@@ -64,6 +68,7 @@ export class DataSourceService {
             ResponseHandler.successResponse(req, res, { status: 200, data: configDefault })
         }
         catch (error: any) {
+            console.error(error)
             next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
         }
     }
@@ -72,6 +77,7 @@ export class DataSourceService {
             .then(() => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASOURCE_PUBLISHED, "dataset_id": req.body.id } })
             }).catch((error: any) => {
+                console.error(error)
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             });
     }

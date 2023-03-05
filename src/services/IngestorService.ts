@@ -35,6 +35,7 @@ export class IngestorService {
             .then(() => {
                 responseHandler.successResponse(req, res, { status: 200, data: { "message": constants.DATASET.CREATED } })
             }).catch((error: any) => {
+                console.error(error)
                 next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
             })
     }
