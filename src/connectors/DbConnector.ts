@@ -3,6 +3,7 @@ import { IConnector } from "../models/DatasetModels";
 import { DbConnectorConfig } from "../models/ConnectionModels";
 import { SchemaMerger } from "../generators/SchemaMerger";
 import _ from 'lodash'
+import { stat } from "fs";
 const schemaMerger = new SchemaMerger()
 export class DbConnector implements IConnector {
     public pool: Knex
@@ -52,13 +53,15 @@ export class DbConnector implements IConnector {
         // const query = this.pool.from(table).select().where(fields.filters)
         const query = this.pool.from(table).select().where((builder) => {
             const filters = fields.filters || {};
-            if (filters.id) {
-                builder.where("id", "=", filters.id);
+            if (filters.status) {
+                if (Array.isArray(filters.status) && filters.status.length > 0) {
+                    builder.whereIn("status", filters.status);
+                } else if (filters.status.length > 0) {
+                    builder.where("status", filters.status);
+                }
             }
-            const status = filters.status ? filters.status : [];
-            if (status.length > 0) {
-                builder.whereIn("status", status);
-            }
+            delete filters.status;
+            builder.where(filters);
         });
         const { offset, limit } = fields
         if (offset && limit) {
