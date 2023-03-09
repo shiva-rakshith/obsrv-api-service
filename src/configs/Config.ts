@@ -35,5 +35,4 @@ export const config = {
       password: process.env.postgres_password || '5b-0b5rv',
     }
   }
-
 }

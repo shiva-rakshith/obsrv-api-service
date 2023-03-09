@@ -86,16 +86,13 @@ export class DatasetService {
     }
 
     private getTableName(status: string | string[]): string {
-        let table;
-        if (Array.isArray(status)) {
-            if (status.includes("ACTIVE") || status.includes("DISABLED")) {
-                table = "datasets";
-            } else {
-                table = "datasets_draft";
-            }
-        } else {
-            table = this.tableNameMap.get(status) || "datasets_draft";
+        if (!Array.isArray(status)) {
+            return this.tableNameMap.get(status) || "datasets_draft";
         }
-        return table;
+        else if (status.includes("ACTIVE") || status.includes("DISABLED")) {
+            return "datasets";
+        } else {
+            return "datasets_draft";
+        }
     }
 }

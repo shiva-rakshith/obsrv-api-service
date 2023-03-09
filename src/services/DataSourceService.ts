@@ -82,16 +82,14 @@ export class DataSourceService {
             });
     }
     private getTableName(status: string | string[]): string {
-        let table;
-        if (Array.isArray(status)) {
-            if (status.includes("ACTIVE") || status.includes("DISABLED")) {
-                table = "datasources";
-            } else {
-                table = "datasources_draft";
-            }
-        } else {
-            table = this.tableNameMap.get(status) || "datasources_draft";
+
+        if (!Array.isArray(status)) {
+            return this.tableNameMap.get(status) || "datasources_draft";
         }
-        return table;
+        else if (status.includes("ACTIVE") || status.includes("DISABLED")) {
+            return "datasources";
+        } else {
+            return "datasources_draft";
+        }
     }
 }

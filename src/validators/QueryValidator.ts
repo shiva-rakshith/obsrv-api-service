@@ -24,20 +24,20 @@ export class QueryValidator implements IValidator {
     }
 
     private validateNativeQuery(data: any): ValidationStatus {
-        const validation = this.validateConfiguration(data)
-        if (!validation.isValid) return validation
+        // const validation = this.validateConfiguration(data)
+        // if (!validation.isValid) return validation
         let queryObj: IQuery = data;
         this.setQueryLimits(data, this.limits.common);
         let dataSourceLimits = this.getDataSourceLimits(queryObj.query.dataSource);
-        return this.validateQueryRules(queryObj, dataSourceLimits.queryRules[queryObj.query.queryType as keyof IQueryTypeRules]);
+        return (!_.isEmpty(dataSourceLimits)) ? this.validateQueryRules(queryObj, dataSourceLimits.queryRules[queryObj.query.queryType as keyof IQueryTypeRules]) : { isValid: true }
     }
 
     private validateSqlQuery(data: any): ValidationStatus {
-        const validation = this.validateConfiguration(data)
-        if (!validation.isValid) return validation
+        // const validation = this.validateConfiguration(data)
+        // if (!validation.isValid) return validation
         this.setQueryLimits(data, this.limits.common);
         let dataSourceLimits = this.getDataSourceLimits(this.getDataSource(data));
-        return this.validateQueryRules(data, dataSourceLimits.queryRules.scan);
+        return (!_.isEmpty(dataSourceLimits)) ? this.validateQueryRules(data, dataSourceLimits.queryRules.scan) : { isValid: true };
     }
 
     private validateQueryRules(queryPayload: IQuery, limits: IRules): ValidationStatus {
@@ -57,10 +57,8 @@ export class QueryValidator implements IValidator {
         }
         const isValidDates = fromDate && toDate && fromDate.isValid() && toDate.isValid()
         return isValidDates ? this.validateDateRange(fromDate, toDate, allowedRange)
-            : { isValid: false, message: constants.ERROR_MESSAGE.NO_DATE_RANGE, code: httpStatus[400] };
+            : { isValid: false, message: constants.ERROR_MESSAGE.NO_DATE_RANGE, code: httpStatus["400_NAME"] };
     };
-
-
 
     private getDataSource(queryPayload: IQuery): string {
         if (queryPayload.querySql) {
@@ -86,7 +84,7 @@ export class QueryValidator implements IValidator {
         const isValidDates = (differenceInDays > allowedRange) ? false : true
         return isValidDates
             ? { isValid: true, code: httpStatus[200] }
-            : { isValid: false, message: constants.ERROR_MESSAGE.INVALID_DATE_RANGE.replace("${allowedRange}", allowedRange.toString()), code: httpStatus[200] };
+            : { isValid: false, message: constants.ERROR_MESSAGE.INVALID_DATE_RANGE.replace("${allowedRange}", allowedRange.toString()), code: httpStatus["400_NAME"] };
     };
 
     private getLimit(queryLimit: number, maxRowLimit: number) {
@@ -120,13 +118,13 @@ export class QueryValidator implements IValidator {
         }
     }
 
-    public validateConfiguration = (data: any): ValidationStatus => {
-        let dataSource: string = this.getDataSource(data);
-        let dataSourceLimits = this.getDataSourceLimits(dataSource);
-        const rules = (dataSource != data.context.dataSource) || (_.isUndefined(dataSourceLimits))
-        return rules ?
-            { isValid: false, message: "Data source Rules Not found", code: httpStatus[404] }
-            : { isValid: true }
-    };
+    // public validateConfiguration = (data: any): ValidationStatus => {
+    //     let dataSource: string = this.getDataSource(data);
+    //     let dataSourceLimits = this.getDataSourceLimits(dataSource);
+    //     const rules = (dataSource != data.context.dataSource) || (_.isUndefined(dataSourceLimits))
+    //     return rules ?
+    //         { isValid: false, message: "Data source Rules Not found", code: httpStatus[404] }
+    //         : { isValid: true }
+    // };
 
 }

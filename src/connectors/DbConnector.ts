@@ -3,7 +3,6 @@ import { IConnector } from "../models/DatasetModels";
 import { DbConnectorConfig } from "../models/ConnectionModels";
 import { SchemaMerger } from "../generators/SchemaMerger";
 import _ from 'lodash'
-import { stat } from "fs";
 const schemaMerger = new SchemaMerger()
 export class DbConnector implements IConnector {
     public pool: Knex

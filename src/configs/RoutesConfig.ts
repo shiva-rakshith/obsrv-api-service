@@ -27,7 +27,7 @@ export const routesConfig = {
         path: "/obsrv/v1/datasets/:datasetId"
       },
       update: {
-        api_id: "obsrv.config.dataset.save",
+        api_id: "obsrv.config.dataset.update",
         method: "patch",
         path: "/obsrv/v1/datasets"
       },
@@ -59,7 +59,7 @@ export const routesConfig = {
         path: "/obsrv/v1/datasources/:datasourceId"
       },
       update: {
-        api_id: "obsrv.config.datasource.save",
+        api_id: "obsrv.config.datasource.update",
         method: "patch",
         path: "/obsrv/v1/datasources"
       },

@@ -17,17 +17,17 @@ const ResponseHandler = {
   },
 
   routeNotFound: (req: Request, res: Response, next: NextFunction) => {
-    next({ statusCode: httpStatus.NOT_FOUND, message: constants.ERROR_MESSAGE.ROUTE_NOT_FOUND, errCode: httpStatus['404_NAME'] });
+    next({ statusCode: httpStatus.NOT_FOUND, message: constants.ERROR_MESSAGE.ROUTE_NOT_FOUND, errCode: httpStatus[404] });
   },
 
-  refactorResponse: ({ id = routesConfig.default.api_id, ver = "v1", params = { status: httpStatus[200], errmsg: "" }, responseCode = httpStatus[200], result = {} }): IResponse => {
+  refactorResponse: ({ id = routesConfig.default.api_id, ver = "v1", params = { status: constants.STATUS.SUCCESS, errmsg: "" }, responseCode = httpStatus["200_NAME"], result = {} }): IResponse => {
     return <IResponse>{ id, ver, ts: Date.now(), params, responseCode, result }
   },
 
   errorResponse: (error: extendedErrorRequestHandler, req: Request, res: Response, next: NextFunction) => {
     const { statusCode, message, errCode } = error;
     const { id } = req as any;
-    res.status(statusCode || httpStatus.INTERNAL_SERVER_ERROR).json(ResponseHandler.refactorResponse({ id: id, params: { status: httpStatus[400], errmsg: message, }, responseCode: errCode || httpStatus["500_NAME"] }));
+    res.status(statusCode || httpStatus.INTERNAL_SERVER_ERROR).json(ResponseHandler.refactorResponse({ id: id, params: { status: constants.STATUS.FAILURE, errmsg: message, }, responseCode: errCode || httpStatus["500_NAME"] }));
   },
 
   setApiId: (id: string) => (req: Request, res: Response, next: NextFunction) => {
