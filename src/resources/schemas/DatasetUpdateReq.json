@@ -7,6 +7,9 @@
         "dataset_name": {
             "type": "string"
         },
+        "dataset_slug": {
+            "type": "string"
+        },
         "extraction_config": {
             "type": "object",
             "properties": {
@@ -89,7 +92,13 @@
         },
         "status": {
             "type": "string",
-            "enum":["ACTIVE", "DISABLED", "PUBLISHED", "READY_FOR_PUBLISH", "DRAFT"]
+            "enum": [
+                "ACTIVE",
+                "DISABLED",
+                "PUBLISHED",
+                "READY_FOR_PUBLISH",
+                "DRAFT"
+            ]
         },
         "version": {
             "type": "string"

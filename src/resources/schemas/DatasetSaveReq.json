@@ -7,6 +7,9 @@
         "dataset_name": {
             "type": "string"
         },
+        "dataset_slug":{
+            "type": "string"
+        },
         "extraction_config": {
             "type": "object",
             "properties": {
