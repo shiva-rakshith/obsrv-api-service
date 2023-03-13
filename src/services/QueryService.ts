@@ -24,7 +24,7 @@ export class QueryService {
       }
       ResponseHandler.successResponse(req, res, { status: result.status, data: _.flatten(mergedResult) });
     } catch (error: any) {
-      console.error(error)
+      // console.error(error)
       next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
   };

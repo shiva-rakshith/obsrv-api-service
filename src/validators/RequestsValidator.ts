@@ -31,7 +31,7 @@ export class RequestsValidator implements IValidator {
         if (!validRequestObj) {
             let error = this.validator.errors;
             let errorMessage = error![0].instancePath.replace("/", "") + " " + error![0].message;
-            return { error: httpStatus["400_NAME"], isValid: false, message: errorMessage, code: httpStatus[400] };
+            return { error: httpStatus["400_NAME"], isValid: false, message: errorMessage, code: httpStatus["400_NAME"] };
         } else {
             return { isValid: true, message: "Validation Success", code: httpStatus[200] };
         }

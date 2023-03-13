@@ -14,8 +14,8 @@ describe("QUERY API", () => {
     describe("If service is down", () => {
         it("it should raise error when native query endpoint is called", (done) => {
             nock(config.druidHost + ":" + config.druidPort)
-            .post(config.druidEndPoint)
-            .reply(500)
+                .post(config.druidEndPoint)
+                .reply(500)
             chai
                 .request(app)
                 .post(config.apiDruidEndPoint)
@@ -29,8 +29,8 @@ describe("QUERY API", () => {
         });
         it("should raise error when sql query endpoint is called", (done) => {
             nock(config.druidHost + ":" + config.druidPort)
-            .post(config.druidSqlEndPoint)
-            .reply(500)
+                .post(config.druidSqlEndPoint)
+                .reply(500)
             chai
                 .request(app)
                 .post(config.apiDruidSqlEndPoint)
@@ -155,17 +155,16 @@ describe("QUERY API", () => {
                 });
         });
         // // todo
-        it("it should reject query when query limits are not found for particular datasource", (done) => {
+        it("it should skip validation and allow druid for query if rules does not exist for datasource", (done) => {
             chai
                 .request(app)
                 .post(config.apiDruidEndPoint)
                 .send(JSON.parse(TestDruidQuery.UNSUPPORTED_DATA_SOURCE))
                 .end((err, res) => {
-                    res.should.have.status(httpStatus.BAD_REQUEST);
+                    res.should.have.status(httpStatus.OK);
                     res.body.should.be.a("object");
-                    res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
-                    res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
-                    res.body.result.should.be.empty;
+                    res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
+                    res.body.params.status.should.be.eq(constants.STATUS.SUCCESS);
                     res.body.id.should.be.eq(routesConfig.query.native_query.api_id);
                     done();
                 });
@@ -209,7 +208,7 @@ describe("QUERY API", () => {
                     res.body.should.be.a("object");
                     res.body.id.should.be.eq(routesConfig.default.api_id);
                     res.body.responseCode.should.be.eq(httpStatus["404_NAME"]);
-                    res.body.params.status.should.be.eq(httpStatus[404]);
+                    res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
                     res.body.result.should.be.empty;
                     done();
                 });
@@ -302,8 +301,7 @@ describe("QUERY API", () => {
                     res.should.have.status(httpStatus.OK);
                     res.body.should.be.a("object");
                     res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
-                    res.body.params.status.should.be.eq(httpStatus["200_NAME"]);
-                    //   res.body.result.should.be.empty;
+                    res.body.params.status.should.be.eq(constants.STATUS.SUCCESS);
                     res.body.id.should.be.eq(routesConfig.query.sql_query.api_id);
                     done();
                 });

@@ -4,6 +4,7 @@ const config = {
   apiHealthEndPoint: "/obsrv/health",
   apiDruidEndPoint: `${routesConfig.query.native_query.path}`,
   apiDruidSqlEndPoint: `${routesConfig.query.sql_query.path}`,
+  apiDatasetIngestEndPoint: `${routesConfig.data_ingest.path}`,
 
   druidHost: "http://localhost",
   druidPort: 8888,

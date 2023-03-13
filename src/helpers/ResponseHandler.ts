@@ -17,7 +17,7 @@ const ResponseHandler = {
   },
 
   routeNotFound: (req: Request, res: Response, next: NextFunction) => {
-    next({ statusCode: httpStatus.NOT_FOUND, message: constants.ERROR_MESSAGE.ROUTE_NOT_FOUND, errCode: httpStatus[404] });
+    next({ statusCode: httpStatus.NOT_FOUND, message: constants.ERROR_MESSAGE.ROUTE_NOT_FOUND, errCode: httpStatus["404_NAME"] });
   },
 
   refactorResponse: ({ id = routesConfig.default.api_id, ver = "v1", params = { status: constants.STATUS.SUCCESS, errmsg: "" }, responseCode = httpStatus["200_NAME"], result = {} }): IResponse => {
