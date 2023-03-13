@@ -39,8 +39,3 @@ jobs:
         ls  
         cd helm_charts/obsrv-api-service/
         helm upgrade --install obsrv-api-service . -n obsrv-api-service-local --create-namespace --atomic
-        
-
-    
-    - name: Install config-service-ext  helm chart
-      run: |
