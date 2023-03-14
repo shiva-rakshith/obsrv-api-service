@@ -3,7 +3,7 @@ name: Deploy workflow for Obsrv-API
 on:
   push:
     tags:
-      - '*'
+    - '*'
     # branches:
     # - testing-draft-APIs
     
@@ -28,8 +28,8 @@ jobs:
     
     - name: Build Docker image
       run: |
-        docker build -t sanketikahub/config-service-ext:1.0.0 -f Dockerfile .
-        docker push sanketikahub/config-service-ext:1.0.0
+        docker build -t sanketikahub/obsrv-api-service:1.0.0 -f Dockerfile .
+        docker push sanketikahub/obsrv-api-service:1.0.0
       
     - name: Fetch kubeconfig
       run: |
