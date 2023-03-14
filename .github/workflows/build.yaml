@@ -2,8 +2,10 @@ name: Deploy workflow for Obsrv-API
 
 on:
   push:
-    branches:
-    - testing-draft-APIs
+    tags:
+      - '*'
+    # branches:
+    # - testing-draft-APIs
     
 jobs:
   docker:

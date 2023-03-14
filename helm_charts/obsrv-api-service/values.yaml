@@ -1,5 +1,5 @@
 namespace: "obsrv-api-service"
-dockerhub: "gayathrisrividya"
+dockerhub: "sanketikahub"
 replicaCount: 1
 repository: "obsrv-api-service"
 env: "local"
