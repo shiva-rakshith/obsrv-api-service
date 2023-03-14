@@ -11,12 +11,12 @@ druid_service:
     DRUID_HOST:  
     DRUID_PORT: 
 kafka_service:
-    KAFKA_HOST: 
-    KAFKA_PORT: 
-    KAFKA_TOPIC_CREATE: 
+    KAFKA_HOST: "kafka-headless.kafka.svc"
+    KAFKA_PORT: 9092
+    KAFKA_TOPIC_CREATE: "telemetry.ingest"
 postgres_service:
-    POSTGRES_HOST: 
-    POSTGRES_PORT: 
-    POSTGRES_DATABASE: 
-    POSTGRES_USERNAME: 
-    POSTGRES_PASSWORD: 
+    POSTGRES_HOST: postgresql-hl.postgres.svc
+    POSTGRES_PORT: 5432
+    POSTGRES_DATABASE: 'postgres'
+    POSTGRES_USERNAME: 'manjunathdavanam'
+    POSTGRES_PASSWORD: 'Manju@123'
