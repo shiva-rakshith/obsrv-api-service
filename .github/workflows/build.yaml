@@ -40,4 +40,5 @@ jobs:
       run: |
         ls  
         cd helm_charts/obsrv-api-service/
-        helm upgrade --install obsrv-api-service . -n obsrv-api-service-local --create-namespace --atomic
+        # helm upgrade --install obsrv-api-service . -n obsrv-api-service-local --create-namespace --atomic
+        helm upgrade --install -f ../../env/dev/values.yaml obsrv-api-service . -n obsrv-api-service-dev --create-namespace --atomic
