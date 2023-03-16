@@ -1,0 +1,406 @@
+openapi: 3.0.0
+info:
+    title: Obsrv API(s) 
+    version: "1.0.0"
+    description: |
+         ## Sunbird Obsrv
+         Sunbird Obsrv comprises several pluggable tools and microservies that come together to enable observability features on any platform/solution. This includes the ability to capture granular events via telemetry, create measures, and observe various events/actions carried out by the system/users/devices (like IoT devices) on any platform/solution.
+        
+    contact:
+        name: Obsrv
+        email: ""
+        url: "#"
+    license:
+        name: All rights reserved
+        url: none
+servers:
+    - description: dev
+      url: "https://example.com"
+    - description: uat
+      url: "https://example.com"
+    - description: qa
+      url: "https://example.com"
+    - description: prod
+      url: "https://example.com"
+tags:
+     - name: Obsrv Read API(s)
+       description: The Obsrv Read API is a powerful tool that enables users to query data using various endpoints. These endpoints provide flexibility in terms of data aggregation, slicing, and dicing.
+     
+components:
+    schemas:
+     
+        DruidNativeQuery:
+            description: context parameter is required
+            type: object
+            properties:
+                context: 
+                    type: object
+                    properties:
+                        dataSource:
+                            type: string
+                query:
+                    type: object
+                    properties:
+                        queryType:
+                            type: string
+                            enum:
+                              - scan
+                              - groupBy
+                              - topN
+                              - timeBoundary
+                              - search
+                              - timeseries
+                        dataSource:
+                            type: string
+                        dimensions:
+                            type: array
+                            items:
+                                type: string
+                        granularity:
+                                type: string
+                        intervals:
+                            oneOf:
+                            - type: string
+                            - type: array
+                              items:
+                                  type: string
+                        filter:
+                            type: object
+                            properties:
+                                type:
+                                    type: string
+                                dimension:
+                                    type: string
+                                value:
+                                    type: string
+                        aggregations:
+                            type: array
+                            items:
+                                properties:
+                                    type:
+                                        type: string
+                                    name:
+                                        type: string
+                                    fieldName:
+                                        type: string
+                
+                        
+        DruidSqlQuery:
+            description: context parameter is required
+            type: object
+            properties:
+                context: 
+                    type: object
+                    properties:
+                        dataSource:
+                            type: string
+                querySql:
+                    type: object
+                    properties:
+                        query: 
+                            type: string
+               
+    examples:
+         
+        DruidNativeQuery:
+            value:
+                context: 
+                    dataSource: telemetry-events
+                query:
+                    queryType: scan
+                    dataSource: telemetry-events
+                    granularity: all
+                    intervals:
+                        - 2021-01-04/2021-01-19
+                    limit: 100
+                    columns:
+                        - actor_type
+                        - mid
+                        - eid
+                
+        DruidSqlQuery:
+            value: 
+                context: 
+                    dataSource: telemetry-events
+                querySql:
+                    query: "SELECT object_id AS contentId, COUNT(*) AS totalRatingsCount FROM \"telemetry-events\"  WHERE __time >= TIMESTAMP '2021-01-01' AND __time < TIMESTAMP '2021-01-02' GROUP BY object_id LIMIT 100"
+    responses:
+        BadRequestResponseSchema:
+            description: Bad Request
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            id:
+                                type: string
+                                example: obsrv.native.query
+                            ver:
+                                type: string
+                                example: v1
+                            ts:
+                                type: string
+                                example: 1672679516875
+                            params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: FAILED
+                                    errmsg:
+                                        type: string
+                                        example: Invalid date range! make sure your range must be valid and cannot be more than 30 days
+                            responseCode:
+                                type: string
+                                example: BAD_REQUEST
+                            result:
+                                type: object
+        
+        BadRequestResponseSchemaSql:
+            description: Bad Request
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            id:
+                                type: string
+                                example: obsrv.sql.query
+                            ver:
+                                type: string
+                                example: v1
+                            ts:
+                                type: string
+                                example: 1672679516875
+                            params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: FAILED
+                                    errmsg:
+                                        type: string
+                                        example: Invalid date range! the date range cannot be a null value
+                            responseCode:
+                                type: string
+                                example: BAD_REQUEST
+                            result:
+                                type: object
+                                    
+        
+        NativeResponseSchema:
+            description: OK
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            id:
+                                type: string
+                                example: obsrv.native.query
+                            ver:
+                                type: string
+                                example: v1
+                            ts:
+                                type: string
+                                example: 1672679516875
+                            params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: SUCCESS
+                                    errmsg:
+                                        type: string
+                                        example: ""
+                            responseCode:
+                                type: string
+                                example: OK
+                            result:
+                                type: object
+                                example: 
+                                       - actor_type: User
+                                         mid: d4b95f40-e5d7-475e-9a56-61e320b794ac
+                                         eid: INTERRUPT
+                                       - actor_type: User
+                                         mid: f6e0ca10-d041-418f-b361-39177aafef77
+                                         eid: INTERACT
+                                       - actor_type: User
+                                         mid: 47377f2b-82ab-43ec-abb1-091b53574dee
+                                         eid: INTERRUPT
+                                       - actor_type: User
+                                         mid: 7b790e8f-a5b2-43f2-b997-8054cf1508a7
+                                         eid: INTERACT
+                                       - actor_type: User
+                                         mid: 437200ef-6d83-4995-bb74-9fd1ed8e7548
+                                         eid: INTERACT
+                                       - actor_type: User
+                                         mid: 51f2e58e-c758-4b99-a5ab-956d3083f82e
+                                         eid: INTERACT
+                                       - actor_type: User
+                                         mid: b20df4dc-e7e9-4332-8a59-3a9722b7a427
+                                         eid: INTERACT
+                                       - actor_type: User
+                                         mid: 00ae72fd-5ada-4d3f-bdce-eb30faa86567
+                                         eid: INTERRUPT
+                                       - actor_type: User
+                                         mid: 45800629-6198-40d8-8592-406f4a6bd207
+                                         eid: INTERRUPT
+                                       - actor_type: User
+                                         mid: 7890867f-9e5a-4909-be0e-9050096ed6a0
+                                         eid: INTERACT
+                                       - actor_type: User
+                                         mid: 10a76da8-e18a-4116-8a58-0a6f21283b46
+                                         eid: INTERACT
+                                       - actor_type: User
+                                         mid: 6550efe2-ead4-4257-9788-7cfe5c7920d6
+                                         eid: END
+                                       - actor_type: User
+                                         mid: 32933baa-15f9-423e-ac16-a5afda7447cb
+                                         eid: INTERACT
+                                       - actor_type: User
+                                         mid: 9c41f03a-8a57-49ff-8fd4-fe604edfb69f
+                                         eid: IMPRESSION
+                                       - actor_type: User
+                                         mid: 1832fd59-2e38-4309-8983-424afa19dd75
+                                         eid: INTERACT
+                                       - actor_type: User
+                                         mid: 928f83d3-c9fb-4416-8573-c8eb4f18993b
+                                         eid: INTERACT
+                                       - actor_type: User
+                                         mid: c666a231-bb8f-4121-85ab-e48c066a26bf
+                                         eid: IMPRESSION
+                                       - actor_type: User
+                                         mid: 7d92eaef-474c-49ef-b886-c2bc516869b5
+                                         eid: IMPRESSION
+                                       - actor_type: User
+                                         mid: 7cb63a34-dfb6-45aa-9d57-bc8dc658b61d
+                                         eid: IMPRESSION
+                                       - actor_type: User
+                                         mid: 57b56970-fe96-4e2f-b5ea-6869a291d4af
+                                         eid: START
+                                       - actor_type: User
+                                         mid: e12e8da7-9d4a-4161-bb81-9043edef21d1
+                                         eid: INTERACT
+                                     
+       
+        SqlResponseSchema:
+            description: OK
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            id:
+                                type: string
+                                example: obsrv.sql.query
+                            ver:
+                                type: string
+                                example: v1
+                            ts:
+                                type: string
+                                example: 1672679516875
+                            params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: SUCCESS
+                                    errmsg:
+                                        type: string
+                                        example: ""
+                            responseCode:
+                                type: string
+                                example: OK
+                            result:
+                                type: object
+                                example: 
+                                   - contentId: ''
+                                     totalRatingsCount: 288399
+                                   - contentId: 002db515-fd79-41ae-a9c7-77dc49ff89ea
+                                     totalRatingsCount: 6
+                                   - contentId: 005833a6-94cc-4ad3-99ca-6e36fdbc703e
+                                     totalRatingsCount: 1
+                                   - contentId: 0083d213-f5a5-473d-8210-7d8ee3d053f1
+                                     totalRatingsCount: 2
+                                   - contentId: 00b2da5b-fcd3-4fd3-a599-1e6844a60ef1
+                                     totalRatingsCount: 2
+                                   - contentId: 00baa1ad-bc09-457b-a2ae-20b641f848fe
+                                     totalRatingsCount: 4
+                                   - contentId: 00be98d9-551a-484a-9921-02e12a98cd64
+                                     totalRatingsCount: 1
+                                   - contentId: 00c3d37d-5f6c-488a-9e46-f89f0f8f03a9
+                                     totalRatingsCount: 1
+                                   - contentId: 00c6eb03-f1cb-40d5-8464-d241995bee62
+                                     totalRatingsCount: 2
+                                   - contentId: 00f808de-e636-4718-908a-a852f256fb4e
+                                     totalRatingsCount: 6
+                                   - contentId: 0123a745-8269-46e4-bd04-812d29a4dea9
+                                     totalRatingsCount: 1
+                                   - contentId: '0131360986084147202'
+                                     totalRatingsCount: 25
+                                   - contentId: '01315371693530316815'
+                                     totalRatingsCount: 28
+                                   - contentId: '0131595563210915841'
+                                     totalRatingsCount: 10
+                                   - contentId: '0131595654717767682'
+                                     totalRatingsCount: 3
+                                   - contentId: '0131687259471380480'
+                                     totalRatingsCount: 6
+                                   - contentId: '0131687266805923840'
+                                     totalRatingsCount: 9
+                                   - contentId: '0131728888777031684'
+                                     totalRatingsCount: 173
+                                   - contentId: '0131728891335802883'
+                                     totalRatingsCount: 51
+                                   - contentId: '0131728907872583684'
+                                     totalRatingsCount: 65
+                                         
+                                         
+         
+paths:
+      
+      /obsrv/v1/query:
+        post:
+            summary: Obsrv Native Query API
+            description: |
+                The provided endpoint allows users to query using the native Druid query language. also it allows to perform the filters and aggregations on the data. all the requests goes through the schema validation and query rules validation (if configured). This ensures that any queries submitted conform to the predefined schema and query rules, thus minimizing the possibility of errors or data inconsistencies. By leveraging the native Druid query language through this endpoint, users can more effectively and efficiently query their data, ultimately improving the quality and accuracy of the insights derived from it.
+            tags: [Obsrv Read API(s)]
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DruidNativeQuery"
+                        examples:
+                            Example-1:
+                                $ref: "#/components/examples/DruidNativeQuery"
+            responses:
+                200:
+                    $ref: "#/components/responses/NativeResponseSchema"
+                400:
+                    $ref: "#/components/responses/BadRequestResponseSchema"
+               
+                    
+      /obsrv/v1/sql-query:
+        post:
+            summary: Obsrv SQL Query API
+            description: |
+                The provided endpoint allows users to query using the sql format query language. also it allows to perform the filters and aggregations on the data. all the requests goes through the schema validation and dataset query rules validation (if configured). This ensures that any queries submitted conform to the predefined schema and query rules, thus minimizing the possibility of errors or data inconsistencies.
+            tags: [Obsrv Read API(s)]
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DruidSqlQuery"
+                        examples:
+                            Example-1:
+                                $ref: "#/components/examples/DruidSqlQuery"
+            responses:
+                200:
+                    $ref: "#/components/responses/SqlResponseSchema"
+                400:
+                    description: 
+                    $ref: "#/components/responses/BadRequestResponseSchemaSql"
+               
