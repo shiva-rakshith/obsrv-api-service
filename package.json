@@ -23,6 +23,7 @@
     "knex": "^2.4.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
+    "obsrv-config-service-ext": "file:obsrv-config-service-ext-1.0.0.tgz",
     "pg": "^8.8.0"
   },
   "devDependencies": {
