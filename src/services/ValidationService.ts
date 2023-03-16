@@ -20,15 +20,13 @@ export class ValidationService {
         const status: ValidationStatus = this.request.validate(req.body, (req as any).id)
         status.isValid ?
             next()
-            : next({ statusCode: httpStatus.BAD_REQUEST, message: status?.message || "", errCode: status.code })
+            : next({ statusCode: httpStatus.BAD_REQUEST, message: status.message || "", errCode: status.code })
     };
 
     public validateQuery = (req: Request, res: Response, next: NextFunction) => {
         const status: ValidationStatus = this.query.validate(req.body, (req as any).id)
         status.isValid ?
             next()
-            : next({ statusCode: httpStatus.BAD_REQUEST, message: status?.message || "", errCode: status.code })
+            : next({ statusCode: httpStatus.BAD_REQUEST, message: status.message || "", errCode: status.code })
     };
-
-
 }

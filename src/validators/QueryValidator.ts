@@ -28,7 +28,7 @@ export class QueryValidator implements IValidator {
         // if (!validation.isValid) return validation
         let queryObj: IQuery = data;
         this.setQueryLimits(data, this.limits.common);
-        let dataSourceLimits = this.getDataSourceLimits(queryObj.query.dataSource);
+        let dataSourceLimits = this.getDataSourceLimits(this.getDataSource(data));
         return (!_.isEmpty(dataSourceLimits)) ? this.validateQueryRules(queryObj, dataSourceLimits.queryRules[queryObj.query.queryType as keyof IQueryTypeRules]) : { isValid: true }
     }
 
