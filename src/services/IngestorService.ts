@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import { ResponseHandler } from "../helpers/ResponseHandler";
 import { config } from "../configs/Config";
 import constants from "../resources/Constants.json"
-import errorResponse from "http-errors";
 import httpStatus from "http-status";
 import _ from 'lodash'
 import { IConnector } from "../models/IngestionModels";

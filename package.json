@@ -25,7 +25,7 @@
     "moment": "^2.29.4",
     "obsrv-config-service-ext": "file:obsrv-config-service-ext-1.0.0.tgz",
     "pg": "^8.8.0"
-   },
+  },
   "devDependencies": {
     "@types/chai": "^4.3.3",
     "@types/chai-as-promised": "^7.1.5",

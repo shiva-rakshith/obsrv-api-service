@@ -1,6 +1,9 @@
 
 export const extensions: Array<IExtensionConfig>  = [
-  
+    {
+        "id": "obsrv-config-service-ext",
+        "routePath": "/routes/Routes"
+       }
 ]
 
 
