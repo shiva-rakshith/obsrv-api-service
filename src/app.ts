@@ -3,9 +3,11 @@ import { config } from "./configs/Config";
 import { ResponseHandler } from "./helpers/ResponseHandler";
 import { loadExtensions } from "./managers/Extensions";
 import { router } from "./routes/Router";
+import { scrapMetrics } from './helpers/prometheus'
 const app: Application = express();
 
 app.use(express.json());
+app.use(scrapMetrics());
 
 loadExtensions(app)
   .finally(() => {
