@@ -18,7 +18,7 @@ const apiThroughputMetric = new Prometheus.Gauge({
     help: 'The current number of API calls per second'
 });
 
-// Create a new Prometheus Counter for total API calls
+// Create a new Prometheus Counter for failed API calls
 const failedApiCallsMetric = new Prometheus.Counter({
     name: 'node_failed_api_calls',
     help: 'The total number of Failed API calls made'

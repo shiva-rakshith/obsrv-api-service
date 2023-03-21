@@ -28,7 +28,7 @@ const scrapMetrics = (config: Record<string, any> = {}) => (req: Request, res: R
 const metricsHandler = async (req: Request, res: Response, next: NextFunction) => {
     res.set('Content-Type', client.register.contentType);
     const metrics = await client.register.metrics()
-    res.json(metrics);
+    res.send(metrics).end();
 }
 
 export {
