@@ -1,12 +1,23 @@
 import { NextFunction, Request, Response } from 'express';
 import client from 'prom-client';
-import { apiThroughputMetric, queryResponseTimeMetric, totalApiCallsMetric } from './metrics'
+import {
+    queryResponseTimeMetric,
+    totalApiCallsMetric,
+    apiThroughputMetric,
+    failedApiCallsMetric
+} from './metrics'
+
+const metrics = [queryResponseTimeMetric, totalApiCallsMetric, apiThroughputMetric, failedApiCallsMetric];
 
 const register = new client.Registry();
 
-//register to collect all the default metrics
-client.collectDefaultMetrics({ register });
-client.register.setDefaultLabels({ release: 'monitoring' });
+const configureRegistry = (register: client.Registry) => {
+    client.collectDefaultMetrics({ register });
+    register.setDefaultLabels({ release: 'monitoring' });
+    metrics.forEach(metric => {
+        register.registerMetric(metric);
+    })
+}
 
 const incrementApiCalls = () => totalApiCallsMetric.inc();
 
@@ -27,10 +38,13 @@ const scrapMetrics = (config: Record<string, any> = {}) => (req: Request, res: R
 
 // controller to expose metrics
 const metricsHandler = async (req: Request, res: Response, next: NextFunction) => {
-    res.set('Content-Type', client.register.contentType);
-    const metrics = await client.register.metrics()
-    res.send(metrics).end();
+    res.set('Content-Type', register.contentType);
+    const metrics = await register.metrics()
+    res.status(200).send(metrics);
 }
+
+
+configureRegistry(register);
 
 export {
     client,
