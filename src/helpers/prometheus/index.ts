@@ -6,6 +6,7 @@ const register = new client.Registry();
 
 //register to collect all the default metrics
 client.collectDefaultMetrics({ register });
+client.register.setDefaultLabels({ release: 'monitoring' });
 
 const incrementApiCalls = () => totalApiCallsMetric.inc();
 
