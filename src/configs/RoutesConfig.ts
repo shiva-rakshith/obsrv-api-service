@@ -84,6 +84,10 @@ export const routesConfig = {
     api_id: "obsrv.dataset.data.in",
     method: "post",
     path: "/obsrv/v1/data/:datasetId"
+  },
+  prometheus: {
+    method: "get",
+    path: "/metrics"
   }
 }
 

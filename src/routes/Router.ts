@@ -10,6 +10,7 @@ import { DataSourceService } from "../services/DataSourceService";
 import { DbConnector } from "../connectors/DbConnector";
 import { routesConfig } from "../configs/RoutesConfig";
 import { IngestorService } from "../services/IngestorService";
+import { metricsHandler } from "../helpers/prometheus";
 
 const validationService = new ValidationService();
 
@@ -51,5 +52,7 @@ router.get(`${routesConfig.config.datasource.read.path}`, ResponseHandler.setApi
 router.post(`${routesConfig.config.datasource.list.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.list.api_id), validationService.validateRequestBody, datasourceService.list);
 // router.get(`${routesConfig.config.datasource.publish.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.publish.api_id), datasourceService.publish);
 
+// Prometheus metrics endpoint
+router.get(routesConfig.prometheus.path, metricsHandler)
 
 export { router };

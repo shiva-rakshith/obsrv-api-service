@@ -3,7 +3,7 @@ import httpStatus from "http-status";
 import { IResponse, Result } from "../models/DatasetModels";
 import constants from "../resources/Constants.json";
 import { routesConfig } from "../configs/RoutesConfig";
-
+import { failedApiCallsMetric } from '../helpers/prometheus/metrics'
 type extendedErrorRequestHandler = ErrorRequestHandler & {
   statusCode: number;
   message: string;
@@ -26,6 +26,7 @@ const ResponseHandler = {
 
   errorResponse: (error: extendedErrorRequestHandler, req: Request, res: Response, next: NextFunction) => {
     const { statusCode, message, errCode } = error;
+    failedApiCallsMetric.inc();
     const { id } = req as any;
     res.status(statusCode || httpStatus.INTERNAL_SERVER_ERROR).json(ResponseHandler.refactorResponse({ id: id, params: { status: constants.STATUS.FAILURE, errmsg: message, }, responseCode: errCode || httpStatus["500_NAME"] }));
   },
