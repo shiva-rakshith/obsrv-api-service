@@ -97,10 +97,7 @@
             "type": "string",
             "enum": [
                 "ACTIVE",
-                "DISABLED",
-                "PUBLISHED",
-                "READY_FOR_PUBLISH",
-                "DRAFT"
+                "DISABLED"
             ]
         },
         "version": {

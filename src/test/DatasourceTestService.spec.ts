@@ -140,26 +140,7 @@ describe("Datasource update API", () => {
                 done();
             });
     });
-    it("should successfully update records in database for publishing", (done) => {
-        chai.spy.on(dbConnector, "execute", () => {
-            return Promise.resolve()
-        })
-        chai
-            .request(app)
-            .patch(config.apiDatasourceUpdateEndPoint)
-            .send(TestDataSource.PUBLISH_DATASOURCE)
-            .end((err, res) => {
-                res.should.have.status(httpStatus.OK);
-                res.body.should.be.a("object");
-                res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
-                res.body.should.have.property("result");
-                res.body.id.should.be.eq(routesConfig.config.datasource.update.api_id);
-                res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
-                res.body.result.message.should.be.eq(constants.CONFIG.DATASOURCE_PUBLISHED)
-                chai.spy.restore(dbConnector, "execute")
-                done();
-            });
-    });
+
 })
 describe("Datasource read API", () => {
     it("should successfully retrieve records from database", (done) => {
@@ -168,7 +149,7 @@ describe("Datasource read API", () => {
         })
         chai
             .request(app)
-            .get(config.apiDatasourceReadEndPoint.replace(":datasourceId", TestDataSource.SAMPLE_ID))
+            .get(config.apiDatasourceReadEndPoint.replace(":datasourceId", TestDataSource.SAMPLE_ID).concat('?status=ACTIVE'))
             .end((err, res) => {
                 res.should.have.status(httpStatus.OK);
                 res.body.should.be.a("object");
@@ -187,7 +168,7 @@ describe("Datasource read API", () => {
             })
             chai
                 .request(app)
-                .get(config.apiDatasourceReadEndPoint.replace(":datasourceId", TestDataSource.SAMPLE_ID))
+                .get(config.apiDatasourceReadEndPoint.replace(":datasourceId", TestDataSource.SAMPLE_ID).concat('?status=ACTIVE'))
                 .end((err, res) => {
                     res.should.have.status(httpStatus.NOT_FOUND);
                     res.body.should.be.a("object");
@@ -205,7 +186,7 @@ describe("Datasource read API", () => {
             })
             chai
                 .request(app)
-                .get(config.apiDatasourceReadEndPoint.replace(":datasourceId", TestDataSource.SAMPLE_ID))
+                .get(config.apiDatasourceReadEndPoint.replace(":datasourceId", TestDataSource.SAMPLE_ID).concat('?status=ACTIVE'))
                 .end((err, res) => {
                     res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
                     res.body.should.be.a("object");
@@ -244,7 +225,7 @@ describe("Datasource list API", () => {
         chai
             .request(app)
             .post(config.apiDatasourceListEndPoint)
-            .send({})
+            .send({ "filters": { "status": "ACTIVE" }, "offset": true })
             .end((err, res) => {
                 res.should.have.status(httpStatus.BAD_REQUEST);
                 res.body.should.be.a("object");
@@ -276,12 +257,12 @@ describe("Datasource list API", () => {
     })
     it("it should query on draft table if status field is not provided", (done) => {
         chai.spy.on(dbConnector, "execute", () => {
-            return Promise.resolve([{},{},{}])
+            return Promise.resolve([{}, {}, {}])
         })
         chai
             .request(app)
             .post(config.apiDatasourceListEndPoint)
-            .send({ "filters": { "status": [] } })
+            .send({ "filters": { "status": ["ACTIVE"] } })
             .end((err, res) => {
                 res.should.have.status(httpStatus.OK);
                 res.body.should.be.a("object");
@@ -310,7 +291,8 @@ describe("Datasource PRESET API", () => {
                 res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
                 done()
             })
-    }),
+    })
+        ,
         it("should handle errors", (done) => {
             chai.spy.on(Datasources.prototype, "getDefaults", () => { throw new Error("Test error") })
             chai

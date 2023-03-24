@@ -9,7 +9,7 @@ import { config } from "./Config";
 import { routesConfig } from "../configs/RoutesConfig";
 import { dbConnector } from "../routes/Router";
 import { Datasets } from "../helpers/Datasets";
-
+ 
 chai.use(spies);
 chai.should();
 chai.use(chaiHttp);
@@ -157,25 +157,6 @@ describe("Dataset update API", () => {
                 done();
             });
     });
-    it("should successfully update records in database for publishing", (done) => {
-        chai.spy.on(dbConnector, "execute", () => {
-            return Promise.resolve()
-        })
-        chai
-            .request(app)
-            .patch(config.apiDatasetUpdateEndPoint)
-            .send(TestDataset.PUBLISH_DATASET)
-            .end((err, res) => {
-                res.should.have.status(httpStatus.OK);
-                res.body.should.be.a("object")
-                res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
-                res.body.should.have.property("result");
-                res.body.id.should.be.eq(routesConfig.config.dataset.update.api_id);
-                res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
-                chai.spy.restore(dbConnector, "execute")
-                done();
-            });
-    });
 })
 describe("Dataset read API", () => {
     it("should successfully retrieve records from database", (done) => {
@@ -184,7 +165,7 @@ describe("Dataset read API", () => {
         })
         chai
             .request(app)
-            .get(config.apiDatasetReadEndPoint.replace(":datasetId", TestDataset.SAMPLE_ID))
+            .get(config.apiDatasetReadEndPoint.replace(":datasetId", TestDataset.SAMPLE_ID).concat('?status = ACTIVE'))
             .end((err, res) => {
                 res.should.have.status(httpStatus.OK);
                 res.body.should.be.a("object")
@@ -203,7 +184,7 @@ describe("Dataset read API", () => {
             })
             chai
                 .request(app)
-                .get(config.apiDatasetReadEndPoint.replace(":datasetId", TestDataset.SAMPLE_ID))
+                .get(config.apiDatasetReadEndPoint.replace(":datasetId", TestDataset.SAMPLE_ID).concat('?status=DISABLED'))
                 .end((err, res) => {
                     res.should.have.status(httpStatus.NOT_FOUND);
                     res.body.should.be.a("object")
@@ -221,7 +202,7 @@ describe("Dataset read API", () => {
             })
             chai
                 .request(app)
-                .get(config.apiDatasetReadEndPoint.replace(":datasetId", TestDataset.SAMPLE_ID))
+                .get(config.apiDatasetReadEndPoint.replace(":datasetId", TestDataset.SAMPLE_ID).concat('?status=DISABLED'))
                 .end((err, res) => {
                     res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
                     res.body.should.be.a("object")
@@ -238,7 +219,7 @@ describe("Dataset read API", () => {
 describe("Dataset list API", () => {
     it("should successfully list records in the table", (done) => {
         chai.spy.on(dbConnector, "execute", () => {
-            return Promise.resolve([])
+            return Promise.resolve([{}, {}, {}])
         })
         chai
             .request(app)
@@ -260,7 +241,12 @@ describe("Dataset list API", () => {
         chai
             .request(app)
             .post(config.apiDatasetListEndPoint)
-            .send({})
+            .send({
+                "filters": {
+                    "status": "ACTIVE"
+                },
+                "limit": true
+            })
             .end((err, res) => {
                 res.should.have.status(httpStatus.BAD_REQUEST);
                 res.body.should.be.a("object")
@@ -290,27 +276,7 @@ describe("Dataset list API", () => {
                 done();
             })
     })
-    it("it should query on draft table if status field is not provided", (done) => {
-        chai.spy.on(dbConnector, "execute", () => {
-            return Promise.resolve([{},{},{}])
-        })
-        chai
-            .request(app)
-            .post(config.apiDatasetListEndPoint)
-            .send({ "filters": { "status": [] } })
-            .end((err, res) => {
-                res.should.have.status(httpStatus.OK);
-                res.body.should.be.a("object")
-                res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
-                res.body.should.have.property("result");
-                res.body.id.should.be.eq(routesConfig.config.dataset.list.api_id);
-                res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
-                res.body.result.should.be.a("array")
-                res.body.result.should.have.length(3)
-                chai.spy.restore(dbConnector, "execute")
-                done();
-            });
-    })
+
 })
 describe("Dataset PRESET API", () => {
     it("should return default params", (done) => {
@@ -326,13 +292,15 @@ describe("Dataset PRESET API", () => {
                 res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
                 done()
             })
-    }),
+    })
+    ,
         it("should handle errors", (done) => {
             chai.spy.on(Datasets.prototype, "getDefaults", () => { throw new Error("Test error") })
             chai
                 .request(app)
                 .get(config.apiDatasetPresetEndPoint)
                 .end((err, res) => {
+                    console.log(res)
                     res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR)
                     res.body.should.be.a("object")
                     res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);

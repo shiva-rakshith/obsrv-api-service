@@ -7,22 +7,17 @@ import { Datasets } from "../helpers/Datasets";
 import { IConnector } from "../models/IngestionModels";
 
 export class DatasetService {
-    private tableNameMap: Map<any, any> = new Map([
-        ['ACTIVE', 'datasets'],
-        ['DISABLED', 'datasets'],
-        ['DRAFT', 'datasets_draft'],
-        ['READY_FOR_PUBLISH', 'datasets_draft'],
-        ['PUBLISHED', 'datasets_draft'],
-    ]);
+    private table: string
     private dbConnector: IConnector;
     constructor(dbConnector: IConnector) {
         this.dbConnector = dbConnector
+        this.table = "datasets"
     }
     public save = (req: Request, res: Response, next: NextFunction) => {
         // TODO: Where is the user context passed?
         const dataset = new Datasets(req.body)
         req.body = dataset.setValues()
-        this.dbConnector.execute("insert", { "table": this.getTableName(req.body.status), "fields": req.body })
+        this.dbConnector.execute("insert", { "table": this.table, "fields": req.body })
             .then(() => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_SAVED, "dataset_id": req.body.id } })
             }).catch((error: any) => {
@@ -33,10 +28,9 @@ export class DatasetService {
     public update = (req: Request, res: Response, next: NextFunction) => {
         const dataset = new Datasets(req.body)
         req.body = dataset.getValues()
-        this.dbConnector.execute("update", { "table": this.getTableName(req.body.status), "fields": { "filters": { "id": req.body.id }, "values": req.body } })
+        this.dbConnector.execute("update", { "table": this.table, "fields": { "filters": { "id": req.body.id }, "values": req.body } })
             .then(() => {
-                let message = req.body.status == 'PUBLISHED' ? constants.CONFIG.DATASET_PUBLISHED : constants.CONFIG.DATASET_UPDATED
-                ResponseHandler.successResponse(req, res, { status: 200, data: { "message": message, "dataset_id": req.body.id } })
+                ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_UPDATED, "dataset_id": req.body.id } })
             }).catch((error: any) => {
                 console.error(error.message)
                 next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
@@ -44,7 +38,7 @@ export class DatasetService {
     }
     public read = (req: Request, res: Response, next: NextFunction) => {
         let status: any = req.query.status
-        this.dbConnector.execute("read", { "table": this.getTableName(status), "fields": { "filters": { "id": req.params.datasetId } } })
+        this.dbConnector.execute("read", { "table": this.table, "fields": { "filters": { "id": req.params.datasetId, "status": status } } })
             .then((data: any[]) => {
                 !_.isEmpty(data) ? ResponseHandler.successResponse(req, res, { status: 200, data: _.first(data) }) : (() => {
                     throw constants.RECORD_NOT_FOUND
@@ -55,7 +49,7 @@ export class DatasetService {
             });
     }
     public list = (req: Request, res: Response, next: NextFunction) => {
-        this.dbConnector.execute("read", { "table": this.getTableName(req.body.filters.status), "fields": req.body })
+        this.dbConnector.execute("read", { "table": this.table, "fields": req.body })
             .then((data: any) => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: data })
             }).catch((error: any) => {
@@ -67,27 +61,10 @@ export class DatasetService {
         try {
             let dataset = new Datasets({})
             let configDefault = dataset.getDefaults()
-            ResponseHandler.successResponse(req, res, { status: 200, data: configDefault })
+            ResponseHandler.successResponse(req, res, { status: 200, data: {} })
         } catch (error: any) {
             console.error(error.message)
             next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
         };
-    }
-    // public publish = (req: Request, res: Response, next: NextFunction) => {
-    //     this.dbConnector.execute("update", { "table": 'datasets_draft', "fields": { "filters": { "id": req.params.datasetId }, "values": { "status": "PUBLISHED", "updated_date": new Date, "published_date": new Date } } })
-    //         .then(() => {
-    //             ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_PUBLISHED, "dataset_id": req.body.id } })
-    //         }).catch((error: any) => {
-    //             // console.error(error)
-    //             next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
-    //         });
-    // }
-
-    private getTableName(status: string | string[]): string {
-        if (!Array.isArray(status)) {
-            return this.tableNameMap.get(status) || "datasets_draft";
-        }
-        return status.some(statusItem => statusItem === "ACTIVE" || statusItem === "DISABLED")  ? "datasets" : "datasets_draft";
-
     }
 }
