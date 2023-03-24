@@ -2,26 +2,25 @@ namespace: "obsrv-api-service"
 dockerhub: "sanketikahub"
 replicaCount: 1
 repository: "obsrv-api-service"
-env: "local"
-image_tag: 1.0.0
+env: "dev"
+image_tag: 1.0.2
 network:
   port: 3000
   targetport: 3000
-SYSTEM_ENV: "local"
+SYSTEM_ENV: "dev"
 druid_service:
-    DRUID_HOST: http://host.docker.internal
-    DRUID_PORT: 8888
+  DRUID_HOST: http://druid-raw-dev-routers.druid-raw.svc
+  DRUID_PORT: 8888
 kafka_service:
-    KAFKA_HOST: host.docker.internal
-    KAFKA_PORT: 9092
-    KAFKA_INITIAL_RETRY_TIME: 3000
-    KAFKA_RETRIES: 5
-    KAFKA_CONNECTION_TIMEOUT: 5000
-    CLIENT_ID: "obsrv-apis"
+  KAFKA_HOST: "kafka-headless.kafka.svc"
+  KAFKA_PORT: 9092
+  KAFKA_INITIAL_RETRY_TIME: 3000
+  KAFKA_RETRIES: 5
+  KAFKA_CONNECTION_TIMEOUT: 5000
+  CLIENT_ID: "obsrv-apis"
 postgres_service:
-    POSTGRES_HOST: host.docker.internal
-    POSTGRES_PORT: 5432
-    POSTGRES_DATABASE: 'sb-obsrv'
-    POSTGRES_USERNAME: 'obsrv'
-    POSTGRES_PASSWORD: '5b-0b5rv'
-
+  POSTGRES_HOST: postgresql-hl.postgresql.svc
+  POSTGRES_PORT: 5432
+  POSTGRES_DATABASE: "obsrv"
+  POSTGRES_USERNAME: "postgres"
+  POSTGRES_PASSWORD: "postgres"
