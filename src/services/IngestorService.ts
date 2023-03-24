@@ -35,13 +35,13 @@ export class IngestorService {
             .then(() => {
                 responseHandler.successResponse(req, res, { status: 200, data: { "message": constants.DATASET.CREATED } })
             }).catch((error: any) => {
-                // console.error(error)
-                next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
+                console.error(error.message)
+                next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
             })
     }
     private getDatasetId(req: Request) {
         let datasetId = req.params.datasetId.trim()
         if (!_.isEmpty(datasetId)) return datasetId
-        throw new Error("datasetId parameter in url cannot be empty")
+        throw constants.EMPTY_DATASET_ID
     }
 }

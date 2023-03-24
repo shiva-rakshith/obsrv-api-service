@@ -6,20 +6,20 @@ import httpStatus from "http-status";
 import { TestDataIngestion } from "./Fixtures";
 import { config } from "./Config";
 import { routesConfig } from "../configs/RoutesConfig";
-import { datasetService, kafkaConnector } from "../routes/Router";
+import constants from "../resources/Constants.json"
+import { ingestorService, kafkaConnector } from "../routes/Router";
 
 chai.use(spies);
 chai.should();
 chai.use(chaiHttp);
 
-
-describe("CREATE API", () => {
+describe("DATA INGEST API", () => {
     it("successfully arrange connection to kafka", (done) => {
         chai.spy.on(kafkaConnector, "connect", () => {
             return Promise.resolve("kafka connection arranged succesfully")
         })
         kafkaConnector.connect()
-        datasetService.init()
+        ingestorService.init()
         chai.expect(kafkaConnector.connect).to.be.called
         chai.spy.restore(kafkaConnector, "connect")
         done()
@@ -28,7 +28,7 @@ describe("CREATE API", () => {
         chai.spy.on(kafkaConnector.producer, "send", () => {
             return Promise.reject(new Error("error connecting kafka service"))
         })
-        datasetService.init()
+        ingestorService.init()
         chai
             .request(app)
             .post(config.apiDatasetIngestEndPoint)
@@ -36,6 +36,7 @@ describe("CREATE API", () => {
             .end((err, res) => {
                 res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
                 res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
+                res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
                 chai.spy.restore(kafkaConnector.producer, "send")
                 done();
             });
@@ -54,6 +55,7 @@ describe("CREATE API", () => {
                 res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
                 res.body.should.have.property("result");
                 res.body.id.should.be.eq(routesConfig.data_ingest.api_id);
+                res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
                 chai.spy.restore(kafkaConnector, "execute")
                 done();
             });
@@ -69,7 +71,36 @@ describe("CREATE API", () => {
                 res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
                 res.body.should.have.property("result");
                 res.body.id.should.be.eq(routesConfig.data_ingest.api_id);
+                res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
                 done();
             });
     });
+    it("should throw an error if kafka service is down", (done) => {
+        chai.spy.on(kafkaConnector, "connect", () => {
+            return Promise.reject(new Error("error connecting kafka service"))
+        })
+        kafkaConnector.connect()
+        ingestorService.init()
+        chai.expect(kafkaConnector.connect).to.be.called
+        chai.spy.restore(kafkaConnector, "connect")
+        done()
+    });
+    it("should close connection to kafka", (done)=>{
+        chai.spy.on(kafkaConnector.producer, "disconnect", () => {
+            return Promise.resolve("kafka disconnected")
+        })
+        kafkaConnector.close()
+        chai.expect(kafkaConnector.producer.disconnect).to.not.throw
+        chai.spy.restore(kafkaConnector.producer, "disconnect")
+        done()
+    })
+    it("should throw error while disconnectig kafka", (done)=>{
+        chai.spy.on(kafkaConnector.producer, "disconnect", () => {
+            return Promise.reject(new Error("failed to disconnect kafka"))
+        })
+        kafkaConnector.close()
+        chai.expect(kafkaConnector.producer.disconnect).to.throw
+        chai.spy.restore(kafkaConnector.producer, "disconnect")
+        done()
+    })
 })

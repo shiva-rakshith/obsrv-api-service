@@ -23,6 +23,8 @@ export const datasourceService = new DataSourceService(dbConnector);
 export const datasetService = new DatasetService(dbConnector);
 export const ingestorService = new IngestorService(kafkaConnector);
 
+dbConnector.init()
+
 const router = express.Router();
 
 /** Query API(s) */
@@ -38,7 +40,7 @@ router.patch(`${routesConfig.config.dataset.update.path}`, ResponseHandler.setAp
 router.get(`${routesConfig.config.dataset.preset.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.preset.api_id), datasetService.preset);
 router.get(`${routesConfig.config.dataset.read.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.read.api_id), datasetService.read);
 router.post(`${routesConfig.config.dataset.list.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.list.api_id), validationService.validateRequestBody, datasetService.list);
-router.get(`${routesConfig.config.dataset.publish.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.publish.api_id), datasetService.publish);
+// router.get(`${routesConfig.config.dataset.publish.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.publish.api_id), datasetService.publish);
 
 
 /** DataSource API(s) */
@@ -47,7 +49,7 @@ router.patch(`${routesConfig.config.datasource.update.path}`, ResponseHandler.se
 router.get(`${routesConfig.config.datasource.preset.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.preset.api_id), datasourceService.preset);
 router.get(`${routesConfig.config.datasource.read.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.read.api_id), datasourceService.read);
 router.post(`${routesConfig.config.datasource.list.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.list.api_id), validationService.validateRequestBody, datasourceService.list);
-router.get(`${routesConfig.config.datasource.publish.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.publish.api_id), datasourceService.publish);
+// router.get(`${routesConfig.config.datasource.publish.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.publish.api_id), datasourceService.publish);
 
 
 export { router };

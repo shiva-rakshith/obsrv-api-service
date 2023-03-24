@@ -28,6 +28,8 @@ export class KafkaConnector implements IConnector {
         });
     }
     async close() {
-        return await this.producer.disconnect()
+        await this.producer.disconnect()
+            .then(() => console.info("Kafka disconnected..."))
+            .catch((err: Error) => console.error(`failed to disconnect kafka: ${err.message}`))
     }
 }
