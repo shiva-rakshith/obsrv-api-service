@@ -18,14 +18,16 @@
     "http-errors": "^2.0.0",
     "http-status": "^1.5.3",
     "json-merger": "^1.1.9",
+    "kafka-node": "^5.0.0",
     "kafkajs": "^2.2.3",
     "kafkajs-snappy": "^1.1.0",
     "knex": "^2.4.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
-    "obsrv-config-service-ext": "file:obsrv-config-service-ext-1.0.0.tgz",
     "pg": "^8.8.0",
-    "prom-client": "^14.2.0"
+    "prom-client": "^14.2.0",
+    "winston": "^3.8.2",
+    "winston-transport": "^4.5.0"
   },
   "devDependencies": {
     "@types/chai": "^4.3.3",

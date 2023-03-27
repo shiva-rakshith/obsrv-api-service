@@ -25,9 +25,10 @@ describe("DATA INGEST API", () => {
         done()
     });
     it("it should not ingest data if service is down", (done) => {
-        chai.spy.on(kafkaConnector.producer, "send", () => {
+        chai.spy.on(kafkaConnector, "connect", () => {
             return Promise.reject(new Error("error connecting kafka service"))
         })
+        kafkaConnector.connect()
         ingestorService.init()
         chai
             .request(app)
@@ -37,7 +38,7 @@ describe("DATA INGEST API", () => {
                 res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
                 res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
-                chai.spy.restore(kafkaConnector.producer, "send")
+                chai.spy.restore(kafkaConnector, "connect")
                 done();
             });
     });
@@ -85,7 +86,7 @@ describe("DATA INGEST API", () => {
         chai.spy.restore(kafkaConnector, "connect")
         done()
     });
-    it("should close connection to kafka", (done)=>{
+    it("should close connection to kafka", (done) => {
         chai.spy.on(kafkaConnector.producer, "disconnect", () => {
             return Promise.resolve("kafka disconnected")
         })
@@ -94,7 +95,7 @@ describe("DATA INGEST API", () => {
         chai.spy.restore(kafkaConnector.producer, "disconnect")
         done()
     })
-    it("should throw error while disconnectig kafka", (done)=>{
+    it("should throw error while disconnectig kafka", (done) => {
         chai.spy.on(kafkaConnector.producer, "disconnect", () => {
             return Promise.reject(new Error("failed to disconnect kafka"))
         })

@@ -9,7 +9,7 @@ import { config } from "./Config";
 import { routesConfig } from "../configs/RoutesConfig";
 import { dbConnector } from "../routes/Router";
 import { Datasets } from "../helpers/Datasets";
- 
+
 chai.use(spies);
 chai.should();
 chai.use(chaiHttp);
@@ -293,14 +293,13 @@ describe("Dataset PRESET API", () => {
                 done()
             })
     })
-    ,
+        ,
         it("should handle errors", (done) => {
             chai.spy.on(Datasets.prototype, "getDefaults", () => { throw new Error("Test error") })
             chai
                 .request(app)
                 .get(config.apiDatasetPresetEndPoint)
                 .end((err, res) => {
-                    console.log(res)
                     res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR)
                     res.body.should.be.a("object")
                     res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
