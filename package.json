@@ -19,7 +19,7 @@
     "http-status": "^1.5.3",
     "json-merger": "^1.1.9",
     "kafka-js": "0.0.0",
-    "kafka-node": "^5.0.0",
+    "kafka-node": "~2.6.1",
     "kafkajs": "^2.2.3",
     "kafkajs-snappy": "^1.1.0",
     "knex": "^2.4.2",
@@ -28,9 +28,8 @@
     "pg": "^8.8.0",
     "prom-client": "^14.2.0",
     "request": "^2.88.2",
-    "winston": "^3.8.2",
-    "winston-daily-rotate-file": "^4.7.1",
-    "winston-transport": "^4.5.0"
+    "winston": "~2.4.3",
+    "winston-daily-rotate-file": "~3.2.1"
   },
   "devDependencies": {
     "@types/chai": "^4.3.3",
@@ -67,7 +66,8 @@
   },
   "nyc": {
     "exclude": [
-      "**/test/*.ts", "**/lib/*.ts"
+      "**/test/*.ts",
+      "**/lib/*.ts"
     ],
     "extension": [
       ".ts"

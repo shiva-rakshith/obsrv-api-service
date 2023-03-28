@@ -1,5 +1,5 @@
 import { IConnector } from "../models/IngestionModels";
-import telemetryService from "../lib/services/TelemetryService";
+const telemetryService = require('../lib/services/TelemetryService')
 import { kafkaConnector } from "../routes/Router";
 
 export class KafkaConnector {
@@ -17,7 +17,7 @@ export class KafkaConnector {
     }
 
     async execute(req: any, res: any) {
-        return await telemetryService.dispatch(req, res)
+        await telemetryService.dispatch(req, res)
     }
 
     close() {

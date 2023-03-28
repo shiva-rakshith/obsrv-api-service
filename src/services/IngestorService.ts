@@ -31,12 +31,12 @@ export class IngestorService {
         // 2. Check if the data is as per the extraction config
         req.body = Object.assign(req.body.data, { "dataset": this.getDatasetId(req) })
         this.kafkaConnector.execute(req, res)
-            .then(() => {
-                responseHandler.successResponse(req, res, { status: 200, data: { "message": constants.DATASET.CREATED } })
-            }).catch((error: any) => {
-                console.error(error.message, "erro")
-                next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
-            })
+            // .then(() => {
+            //     responseHandler.successResponse(req, res, { status: 200, data: { "message": constants.DATASET.CREATED } })
+            // }).catch((error: any) => {
+            //     console.error(error.message, "erro")
+            //     next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
+            // })
     }
     private getDatasetId(req: Request) {
         let datasetId = req.params.datasetId.trim()
