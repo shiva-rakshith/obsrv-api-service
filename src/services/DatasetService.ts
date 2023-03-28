@@ -60,7 +60,7 @@ export class DatasetService {
         try {
             let dataset = new Datasets({})
             let configDefault = dataset.getDefaults()
-            ResponseHandler.successResponse(req, res, { status: 200, data: {} })
+            ResponseHandler.successResponse(req, res, { status: 200, data: configDefault })
         } catch (error: any) {
             console.error(error.message)
             next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })

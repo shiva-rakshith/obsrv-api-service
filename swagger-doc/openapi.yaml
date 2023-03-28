@@ -1,14 +1,16 @@
 openapi: 3.0.0
 info:
-    title: Obsrv API(s) 
+    title: Obsrv APIS 
     version: "1.0.0"
     description: |
-         ## Sunbird Obsrv
-         Sunbird Obsrv comprises several pluggable tools and microservies that come together to enable observability features on any platform/solution. This includes the ability to capture granular events via telemetry, create measures, and observe various events/actions carried out by the system/users/devices (like IoT devices) on any platform/solution.
+        Obsrv is a set of APIs that provide access to a variety of data sources and datasets. These APIs can be used to query and analyze different types of events, as well as to manage data sources and datasets.  
+        
+        This OpenAPI document provides a detailed specification for the Obsrv APIs,including information about the endpoints, parameters, responses, and authentication requirements.
+        
         
     contact:
-        name: Obsrv
-        email: ""
+        name: Sanketika Obsrv
+        email: "example@gmail.com"
         url: "#"
     license:
         name: All rights reserved
@@ -23,12 +25,195 @@ servers:
     - description: prod
       url: "https://example.com"
 tags:
-     - name: Obsrv Read API(s)
-       description: The Obsrv Read API is a powerful tool that enables users to query data using various endpoints. These endpoints provide flexibility in terms of data aggregation, slicing, and dicing.
+     - name: Obsrv Query APIs
+       description: The Query API provides the the ability to query various type of events from the underlying data sources.
+     - name: Obsrv Data IN API
+       description: Ingests data from the request body into a Kafka topic.
+     - name: Obsrv Dataset APIs
+       description: The Dataset APIs provide a way to interact with a database and   allow you to create, read, update records in the database, as well as list multiple records based on certain criteria.
+     - name: Obsrv Datasource APIs
+       description: The Datsources APIs provide a way to interact with a database and allow you to create, read, update records in the database, as well as list multiple records based on certain criteria.
+
      
 components:
     schemas:
-     
+        DatasetCreate:
+            description: id, router_config are required
+            type: object
+            properties:
+              id:
+                type: string
+              dataset_name:
+                type: string
+              dataset_slug:
+                type: string
+              extraction_config:
+                type: object
+                properties:
+                  is_batch_event:
+                    type: boolean
+                  extraction_key:
+                    type: string
+              validation_config:
+                type: object
+                properties:
+                  validate:
+                    type: boolean
+                  mode:
+                    type: string
+              dedup_config:
+                type: object
+                properties:
+                  drop_duplicates:
+                    type: boolean
+                  dedup_key:
+                    type: string
+                  dedup_period:
+                    type: integer
+              data_schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+              denorm_config:
+                type: object
+                properties:
+                  redis_db_host:
+                    type: string
+                  redis_db_port:
+                    type: string
+                  denorm_fields:
+                    type: object
+                    properties:
+                      denorm_key:
+                        type: string
+                      redis_db:
+                        type: integer
+                      denorm_out_field:
+                        type: string
+              router_config:
+                type: object
+                properties:
+                  topic:
+                    type: string
+                required:
+                  - topic
+              status:
+                type: string
+                enum:
+                  - ACTIVE
+                  - DISABLED
+              version:
+                type: string
+              created_by:
+                type: string
+              updated_by:
+                type: string
+              created_date:
+                type: string
+              updated_date:
+                type: string
+              published_date:
+                type: string
+             
+        DatasetUpdate:
+            description: id, router_config are required
+            type: object
+            properties:
+              id:
+                type: string
+              dataset_name:
+                type: string
+              dataset_slug:
+                type: string
+              extraction_config:
+                type: object
+                properties:
+                  is_batch_event:
+                    type: boolean
+                  extraction_key:
+                    type: string
+              validation_config:
+                type: object
+                properties:
+                  validate:
+                    type: boolean
+                  mode:
+                    type: string
+              dedup_config:
+                type: object
+                properties:
+                  drop_duplicates:
+                    type: boolean
+                  dedup_key:
+                    type: string
+                  dedup_period:
+                    type: integer
+              data_schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+              denorm_config:
+                type: object
+                properties:
+                  redis_db_host:
+                    type: string
+                  redis_db_port:
+                    type: string
+                  denorm_fields:
+                    type: object
+                    properties:
+                      denorm_key:
+                        type: string
+                      redis_db:
+                        type: integer
+                      denorm_out_field:
+                        type: string
+              router_config:
+                type: object
+                properties:
+                  topic:
+                    type: string
+                required:
+                  - topic
+              status:
+                type: string
+                enum:
+                  - ACTIVE
+                  - DISABLED
+              version:
+                type: string
+              created_by:
+                type: string
+              updated_by:
+                type: string
+              created_date:
+                type: string
+              updated_date:
+                type: string
+              published_date:
+                type: string
+        DatasetList:
+            description: filters are required
+            type: object
+            properties:
+                filters:
+                    type: object
+                    properties: 
+                        status: 
+                            oneOf:
+                            - type: string
+                            - type: array
+                              items:
+                                  type: string
+                              enum:
+                              - ACTIVE
+                              - DISABLED
+                offset:
+                  type: integer
+                limit:
+                  type: integer
         DruidNativeQuery:
             description: context parameter is required
             type: object
@@ -99,7 +284,97 @@ components:
                     properties:
                         query: 
                             type: string
+        DatasourceCreate:
+            description: dataset_id, datasource parameters are required
+            type: object
+            properties: 
+               id:
+                 type: string
+               dataset_id:
+                 type: string
+               ingestion_spec:
+                 type: object
+               datasource:
+                 type: string
+               retention_period:
+                 type: object
+               archival_policy:
+                 type: object
+               purge_policy:
+                 type: object
+               backup_config:
+                 type: object
+               status:
+                 type: string
+                 enum:
+                   - ACTIVE
+                   - DISABLED
+               created_by:
+                 type: string
+               updated_by:
+                 type: string
+               published_date:
+                 type: string
                
+        DatasourceUpdate:
+            description: dataset_id, datasource parameters are required
+            type: object
+            properties: 
+               id:
+                 type: string
+               dataset_id:
+                 type: string
+               ingestion_spec:
+                 type: object
+               datasource:
+                 type: string
+               retention_period:
+                 type: object
+               archival_policy:
+                 type: object
+               purge_policy:
+                 type: object
+               backup_config:
+                 type: object
+               status:
+                 type: string
+                 enum:
+                   - ACTIVE
+                   - DISABLED
+               created_by:
+                 type: string
+               updated_by:
+                 type: string
+               published_date:
+                 type: string
+        
+        DataIngest:
+            description: datasetId in request params is required
+            type: object
+            properties:
+                data:
+                    type: object
+               
+        DatasourceList:
+            description: filters are required
+            type: object
+            properties:
+                filters:
+                    type: object
+                    properties: 
+                        status: 
+                            oneOf:
+                            - type: string
+                            - type: array
+                              items:
+                                  type: string
+                              enum:
+                              - ACTIVE
+                              - DISABLED
+                offset:
+                  type: integer
+                limit:
+                  type: integer
     examples:
          
         DruidNativeQuery:
@@ -117,13 +392,755 @@ components:
                         - actor_type
                         - mid
                         - eid
-                
+          
         DruidSqlQuery:
             value: 
                 context: 
                     dataSource: telemetry-events
                 querySql:
                     query: "SELECT object_id AS contentId, COUNT(*) AS totalRatingsCount FROM \"telemetry-events\"  WHERE __time >= TIMESTAMP '2021-01-01' AND __time < TIMESTAMP '2021-01-02' GROUP BY object_id LIMIT 100"
+        DataIngest:
+            value:
+                data:
+                  id: telemetry-raw
+                  events: []
+        DatasetCreate:
+            value:
+                id: 9e107d9d-763f-4f4-9d61-00a0c91e6bf6
+                dataset_name: telemetry-raw
+                dataset_slug: telemetry-raw
+                router_config:
+                  topic: ''
+                data_schema:
+                  type: object
+                  properties:
+                    eid:
+                      type: integer
+                    ver:
+                      type: string
+                    syncts:
+                      type: integer
+                    ets:
+                      type: integer
+                    flags:
+                      type: object
+                      properties:
+                        ex_processed:
+                          type: boolean
+                        pp_validation_processed:
+                          type: boolean
+                        pp_duplicate_skipped:
+                          type: boolean
+                        device_denorm:
+                          type: boolean
+                        user_denorm:
+                          type: boolean
+                        loc_denorm:
+                          type: boolean
+                      required:
+                        - ex_processed
+                        - pp_validation_processed
+                        - pp_duplicate_skipped
+                        - device_denorm
+                        - user_denorm
+                        - loc_denorm
+                    derivedlocationdata:
+                      type: object
+                      properties:
+                        district:
+                          type: string
+                        from:
+                          type: string
+                        state:
+                          type: string
+                      required:
+                        - district
+                        - from
+                        - state
+                    mid:
+                      type: string
+                      format: uuid
+                      suggestions:
+                        - message: The Property 'mid' appears to be 'uuid' format type.
+                          advice: Suggest to not to index the high cardinal columns
+                          resolutionType: DEDUP
+                          severity: LOW
+                    type:
+                      type: string
+                    actor:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        id:
+                          type: string
+                          format: uuid
+                          suggestions:
+                            - message: The Property 'actor.id' appears to be 'uuid' format type.
+                              advice: Suggest to not to index the high cardinal columns
+                              resolutionType: DEDUP
+                              severity: LOW
+                      required:
+                        - type
+                        - id
+                    edata:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                      required:
+                        - type
+                    userdata:
+                      type: object
+                      properties:
+                        district:
+                          type: string
+                        usersubtype:
+                          type: string
+                        usersignintype:
+                          type: string
+                        usertype:
+                          type: string
+                        userlogintype:
+                          type: string
+                        state:
+                          type: string
+                      required:
+                        - subject
+                        - district
+                        - usersubtype
+                        - grade
+                        - usersignintype
+                        - usertype
+                        - userlogintype
+                        - state
+                    devicedata:
+                      type: object
+                      properties:
+                        statecustomcode:
+                          type: string
+                        country:
+                          type: string
+                        iso3166statecode:
+                          type: string
+                        city:
+                          type: string
+                        countrycode:
+                          type: string
+                        state:
+                          type: string
+                        devicespec:
+                          type: object
+                          properties:
+                            idisk:
+                              type: string
+                            webview:
+                              type: string
+                            os:
+                              type: string
+                            scrn:
+                              type: string
+                            sims:
+                              type: string
+                            cpu:
+                              type: string
+                            id:
+                              type: string
+                            camera:
+                              type: string
+                            edisk:
+                              type: string
+                            make:
+                              type: string
+                          required:
+                            - idisk
+                            - webview
+                            - os
+                            - scrn
+                            - sims
+                            - cpu
+                            - id
+                            - camera
+                            - edisk
+                            - make
+                        statecode:
+                          type: string
+                        firstaccess:
+                          type: integer
+                        districtcustom:
+                          type: string
+                        statecustomname:
+                          type: string
+                        userdeclared:
+                          type: object
+                          properties:
+                            district:
+                              type: string
+                            state:
+                              type: string
+                          required:
+                            - district
+                            - state
+                      required:
+                        - statecustomcode
+                        - country
+                        - iso3166statecode
+                        - city
+                        - countrycode
+                        - state
+                        - devicespec
+                        - statecode
+                        - firstaccess
+                        - districtcustom
+                        - statecustomname
+                        - userdeclared
+                    context:
+                      type: object
+                      properties:
+                        cdata:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                format: uuid
+                              type:
+                                type: string
+                            required:
+                              - id
+                              - type
+                        env:
+                          type: string
+                        channel:
+                          type: string
+                        pdata:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            pid:
+                              type: string
+                            ver:
+                              type: string
+                          required:
+                            - id
+                            - pid
+                            - ver
+                        sid:
+                          type: string
+                          format: uuid
+                          suggestions:
+                            - message: The Property 'context.sid' appears to be 'uuid' format type.
+                              advice: Suggest to not to index the high cardinal columns
+                              resolutionType: DEDUP
+                              severity: LOW
+                        did:
+                          type: string
+                        rollup:
+                          type: object
+                          properties:
+                            l1:
+                              type: string
+                          required:
+                            - l1
+                        items:
+                          cdata:
+                            properties:
+                              id:
+                                suggestions:
+                                  - message: The Property 'context.cdata[*].id' appears to be 'uuid' format type.
+                                    advice: Suggest to not to index the high cardinal columns
+                                    resolutionType: DEDUP
+                                    severity: LOW
+                      required:
+                        - cdata
+                        - env
+                        - channel
+                        - pdata
+                        - sid
+                        - did
+                        - rollup
+                    object:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        type:
+                          type: string
+                        version:
+                          type: string
+                        rollup:
+                          type: object
+                      required:
+                        - id
+                        - type
+                        - version
+                        - rollup
+                  required:
+                    - eid
+                    - ver
+                    - syncts
+                    - ets
+                    - flags
+                    - derivedlocationdata
+                    - mid
+                    - type
+                    - actor
+                    - edata
+                    - userdata
+                    - devicedata
+                    - context
+                    - object
+                status: ACTIVE
+                published_date: '2023-03-24 12:19:32.091544'
+        DatasetUpdate:
+            value:
+                id: 9e107d9d-763f-4f4-9d61-00a0c91e6bf6
+                dataset_name: telemetry-raw
+                dataset_slug: telemetry-raw
+                router_config:
+                  topic: 'local.ingest'
+                extraction_config: 
+                  is_batch_event: true
+                  dedup_config:
+                    drop_duplicates: false
+                                   
+        DatasetList:
+            value:
+              filters: ["ACTIVE", "DISABLED"]
+              limit: 100
+              offset: 0
+        DatasourceCreate:
+            value:
+              dataset_id: 9e107d9d-763f-4f4-9d61-00a0c91e6bf6
+              ingestion_spec:
+                type: kafka
+                spec:
+                  dataSchema:
+                    dataSource: obsrv-telemetry-events
+                    dimensionsSpec:
+                      dimensions:
+                        - type: string
+                          name: fromDate
+                        - type: string
+                          name: toDate
+                        - type: string
+                          name: tes
+                        - type: string
+                          name: uid
+                        - type: string
+                          name: mobile
+                        - type: string
+                          name: ip
+                        - type: string
+                          name: ipv6
+                        - type: boolean
+                          name: flags_ex_processed
+                        - type: boolean
+                          name: flags_pp_validation_processed
+                        - type: boolean
+                          name: flags_pp_duplicate_skipped
+                        - type: boolean
+                          name: flags_device_denorm
+                        - type: boolean
+                          name: flags_user_denorm
+                        - type: boolean
+                          name: flags_loc_denorm
+                        - type: string
+                          name: derivedlocationdata_district
+                        - type: string
+                          name: derivedlocationdata_from
+                        - type: string
+                          name: derivedlocationdata_state
+                        - type: string
+                          name: mid
+                        - type: string
+                          name: type
+                        - type: string
+                          name: actor_type
+                        - type: string
+                          name: actor_id
+                        - type: string
+                          name: edata_type
+                        - type: string
+                          name: edata_query
+                        - type: string
+                          name: edata_filters_slug
+                        - type: boolean
+                          name: edata_filters_isTenant
+                        - type: string
+                          name: edata_filters_make_type
+                        - type: string
+                          name: edata_topn[*]_id
+                        - name: edata_items
+                        - type: array
+                          name: userdata_subject
+                        - type: string
+                          name: userdata_district
+                        - type: string
+                          name: userdata_usersubtype
+                        - type: array
+                          name: userdata_grade
+                        - type: string
+                          name: userdata_usersignintype
+                        - type: string
+                          name: userdata_usertype
+                        - type: string
+                          name: userdata_userlogintype
+                        - type: string
+                          name: userdata_state
+                        - type: string
+                          name: '@timestamp'
+                        - type: string
+                          name: devicedata_statecustomcode
+                        - type: string
+                          name: devicedata_country
+                        - type: string
+                          name: devicedata_iso3166statecode
+                        - type: string
+                          name: devicedata_city
+                        - type: string
+                          name: devicedata_countrycode
+                        - type: string
+                          name: devicedata_state
+                        - type: string
+                          name: devicedata_devicespec_idisk
+                        - type: string
+                          name: devicedata_devicespec_webview
+                        - type: string
+                          name: devicedata_devicespec_os
+                        - type: string
+                          name: devicedata_devicespec_scrn
+                        - type: string
+                          name: devicedata_devicespec_sims
+                        - type: string
+                          name: devicedata_devicespec_cpu
+                        - type: string
+                          name: devicedata_devicespec_id
+                        - type: string
+                          name: devicedata_devicespec_camera
+                        - type: string
+                          name: devicedata_devicespec_edisk
+                        - type: string
+                          name: devicedata_devicespec_make
+                        - type: string
+                          name: devicedata_statecode
+                        - type: string
+                          name: devicedata_districtcustom
+                        - type: string
+                          name: devicedata_statecustomname
+                        - type: string
+                          name: devicedata_userdeclared_district
+                        - type: string
+                          name: devicedata_userdeclared_state
+                        - type: string
+                          name: context_cdata[*]_id
+                        - type: string
+                          name: context_cdata[*]_type
+                        - type: string
+                          name: context_env
+                        - type: string
+                          name: context_channel
+                        - type: string
+                          name: context_pdata_id
+                        - type: string
+                          name: context_pdata_pid
+                        - type: string
+                          name: context_pdata_ver
+                        - type: string
+                          name: context_sid
+                        - type: string
+                          name: context_did
+                        - type: string
+                          name: context_rollup_l1
+                        - type: string
+                          name: object_id
+                        - type: string
+                          name: object_type
+                        - type: string
+                          name: object_version
+                        - type: string
+                          name: ver
+                    timestampSpec:
+                      column: arrival-time
+                      format: auto
+                    metricsSpec:
+                      - type: doubleSum
+                        name: eid
+                        fieldName: eid
+                      - type: doubleSum
+                        name: syncts
+                        fieldName: syncts
+                      - type: doubleSum
+                        name: ets
+                        fieldName: ets
+                      - type: doubleSum
+                        name: edata_duration
+                        fieldName: edata_duration
+                      - type: doubleSum
+                        name: edata_size
+                        fieldName: edata_size
+                      - type: doubleSum
+                        name: edata_filters_make_vers
+                        fieldName: edata_filters_make_vers
+                      - type: doubleSum
+                        name: devicedata_firstaccess
+                        fieldName: devicedata_firstaccess
+                    granularitySpec:
+                      type: uniform
+                      segmentGranularity: DAY
+                      queryGranularity: HOUR
+                      rollup: false
+                  tuningConfig:
+                    type: kafka
+                    maxRowsPerSegment: 50000
+                    logParseExceptions: true
+                  ioConfig:
+                    type: kafka
+                    topic: obsrv.telemetry.input
+                    consumerProperties: {}
+                    taskCount: 1
+                    replicas: 1
+                    taskDuration: PT8H
+                    useEarliestOffset: false
+                    completionTimeout: PT8H
+                    inputFormat:
+                      type: json
+                      flattenSpec:
+                        useFieldDiscovery: true
+                        fields:
+                          - type: path
+                            expr: $.eid
+                            name: eid
+                          - type: path
+                            expr: $.syncts
+                            name: syncts
+                          - type: path
+                            expr: $.ets
+                            name: ets
+                          - type: path
+                            expr: $.edata.duration
+                            name: edata_duration
+                          - type: path
+                            expr: $.edata.size
+                            name: edata_size
+                          - type: path
+                            expr: $.edata.filters.make.vers
+                            name: edata_filters_make_vers
+                          - type: path
+                            expr: $.devicedata.firstaccess
+                            name: devicedata_firstaccess
+                          - type: path
+                            expr: $.flags.ex_processed
+                            name: flags_ex_processed
+                          - type: path
+                            expr: $.flags.pp_validation_processed
+                            name: flags_pp_validation_processed
+                          - type: path
+                            expr: $.flags.pp_duplicate_skipped
+                            name: flags_pp_duplicate_skipped
+                          - type: path
+                            expr: $.flags.device_denorm
+                            name: flags_device_denorm
+                          - type: path
+                            expr: $.flags.user_denorm
+                            name: flags_user_denorm
+                          - type: path
+                            expr: $.flags.loc_denorm
+                            name: flags_loc_denorm
+                          - type: path
+                            expr: $.derivedlocationdata.district
+                            name: derivedlocationdata_district
+                          - type: path
+                            expr: $.derivedlocationdata.from
+                            name: derivedlocationdata_from
+                          - type: path
+                            expr: $.derivedlocationdata.state
+                            name: derivedlocationdata_state
+                          - type: path
+                            expr: $.mid
+                            name: mid
+                          - type: path
+                            expr: $.type
+                            name: type
+                          - type: path
+                            expr: $.actor.type
+                            name: actor_type
+                          - type: path
+                            expr: $.actor.id
+                            name: actor_id
+                          - type: path
+                            expr: $.edata.type
+                            name: edata_type
+                          - type: path
+                            expr: $.edata.query
+                            name: edata_query
+                          - type: path
+                            expr: $.edata.filters.slug
+                            name: edata_filters_slug
+                          - type: path
+                            expr: $.edata.filters.isTenant
+                            name: edata_filters_isTenant
+                          - type: path
+                            expr: $.edata.filters.make.type
+                            name: edata_filters_make_type
+                          - type: path
+                            expr: $.edata.topn[*].id
+                            name: edata_topn_id
+                          - type: path
+                            expr: $.edata.items
+                            name: edata_items
+                          - type: path
+                            expr: $.userdata.subject[*]
+                            name: userdata_subject
+                          - type: path
+                            expr: $.userdata.district
+                            name: userdata_district
+                          - type: path
+                            expr: $.userdata.usersubtype
+                            name: userdata_usersubtype
+                          - type: path
+                            expr: $.userdata.grade[*]
+                            name: userdata_grade
+                          - type: path
+                            expr: $.userdata.usersignintype
+                            name: userdata_usersignintype
+                          - type: path
+                            expr: $.userdata.usertype
+                            name: userdata_usertype
+                          - type: path
+                            expr: $.userdata.userlogintype
+                            name: userdata_userlogintype
+                          - type: path
+                            expr: $.userdata.state
+                            name: userdata_state
+                          - type: path
+                            expr: $.@timestamp
+                            name: '@timestamp'
+                          - type: path
+                            expr: $.devicedata.statecustomcode
+                            name: devicedata_statecustomcode
+                          - type: path
+                            expr: $.devicedata.country
+                            name: devicedata_country
+                          - type: path
+                            expr: $.devicedata.iso3166statecode
+                            name: devicedata_iso3166statecode
+                          - type: path
+                            expr: $.devicedata.city
+                            name: devicedata_city
+                          - type: path
+                            expr: $.devicedata.countrycode
+                            name: devicedata_countrycode
+                          - type: path
+                            expr: $.devicedata.state
+                            name: devicedata_state
+                          - type: path
+                            expr: $.devicedata.devicespec.idisk
+                            name: devicedata_devicespec_idisk
+                          - type: path
+                            expr: $.devicedata.devicespec.webview
+                            name: devicedata_devicespec_webview
+                          - type: path
+                            expr: $.devicedata.devicespec.os
+                            name: devicedata_devicespec_os
+                          - type: path
+                            expr: $.devicedata.devicespec.scrn
+                            name: devicedata_devicespec_scrn
+                          - type: path
+                            expr: $.devicedata.devicespec.sims
+                            name: devicedata_devicespec_sims
+                          - type: path
+                            expr: $.devicedata.devicespec.cpu
+                            name: devicedata_devicespec_cpu
+                          - type: path
+                            expr: $.devicedata.devicespec.id
+                            name: devicedata_devicespec_id
+                          - type: path
+                            expr: $.devicedata.devicespec.camera
+                            name: devicedata_devicespec_camera
+                          - type: path
+                            expr: $.devicedata.devicespec.edisk
+                            name: devicedata_devicespec_edisk
+                          - type: path
+                            expr: $.devicedata.devicespec.make
+                            name: devicedata_devicespec_make
+                          - type: path
+                            expr: $.devicedata.statecode
+                            name: devicedata_statecode
+                          - type: path
+                            expr: $.devicedata.districtcustom
+                            name: devicedata_districtcustom
+                          - type: path
+                            expr: $.devicedata.statecustomname
+                            name: devicedata_statecustomname
+                          - type: path
+                            expr: $.devicedata.userdeclared.district
+                            name: devicedata_userdeclared_district
+                          - type: path
+                            expr: $.devicedata.userdeclared.state
+                            name: devicedata_userdeclared_state
+                          - type: path
+                            expr: $.context.cdata[*].id
+                            name: context_cdata_id
+                          - type: path
+                            expr: $.context.cdata[*].type
+                            name: context_cdata_type
+                          - type: path
+                            expr: $.context.env
+                            name: context_env
+                          - type: path
+                            expr: $.context.channel
+                            name: context_channel
+                          - type: path
+                            expr: $.context.pdata.id
+                            name: context_pdata_id
+                          - type: path
+                            expr: $.context.pdata.pid
+                            name: context_pdata_pid
+                          - type: path
+                            expr: $.context.pdata.ver
+                            name: context_pdata_ver
+                          - type: path
+                            expr: $.context.sid
+                            name: context_sid
+                          - type: path
+                            expr: $.context.did
+                            name: context_did
+                          - type: path
+                            expr: $.context.rollup.l1
+                            name: context_rollup_l1
+                          - type: path
+                            expr: $.object.id
+                            name: object_id
+                          - type: path
+                            expr: $.object.type
+                            name: object_type
+                          - type: path
+                            expr: $.object.version
+                            name: object_version
+                          - type: path
+                            expr: $.ver
+                            name: ver
+                    appendToExisting: false
+              datasource: telemetry-rollup
+              published_date: '2023-03-27T11:40:43.269Z'
+              status: ACTIVE
+              
+        DatasourceUpdate:
+            value:
+              dataset_id: 9e107d9d-763f-4f4-9d61-00a0c91e6bf6
+              datasource: telemetry-rollup
+              backup_config:
+                enabled: true
+              
+        DatasourceList:
+            value:
+              filters: ["ACTIVE", "DISABLED"]
+              limit: 100
+              offset: 0
+              
     responses:
         BadRequestResponseSchema:
             description: Bad Request
@@ -186,7 +1203,7 @@ components:
                                 example: BAD_REQUEST
                             result:
                                 type: object
-                                    
+        
         
         NativeResponseSchema:
             description: OK
@@ -356,16 +1373,2295 @@ components:
                                    - contentId: '0131728907872583684'
                                      totalRatingsCount: 65
                                          
-                                         
-         
+        DataIngestResponseSchema:
+            description: OK
+            content:
+                application/json:
+                  schema:
+                     type: object
+                     properties:
+                      id:
+                        type: string
+                        example: "obsrv.dataset.data.in"
+                      ver:
+                        type: string
+                        example: "v1"
+                      ts:
+                        type: integer
+                        example: 1679916559382
+                      message:
+                        type: string
+                        example: "The data has been successfully ingested"
+                      responseCode:
+                        type: string
+                        example: "OK"
+                      result:
+                        type: object
+                        properties:
+                          message:
+                            type: string
+                            example: "The data has been successfully ingested"
+        DataIngestBadRequest:
+            description: Bad Request
+            content:
+                application/json:
+                  schema:
+                     type: object
+                     properties:
+                      id:
+                        type: string
+                        example: "obsrv.dataset.data.in"
+                      ver:
+                        type: string
+                        example: "v1"
+                      ts:
+                        type: integer
+                        example: 1679916559382
+                      message:
+                        type: string
+                        example: "datasetId parameter in url cannot be empty"
+                      responseCode:
+                        type: string
+                        example: "OK"
+                      result:
+                        type: object
+                         
+        DatasourceCreateResponseSchema:
+              description: OK
+              content:
+                application/json:
+                  schema:
+                     type: object
+                     properties:
+                      id:
+                        type: string
+                        example: "obsrv.config.datasource.save"
+                      ver:
+                        type: string
+                        example: "v1"
+                      ts:
+                        type: integer
+                        example: 1679916559382
+                      params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: SUCCESS
+                                    errmsg:
+                                        type: string
+                                        example: ""
+                      responseCode:
+                        type: string
+                        example: "OK"
+                      result:
+                        type: object
+                        properties:
+                          message:
+                            type: string
+                            example: "The datasource configuration has been saved successfully"
+                          dataset_id:
+                            type: string
+                            example: "9e107d9d-763f-4f4-9d61-00a0c91e6bf6_telemetry-rollup"
+        DatasourceUpdateResponseSchema:
+              description: OK
+              content:
+                application/json:
+                  schema:
+                     type: object
+                     properties:
+                      id:
+                        type: string
+                        example: obsrv.config.datasource.update
+                      ver:
+                        type: string
+                        example: "v1"
+                      ts:
+                        type: integer
+                        example: 1679916559382
+                      params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: SUCCESS
+                                    errmsg:
+                                        type: string
+                                        example: ""
+                      responseCode:
+                        type: string
+                        example: "OK"
+                      result:
+                        type: object
+                        properties:
+                          message:
+                            type: string
+                            example: "The datasource configuration has been updated successfully"
+                          dataset_id:
+                            type: string
+                            example: "9e107d9d-763f-4f4-9d61-00a0c91e6bf6_telemetry-rollup"
+        DatasourceCreateBadRequest:
+            description: Bad Request
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            id:
+                                type: string
+                                example: obsrv.config.datasource.save
+                            ver:
+                                type: string
+                                example: v1
+                            ts:
+                                type: string
+                                example: 1672679516875
+                            params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: FAILED
+                                    errmsg:
+                                        type: string
+                                        example: must have required property 'dataset_id'
+                            responseCode:
+                                type: string
+                                example: BAD_REQUEST
+                            result:
+                                type: object
+        DatasourceUpdateBadRequest:
+            description: Bad Request
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            id:
+                                type: string
+                                example: obsrv.config.datasource.update
+                            ver:
+                                type: string
+                                example: v1
+                            ts:
+                                type: string
+                                example: 1672679516875
+                            params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: FAILED
+                                    errmsg:
+                                        type: string
+                                        example: Failed to update Record
+                            responseCode:
+                                type: string
+                                example: BAD_REQUEST
+                            result:
+                                type: object
+        DatasourceCreateDuplicate:
+            description: Conflict
+            content:
+              application/json:
+                  schema:
+                      type: object
+                      properties:
+                          id: 
+                              type: string
+                              example: obsrv.config.datasource.save
+                          ver:
+                              type: string
+                              example: v1
+                          ts:
+                              type: string
+                              example: 1672679516875
+                          params:
+                              type: object
+                              properties:
+                                  status:
+                                      type: string
+                                      example: FAILED
+                                  errmsg:
+                                      type: string
+                                      example: Record already exists
+                          responseCode:
+                              type: string
+                              example: CONFLICT
+                          result:
+                              type: object
+        DatasourceListResponse:
+            description: OK
+            content:
+              application/json:
+                  schema:
+                      type: object
+                      properties:
+                          id: 
+                              type: string
+                              example: obsrv.config.datasource.list
+                          ver:
+                              type: string
+                              example: v1
+                          ts:
+                              type: string
+                              example: 1672679516875
+                          params:
+                              type: object
+                              properties:
+                                  status:
+                                      type: string
+                                      example: SUCCESS
+                                  errmsg:
+                                      type: string
+                                      example: ""
+                          responseCode:
+                              type: string
+                              example: OK
+                          result:
+                              type: array
+                              items:  
+                                type: object
+                                example: 
+                                   id: 9e107d9d-763f-4f4-9d61-00a0c91e6bf6_telemetry-rollup
+                                   dataset_id: 9e107d9d-763f-4f4-9d61-00a0c91e6bf6
+                                   ingestion_spec:
+                                     type: kafka
+                                     spec:
+                                       dataSchema:
+                                         dataSource: obsrv-telemetry-events
+                                         dimensionsSpec:
+                                           dimensions:
+                                             - type: string
+                                               name: fromDate
+                                             - type: string
+                                               name: toDate
+                                             - type: string
+                                               name: tes
+                                             - type: string
+                                               name: uid
+                                             - type: string
+                                               name: mobile
+                                             - type: string
+                                               name: ip
+                                             - type: string
+                                               name: ipv6
+                                             - type: boolean
+                                               name: flags_ex_processed
+                                             - type: boolean
+                                               name: flags_pp_validation_processed
+                                             - type: boolean
+                                               name: flags_pp_duplicate_skipped
+                                             - type: boolean
+                                               name: flags_device_denorm
+                                             - type: boolean
+                                               name: flags_user_denorm
+                                             - type: boolean
+                                               name: flags_loc_denorm
+                                             - type: string
+                                               name: derivedlocationdata_district
+                                             - type: string
+                                               name: derivedlocationdata_from
+                                             - type: string
+                                               name: derivedlocationdata_state
+                                             - type: string
+                                               name: mid
+                                             - type: string
+                                               name: type
+                                             - type: string
+                                               name: actor_type
+                                             - type: string
+                                               name: actor_id
+                                             - type: string
+                                               name: edata_type
+                                             - type: string
+                                               name: edata_query
+                                             - type: string
+                                               name: edata_filters_slug
+                                             - type: boolean
+                                               name: edata_filters_isTenant
+                                             - type: string
+                                               name: edata_filters_make_type
+                                             - type: string
+                                               name: edata_topn[*]_id
+                                             - name: edata_items
+                                             - type: array
+                                               name: userdata_subject
+                                             - type: string
+                                               name: userdata_district
+                                             - type: string
+                                               name: userdata_usersubtype
+                                             - type: array
+                                               name: userdata_grade
+                                             - type: string
+                                               name: userdata_usersignintype
+                                             - type: string
+                                               name: userdata_usertype
+                                             - type: string
+                                               name: userdata_userlogintype
+                                             - type: string
+                                               name: userdata_state
+                                             - type: string
+                                               name: '@timestamp'
+                                             - type: string
+                                               name: devicedata_statecustomcode
+                                             - type: string
+                                               name: devicedata_country
+                                             - type: string
+                                               name: devicedata_iso3166statecode
+                                             - type: string
+                                               name: devicedata_city
+                                             - type: string
+                                               name: devicedata_countrycode
+                                             - type: string
+                                               name: devicedata_state
+                                             - type: string
+                                               name: devicedata_devicespec_idisk
+                                             - type: string
+                                               name: devicedata_devicespec_webview
+                                             - type: string
+                                               name: devicedata_devicespec_os
+                                             - type: string
+                                               name: devicedata_devicespec_scrn
+                                             - type: string
+                                               name: devicedata_devicespec_sims
+                                             - type: string
+                                               name: devicedata_devicespec_cpu
+                                             - type: string
+                                               name: devicedata_devicespec_id
+                                             - type: string
+                                               name: devicedata_devicespec_camera
+                                             - type: string
+                                               name: devicedata_devicespec_edisk
+                                             - type: string
+                                               name: devicedata_devicespec_make
+                                             - type: string
+                                               name: devicedata_statecode
+                                             - type: string
+                                               name: devicedata_districtcustom
+                                             - type: string
+                                               name: devicedata_statecustomname
+                                             - type: string
+                                               name: devicedata_userdeclared_district
+                                             - type: string
+                                               name: devicedata_userdeclared_state
+                                             - type: string
+                                               name: context_cdata[*]_id
+                                             - type: string
+                                               name: context_cdata[*]_type
+                                             - type: string
+                                               name: context_env
+                                             - type: string
+                                               name: context_channel
+                                             - type: string
+                                               name: context_pdata_id
+                                             - type: string
+                                               name: context_pdata_pid
+                                             - type: string
+                                               name: context_pdata_ver
+                                             - type: string
+                                               name: context_sid
+                                             - type: string
+                                               name: context_did
+                                             - type: string
+                                               name: context_rollup_l1
+                                             - type: string
+                                               name: object_id
+                                             - type: string
+                                               name: object_type
+                                             - type: string
+                                               name: object_version
+                                             - type: string
+                                               name: ver
+                                         timestampSpec:
+                                           column: arrival-time
+                                           format: auto
+                                         metricsSpec:
+                                           - type: doubleSum
+                                             name: eid
+                                             fieldName: eid
+                                           - type: doubleSum
+                                             name: syncts
+                                             fieldName: syncts
+                                           - type: doubleSum
+                                             name: ets
+                                             fieldName: ets
+                                           - type: doubleSum
+                                             name: edata_duration
+                                             fieldName: edata_duration
+                                           - type: doubleSum
+                                             name: edata_size
+                                             fieldName: edata_size
+                                           - type: doubleSum
+                                             name: edata_filters_make_vers
+                                             fieldName: edata_filters_make_vers
+                                           - type: doubleSum
+                                             name: devicedata_firstaccess
+                                             fieldName: devicedata_firstaccess
+                                         granularitySpec:
+                                           type: uniform
+                                           segmentGranularity: DAY
+                                           queryGranularity: HOUR
+                                           rollup: false
+                                       tuningConfig:
+                                         type: kafka
+                                         maxRowsPerSegment: 50000
+                                         logParseExceptions: true
+                                       ioConfig:
+                                         type: kafka
+                                         topic: obsrv.telemetry.input
+                                         consumerProperties: {}
+                                         taskCount: 1
+                                         replicas: 1
+                                         taskDuration: PT8H
+                                         useEarliestOffset: false
+                                         completionTimeout: PT8H
+                                         inputFormat:
+                                           type: json
+                                           flattenSpec:
+                                             useFieldDiscovery: true
+                                             fields:
+                                               - type: path
+                                                 expr: $.eid
+                                                 name: eid
+                                               - type: path
+                                                 expr: $.syncts
+                                                 name: syncts
+                                               - type: path
+                                                 expr: $.ets
+                                                 name: ets
+                                               - type: path
+                                                 expr: $.edata.duration
+                                                 name: edata_duration
+                                               - type: path
+                                                 expr: $.edata.size
+                                                 name: edata_size
+                                               - type: path
+                                                 expr: $.edata.filters.make.vers
+                                                 name: edata_filters_make_vers
+                                               - type: path
+                                                 expr: $.devicedata.firstaccess
+                                                 name: devicedata_firstaccess
+                                               - type: path
+                                                 expr: $.flags.ex_processed
+                                                 name: flags_ex_processed
+                                               - type: path
+                                                 expr: $.flags.pp_validation_processed
+                                                 name: flags_pp_validation_processed
+                                               - type: path
+                                                 expr: $.flags.pp_duplicate_skipped
+                                                 name: flags_pp_duplicate_skipped
+                                               - type: path
+                                                 expr: $.flags.device_denorm
+                                                 name: flags_device_denorm
+                                               - type: path
+                                                 expr: $.flags.user_denorm
+                                                 name: flags_user_denorm
+                                               - type: path
+                                                 expr: $.flags.loc_denorm
+                                                 name: flags_loc_denorm
+                                               - type: path
+                                                 expr: $.derivedlocationdata.district
+                                                 name: derivedlocationdata_district
+                                               - type: path
+                                                 expr: $.derivedlocationdata.from
+                                                 name: derivedlocationdata_from
+                                               - type: path
+                                                 expr: $.derivedlocationdata.state
+                                                 name: derivedlocationdata_state
+                                               - type: path
+                                                 expr: $.mid
+                                                 name: mid
+                                               - type: path
+                                                 expr: $.type
+                                                 name: type
+                                               - type: path
+                                                 expr: $.actor.type
+                                                 name: actor_type
+                                               - type: path
+                                                 expr: $.actor.id
+                                                 name: actor_id
+                                               - type: path
+                                                 expr: $.edata.type
+                                                 name: edata_type
+                                               - type: path
+                                                 expr: $.edata.query
+                                                 name: edata_query
+                                               - type: path
+                                                 expr: $.edata.filters.slug
+                                                 name: edata_filters_slug
+                                               - type: path
+                                                 expr: $.edata.filters.isTenant
+                                                 name: edata_filters_isTenant
+                                               - type: path
+                                                 expr: $.edata.filters.make.type
+                                                 name: edata_filters_make_type
+                                               - type: path
+                                                 expr: $.edata.topn[*].id
+                                                 name: edata_topn_id
+                                               - type: path
+                                                 expr: $.edata.items
+                                                 name: edata_items
+                                               - type: path
+                                                 expr: $.userdata.subject[*]
+                                                 name: userdata_subject
+                                               - type: path
+                                                 expr: $.userdata.district
+                                                 name: userdata_district
+                                               - type: path
+                                                 expr: $.userdata.usersubtype
+                                                 name: userdata_usersubtype
+                                               - type: path
+                                                 expr: $.userdata.grade[*]
+                                                 name: userdata_grade
+                                               - type: path
+                                                 expr: $.userdata.usersignintype
+                                                 name: userdata_usersignintype
+                                               - type: path
+                                                 expr: $.userdata.usertype
+                                                 name: userdata_usertype
+                                               - type: path
+                                                 expr: $.userdata.userlogintype
+                                                 name: userdata_userlogintype
+                                               - type: path
+                                                 expr: $.userdata.state
+                                                 name: userdata_state
+                                               - type: path
+                                                 expr: $.@timestamp
+                                                 name: '@timestamp'
+                                               - type: path
+                                                 expr: $.devicedata.statecustomcode
+                                                 name: devicedata_statecustomcode
+                                               - type: path
+                                                 expr: $.devicedata.country
+                                                 name: devicedata_country
+                                               - type: path
+                                                 expr: $.devicedata.iso3166statecode
+                                                 name: devicedata_iso3166statecode
+                                               - type: path
+                                                 expr: $.devicedata.city
+                                                 name: devicedata_city
+                                               - type: path
+                                                 expr: $.devicedata.countrycode
+                                                 name: devicedata_countrycode
+                                               - type: path
+                                                 expr: $.devicedata.state
+                                                 name: devicedata_state
+                                               - type: path
+                                                 expr: $.devicedata.devicespec.idisk
+                                                 name: devicedata_devicespec_idisk
+                                               - type: path
+                                                 expr: $.devicedata.devicespec.webview
+                                                 name: devicedata_devicespec_webview
+                                               - type: path
+                                                 expr: $.devicedata.devicespec.os
+                                                 name: devicedata_devicespec_os
+                                               - type: path
+                                                 expr: $.devicedata.devicespec.scrn
+                                                 name: devicedata_devicespec_scrn
+                                               - type: path
+                                                 expr: $.devicedata.devicespec.sims
+                                                 name: devicedata_devicespec_sims
+                                               - type: path
+                                                 expr: $.devicedata.devicespec.cpu
+                                                 name: devicedata_devicespec_cpu
+                                               - type: path
+                                                 expr: $.devicedata.devicespec.id
+                                                 name: devicedata_devicespec_id
+                                               - type: path
+                                                 expr: $.devicedata.devicespec.camera
+                                                 name: devicedata_devicespec_camera
+                                               - type: path
+                                                 expr: $.devicedata.devicespec.edisk
+                                                 name: devicedata_devicespec_edisk
+                                               - type: path
+                                                 expr: $.devicedata.devicespec.make
+                                                 name: devicedata_devicespec_make
+                                               - type: path
+                                                 expr: $.devicedata.statecode
+                                                 name: devicedata_statecode
+                                               - type: path
+                                                 expr: $.devicedata.districtcustom
+                                                 name: devicedata_districtcustom
+                                               - type: path
+                                                 expr: $.devicedata.statecustomname
+                                                 name: devicedata_statecustomname
+                                               - type: path
+                                                 expr: $.devicedata.userdeclared.district
+                                                 name: devicedata_userdeclared_district
+                                               - type: path
+                                                 expr: $.devicedata.userdeclared.state
+                                                 name: devicedata_userdeclared_state
+                                               - type: path
+                                                 expr: $.context.cdata[*].id
+                                                 name: context_cdata_id
+                                               - type: path
+                                                 expr: $.context.cdata[*].type
+                                                 name: context_cdata_type
+                                               - type: path
+                                                 expr: $.context.env
+                                                 name: context_env
+                                               - type: path
+                                                 expr: $.context.channel
+                                                 name: context_channel
+                                               - type: path
+                                                 expr: $.context.pdata.id
+                                                 name: context_pdata_id
+                                               - type: path
+                                                 expr: $.context.pdata.pid
+                                                 name: context_pdata_pid
+                                               - type: path
+                                                 expr: $.context.pdata.ver
+                                                 name: context_pdata_ver
+                                               - type: path
+                                                 expr: $.context.sid
+                                                 name: context_sid
+                                               - type: path
+                                                 expr: $.context.did
+                                                 name: context_did
+                                               - type: path
+                                                 expr: $.context.rollup.l1
+                                                 name: context_rollup_l1
+                                               - type: path
+                                                 expr: $.object.id
+                                                 name: object_id
+                                               - type: path
+                                                 expr: $.object.type
+                                                 name: object_type
+                                               - type: path
+                                                 expr: $.object.version
+                                                 name: object_version
+                                               - type: path
+                                                 expr: $.ver
+                                                 name: ver
+                                         appendToExisting: false
+                                   datasource: telemetry-rollup
+                                   retention_period: {}
+                                   archival_policy: {}
+                                   purge_policy: {}
+                                   backup_config:
+                                     enabled: true
+                                   status: ACTIVE
+                                   created_by: SYSTEM
+                                   updated_by: SYSTEM
+                                   created_date: '2023-03-28T16:29:27.165Z'
+                                   updated_date: '2023-03-28T16:30:11.994Z'
+                                   published_date: '2023-03-27T06:10:43.269Z'
+                                   
+                                             
+                                  
+                                  
+        DatasourceListBadRequest:
+            description: Bad Request
+            content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                id:
+                                    type: string
+                                    example: obsrv.config.datasource.list
+                                ver:
+                                    type: string
+                                    example: v1
+                                ts:
+                                    type: string
+                                    example: 1672679516875
+                                params:
+                                    type: object
+                                    properties:
+                                        status:
+                                            type: string
+                                            example: FAILED
+                                        errmsg:
+                                            type: string
+                                            example: must have required property 'filters'
+                                responseCode:
+                                    type: string
+                                    example: BAD_REQUEST
+                                result:
+                                    type: object
+        
+        DatasourceReadResponse:
+            description: OK
+            content:
+              application/json:
+                  schema:
+                      type: object
+                      properties:
+                          id: 
+                              type: string
+                              example: obsrv.config.datasource.read
+                          ver:
+                              type: string
+                              example: v1
+                          ts:
+                              type: string
+                              example: 1672679516875
+                          params:
+                              type: object
+                              properties:
+                                  status:
+                                      type: string
+                                      example: SUCCESS
+                                  errmsg:
+                                      type: string
+                                      example: ""
+                          responseCode:
+                              type: string
+                              example: OK
+                          result:
+                                type: object
+                                example: 
+                                  id: 9e107d9d-763f-4f4-9d61-00a0c91e6bf6_telemetry-rollup
+                                  dataset_id: 9e107d9d-763f-4f4-9d61-00a0c91e6bf6
+                                  ingestion_spec:
+                                    type: kafka
+                                    spec:
+                                      dataSchema:
+                                        dataSource: obsrv-telemetry-events
+                                        dimensionsSpec:
+                                          dimensions:
+                                            - type: string
+                                              name: fromDate
+                                            - type: string
+                                              name: toDate
+                                            - type: string
+                                              name: tes
+                                            - type: string
+                                              name: uid
+                                            - type: string
+                                              name: mobile
+                                            - type: string
+                                              name: ip
+                                            - type: string
+                                              name: ipv6
+                                            - type: boolean
+                                              name: flags_ex_processed
+                                            - type: boolean
+                                              name: flags_pp_validation_processed
+                                            - type: boolean
+                                              name: flags_pp_duplicate_skipped
+                                            - type: boolean
+                                              name: flags_device_denorm
+                                            - type: boolean
+                                              name: flags_user_denorm
+                                            - type: boolean
+                                              name: flags_loc_denorm
+                                            - type: string
+                                              name: derivedlocationdata_district
+                                            - type: string
+                                              name: derivedlocationdata_from
+                                            - type: string
+                                              name: derivedlocationdata_state
+                                            - type: string
+                                              name: mid
+                                            - type: string
+                                              name: type
+                                            - type: string
+                                              name: actor_type
+                                            - type: string
+                                              name: actor_id
+                                            - type: string
+                                              name: edata_type
+                                            - type: string
+                                              name: edata_query
+                                            - type: string
+                                              name: edata_filters_slug
+                                            - type: boolean
+                                              name: edata_filters_isTenant
+                                            - type: string
+                                              name: edata_filters_make_type
+                                            - type: string
+                                              name: edata_topn[*]_id
+                                            - name: edata_items
+                                            - type: array
+                                              name: userdata_subject
+                                            - type: string
+                                              name: userdata_district
+                                            - type: string
+                                              name: userdata_usersubtype
+                                            - type: array
+                                              name: userdata_grade
+                                            - type: string
+                                              name: userdata_usersignintype
+                                            - type: string
+                                              name: userdata_usertype
+                                            - type: string
+                                              name: userdata_userlogintype
+                                            - type: string
+                                              name: userdata_state
+                                            - type: string
+                                              name: '@timestamp'
+                                            - type: string
+                                              name: devicedata_statecustomcode
+                                            - type: string
+                                              name: devicedata_country
+                                            - type: string
+                                              name: devicedata_iso3166statecode
+                                            - type: string
+                                              name: devicedata_city
+                                            - type: string
+                                              name: devicedata_countrycode
+                                            - type: string
+                                              name: devicedata_state
+                                            - type: string
+                                              name: devicedata_devicespec_idisk
+                                            - type: string
+                                              name: devicedata_devicespec_webview
+                                            - type: string
+                                              name: devicedata_devicespec_os
+                                            - type: string
+                                              name: devicedata_devicespec_scrn
+                                            - type: string
+                                              name: devicedata_devicespec_sims
+                                            - type: string
+                                              name: devicedata_devicespec_cpu
+                                            - type: string
+                                              name: devicedata_devicespec_id
+                                            - type: string
+                                              name: devicedata_devicespec_camera
+                                            - type: string
+                                              name: devicedata_devicespec_edisk
+                                            - type: string
+                                              name: devicedata_devicespec_make
+                                            - type: string
+                                              name: devicedata_statecode
+                                            - type: string
+                                              name: devicedata_districtcustom
+                                            - type: string
+                                              name: devicedata_statecustomname
+                                            - type: string
+                                              name: devicedata_userdeclared_district
+                                            - type: string
+                                              name: devicedata_userdeclared_state
+                                            - type: string
+                                              name: context_cdata[*]_id
+                                            - type: string
+                                              name: context_cdata[*]_type
+                                            - type: string
+                                              name: context_env
+                                            - type: string
+                                              name: context_channel
+                                            - type: string
+                                              name: context_pdata_id
+                                            - type: string
+                                              name: context_pdata_pid
+                                            - type: string
+                                              name: context_pdata_ver
+                                            - type: string
+                                              name: context_sid
+                                            - type: string
+                                              name: context_did
+                                            - type: string
+                                              name: context_rollup_l1
+                                            - type: string
+                                              name: object_id
+                                            - type: string
+                                              name: object_type
+                                            - type: string
+                                              name: object_version
+                                            - type: string
+                                              name: ver
+                                        timestampSpec:
+                                          column: arrival-time
+                                          format: auto
+                                        metricsSpec:
+                                          - type: doubleSum
+                                            name: eid
+                                            fieldName: eid
+                                          - type: doubleSum
+                                            name: syncts
+                                            fieldName: syncts
+                                          - type: doubleSum
+                                            name: ets
+                                            fieldName: ets
+                                          - type: doubleSum
+                                            name: edata_duration
+                                            fieldName: edata_duration
+                                          - type: doubleSum
+                                            name: edata_size
+                                            fieldName: edata_size
+                                          - type: doubleSum
+                                            name: edata_filters_make_vers
+                                            fieldName: edata_filters_make_vers
+                                          - type: doubleSum
+                                            name: devicedata_firstaccess
+                                            fieldName: devicedata_firstaccess
+                                        granularitySpec:
+                                          type: uniform
+                                          segmentGranularity: DAY
+                                          queryGranularity: HOUR
+                                          rollup: false
+                                      tuningConfig:
+                                        type: kafka
+                                        maxRowsPerSegment: 50000
+                                        logParseExceptions: true
+                                      ioConfig:
+                                        type: kafka
+                                        topic: obsrv.telemetry.input
+                                        consumerProperties: {}
+                                        taskCount: 1
+                                        replicas: 1
+                                        taskDuration: PT8H
+                                        useEarliestOffset: false
+                                        completionTimeout: PT8H
+                                        inputFormat:
+                                          type: json
+                                          flattenSpec:
+                                            useFieldDiscovery: true
+                                            fields:
+                                              - type: path
+                                                expr: $.eid
+                                                name: eid
+                                              - type: path
+                                                expr: $.syncts
+                                                name: syncts
+                                              - type: path
+                                                expr: $.ets
+                                                name: ets
+                                              - type: path
+                                                expr: $.edata.duration
+                                                name: edata_duration
+                                              - type: path
+                                                expr: $.edata.size
+                                                name: edata_size
+                                              - type: path
+                                                expr: $.edata.filters.make.vers
+                                                name: edata_filters_make_vers
+                                              - type: path
+                                                expr: $.devicedata.firstaccess
+                                                name: devicedata_firstaccess
+                                              - type: path
+                                                expr: $.flags.ex_processed
+                                                name: flags_ex_processed
+                                              - type: path
+                                                expr: $.flags.pp_validation_processed
+                                                name: flags_pp_validation_processed
+                                              - type: path
+                                                expr: $.flags.pp_duplicate_skipped
+                                                name: flags_pp_duplicate_skipped
+                                              - type: path
+                                                expr: $.flags.device_denorm
+                                                name: flags_device_denorm
+                                              - type: path
+                                                expr: $.flags.user_denorm
+                                                name: flags_user_denorm
+                                              - type: path
+                                                expr: $.flags.loc_denorm
+                                                name: flags_loc_denorm
+                                              - type: path
+                                                expr: $.derivedlocationdata.district
+                                                name: derivedlocationdata_district
+                                              - type: path
+                                                expr: $.derivedlocationdata.from
+                                                name: derivedlocationdata_from
+                                              - type: path
+                                                expr: $.derivedlocationdata.state
+                                                name: derivedlocationdata_state
+                                              - type: path
+                                                expr: $.mid
+                                                name: mid
+                                              - type: path
+                                                expr: $.type
+                                                name: type
+                                              - type: path
+                                                expr: $.actor.type
+                                                name: actor_type
+                                              - type: path
+                                                expr: $.actor.id
+                                                name: actor_id
+                                              - type: path
+                                                expr: $.edata.type
+                                                name: edata_type
+                                              - type: path
+                                                expr: $.edata.query
+                                                name: edata_query
+                                              - type: path
+                                                expr: $.edata.filters.slug
+                                                name: edata_filters_slug
+                                              - type: path
+                                                expr: $.edata.filters.isTenant
+                                                name: edata_filters_isTenant
+                                              - type: path
+                                                expr: $.edata.filters.make.type
+                                                name: edata_filters_make_type
+                                              - type: path
+                                                expr: $.edata.topn[*].id
+                                                name: edata_topn[*]_id
+                                              - type: path
+                                                expr: $.edata.items
+                                                name: edata_items
+                                              - type: path
+                                                expr: $.userdata.subject[*]
+                                                name: userdata_subject
+                                              - type: path
+                                                expr: $.userdata.district
+                                                name: userdata_district
+                                              - type: path
+                                                expr: $.userdata.usersubtype
+                                                name: userdata_usersubtype
+                                              - type: path
+                                                expr: $.userdata.grade[*]
+                                                name: userdata_grade
+                                              - type: path
+                                                expr: $.userdata.usersignintype
+                                                name: userdata_usersignintype
+                                              - type: path
+                                                expr: $.userdata.usertype
+                                                name: userdata_usertype
+                                              - type: path
+                                                expr: $.userdata.userlogintype
+                                                name: userdata_userlogintype
+                                              - type: path
+                                                expr: $.userdata.state
+                                                name: userdata_state
+                                              - type: path
+                                                expr: $.@timestamp
+                                                name: '@timestamp'
+                                              - type: path
+                                                expr: $.devicedata.statecustomcode
+                                                name: devicedata_statecustomcode
+                                              - type: path
+                                                expr: $.devicedata.country
+                                                name: devicedata_country
+                                              - type: path
+                                                expr: $.devicedata.iso3166statecode
+                                                name: devicedata_iso3166statecode
+                                              - type: path
+                                                expr: $.devicedata.city
+                                                name: devicedata_city
+                                              - type: path
+                                                expr: $.devicedata.countrycode
+                                                name: devicedata_countrycode
+                                              - type: path
+                                                expr: $.devicedata.state
+                                                name: devicedata_state
+                                              - type: path
+                                                expr: $.devicedata.devicespec.idisk
+                                                name: devicedata_devicespec_idisk
+                                              - type: path
+                                                expr: $.devicedata.devicespec.webview
+                                                name: devicedata_devicespec_webview
+                                              - type: path
+                                                expr: $.devicedata.devicespec.os
+                                                name: devicedata_devicespec_os
+                                              - type: path
+                                                expr: $.devicedata.devicespec.scrn
+                                                name: devicedata_devicespec_scrn
+                                              - type: path
+                                                expr: $.devicedata.devicespec.sims
+                                                name: devicedata_devicespec_sims
+                                              - type: path
+                                                expr: $.devicedata.devicespec.cpu
+                                                name: devicedata_devicespec_cpu
+                                              - type: path
+                                                expr: $.devicedata.devicespec.id
+                                                name: devicedata_devicespec_id
+                                              - type: path
+                                                expr: $.devicedata.devicespec.camera
+                                                name: devicedata_devicespec_camera
+                                              - type: path
+                                                expr: $.devicedata.devicespec.edisk
+                                                name: devicedata_devicespec_edisk
+                                              - type: path
+                                                expr: $.devicedata.devicespec.make
+                                                name: devicedata_devicespec_make
+                                              - type: path
+                                                expr: $.devicedata.statecode
+                                                name: devicedata_statecode
+                                              - type: path
+                                                expr: $.devicedata.districtcustom
+                                                name: devicedata_districtcustom
+                                              - type: path
+                                                expr: $.devicedata.statecustomname
+                                                name: devicedata_statecustomname
+                                              - type: path
+                                                expr: $.devicedata.userdeclared.district
+                                                name: devicedata_userdeclared_district
+                                              - type: path
+                                                expr: $.devicedata.userdeclared.state
+                                                name: devicedata_userdeclared_state
+                                              - type: path
+                                                expr: $.context.cdata[*].id
+                                                name: context_cdata[*]_id
+                                              - type: path
+                                                expr: $.context.cdata[*].type
+                                                name: context_cdata[*]_type
+                                              - type: path
+                                                expr: $.context.env
+                                                name: context_env
+                                              - type: path
+                                                expr: $.context.channel
+                                                name: context_channel
+                                              - type: path
+                                                expr: $.context.pdata.id
+                                                name: context_pdata_id
+                                              - type: path
+                                                expr: $.context.pdata.pid
+                                                name: context_pdata_pid
+                                              - type: path
+                                                expr: $.context.pdata.ver
+                                                name: context_pdata_ver
+                                              - type: path
+                                                expr: $.context.sid
+                                                name: context_sid
+                                              - type: path
+                                                expr: $.context.did
+                                                name: context_did
+                                              - type: path
+                                                expr: $.context.rollup.l1
+                                                name: context_rollup_l1
+                                              - type: path
+                                                expr: $.object.id
+                                                name: object_id
+                                              - type: path
+                                                expr: $.object.type
+                                                name: object_type
+                                              - type: path
+                                                expr: $.object.version
+                                                name: object_version
+                                              - type: path
+                                                expr: $.ver
+                                                name: ver
+                                        appendToExisting: false
+                                  datasource: telemetry-rollup
+                                  retention_period: {}
+                                  archival_policy: {}
+                                  purge_policy: {}
+                                  backup_config:
+                                    enabled: true
+                                  status: ACTIVE
+                                  created_by: SYSTEM
+                                  updated_by: SYSTEM
+                                  created_date: '2023-03-28T16:29:27.165Z'
+                                  updated_date: '2023-03-28T16:30:11.994Z'
+                                  published_date: '2023-03-27T06:10:43.269Z'
+                                  
+        DatasourceReadNotFound:
+            description: Not Found
+            content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                id:
+                                    type: string
+                                    example: obsrv.config.datasource.read
+                                ver:
+                                    type: string
+                                    example: v1
+                                ts:
+                                    type: string
+                                    example: 1672679516875
+                                params:
+                                    type: object
+                                    properties:
+                                        status:
+                                            type: string
+                                            example: FAILED
+                                        errmsg:
+                                            type: string
+                                            example: Record not found
+                                responseCode:
+                                    type: string
+                                    example: NOT_FOUND
+                                result:
+                                    type: object
+        DatasourcePresetResponse:
+          description: OK
+          content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                id:
+                                    type: string
+                                    example: obsrv.config.datasource.preset
+                                ver:
+                                    type: string
+                                    example: v1
+                                ts:
+                                    type: string
+                                    example: 1672679516875
+                                params:
+                                    type: object
+                                    properties:
+                                        status:
+                                            type: string
+                                            example: SUCCESS
+                                        errmsg:
+                                            type: string
+                                            example: ""
+                                responseCode:
+                                    type: string
+                                    example: OK
+                                result:
+                                    type: object
+                                    example:
+                                      retention_period: {}
+                                      archival_policy: {}
+                                      purge_policy: {}
+                                      backup_config: {}
+                                      status: ACTIVE
+                                      created_by: SYSTEM
+                                      updated_by: SYSTEM
+                                      
+                                    
+        DatasetCreateResponseSchema:
+              description: OK
+              content:
+                application/json:
+                  schema:
+                     type: object
+                     properties:
+                      id:
+                        type: string
+                        example: "obsrv.config.dataset.save"
+                      ver:
+                        type: string
+                        example: "v1"
+                      ts:
+                        type: integer
+                        example: 1679916559382
+                      params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: SUCCESS
+                                    errmsg:
+                                        type: string
+                                        example: ""
+                      responseCode:
+                        type: string
+                        example: "OK"
+                      result:
+                        type: object
+                        properties:
+                          message:
+                            type: string
+                            example: "The dataset configuration has been saved successfully"
+                          dataset_id:
+                            type: string
+                            example: "9e107d9d-763f-4f4-9d61-00a0c91e6bf6"
+        DatasetUpdateResponseSchema:
+              description: OK
+              content:
+                application/json:
+                  schema:
+                     type: object
+                     properties:
+                      id:
+                        type: string
+                        example: obsrv.config.dataset.update
+                      ver:
+                        type: string
+                        example: "v1"
+                      ts:
+                        type: integer
+                        example: 1679916559382
+                      params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: SUCCESS
+                                    errmsg:
+                                        type: string
+                                        example: ""
+                      responseCode:
+                        type: string
+                        example: "OK"
+                      result:
+                        type: object
+                        properties:
+                          message:
+                            type: string
+                            example: "The dataset configuration has been updated successfully"
+                          dataset_id:
+                            type: string
+                            example: "9e107d9d-763f-4f4-9d61-00a0c91e6bf6"
+        DatasetCreateBadRequest:
+            description: Bad Request
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            id:
+                                type: string
+                                example: obsrv.config.dataset.save
+                            ver:
+                                type: string
+                                example: v1
+                            ts:
+                                type: string
+                                example: 1672679516875
+                            params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: FAILED
+                                    errmsg:
+                                        type: string
+                                        example: must have required property 'id'
+                            responseCode:
+                                type: string
+                                example: BAD_REQUEST
+                            result:
+                                type: object
+        DatasetUpdateBadRequest:
+            description: Bad Request
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            id:
+                                type: string
+                                example: obsrv.config.dataset.update
+                            ver:
+                                type: string
+                                example: v1
+                            ts:
+                                type: string
+                                example: 1672679516875
+                            params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: FAILED
+                                    errmsg:
+                                        type: string
+                                        example: Failed to update Record
+                            responseCode:
+                                type: string
+                                example: BAD_REQUEST
+                            result:
+                                type: object
+        DatasetCreateDuplicate:
+            description: Conflict
+            content:
+              application/json:
+                  schema:
+                      type: object
+                      properties:
+                          id: 
+                              type: string
+                              example: obsrv.config.dataset.save
+                          ver:
+                              type: string
+                              example: v1
+                          ts:
+                              type: string
+                              example: 1672679516875
+                          params:
+                              type: object
+                              properties:
+                                  status:
+                                      type: string
+                                      example: FAILED
+                                  errmsg:
+                                      type: string
+                                      example: Record already exists
+                          responseCode:
+                              type: string
+                              example: CONFLICT
+                          result:
+                              type: object
+        DatasetListResponse:
+            description: OK
+            content:
+              application/json:
+                  schema:
+                      type: object
+                      properties:
+                          id: 
+                              type: string
+                              example: obsrv.config.dataset.list
+                          ver:
+                              type: string
+                              example: v1
+                          ts:
+                              type: string
+                              example: 1672679516875
+                          params:
+                              type: object
+                              properties:
+                                  status:
+                                      type: string
+                                      example: SUCCESS
+                                  errmsg:
+                                      type: string
+                                      example: ""
+                          responseCode:
+                              type: string
+                              example: OK
+                          result:
+                              type: array
+                              items:  
+                                type: object
+                                example: 
+                                  id: 9e107d9d-763f-4f4-9d61-687ea72
+                                  dataset_name: telemetry-raw
+                                  validation_config:
+                                    validate: true
+                                    mode: Strict
+                                  extraction_config:
+                                   is_batch_event: false
+                                   extraction_key: ''
+                                   dedup_config:
+                                     drop_duplicates: true
+                                     dedup_key: id
+                                     dedup_period: 3
+                                  dedup_config:
+                                   drop_duplicates: true
+                                   dedup_key: id
+                                   dedup_period: 3
+                                  data_schema:
+                                   type: object
+                                   properties:
+                                     eid:
+                                       type: integer
+                                     ver:
+                                       type: string
+                                     syncts:
+                                       type: integer
+                                     ets:
+                                       type: integer
+                                     flags:
+                                       type: object
+                                       properties:
+                                         ex_processed:
+                                           type: boolean
+                                         pp_validation_processed:
+                                           type: boolean
+                                         pp_duplicate_skipped:
+                                           type: boolean
+                                         device_denorm:
+                                           type: boolean
+                                         user_denorm:
+                                           type: boolean
+                                         loc_denorm:
+                                           type: boolean
+                                       required:
+                                         - ex_processed
+                                         - pp_validation_processed
+                                         - pp_duplicate_skipped
+                                         - device_denorm
+                                         - user_denorm
+                                         - loc_denorm
+                                     derivedlocationdata:
+                                       type: object
+                                       properties:
+                                         district:
+                                           type: string
+                                         from:
+                                           type: string
+                                         state:
+                                           type: string
+                                       required:
+                                         - district
+                                         - from
+                                         - state
+                                     mid:
+                                       type: string
+                                       format: uuid
+                                       suggestions:
+                                         - message: The Property 'mid' appears to be 'uuid' format type.
+                                           advice: Suggest to not to index the high cardinal columns
+                                           resolutionType: DEDUP
+                                           severity: LOW
+                                     type:
+                                       type: string
+                                     actor:
+                                       type: object
+                                       properties:
+                                         type:
+                                           type: string
+                                         id:
+                                           type: string
+                                           format: uuid
+                                           suggestions:
+                                             - message: The Property 'actor.id' appears to be 'uuid' format type.
+                                               advice: Suggest to not to index the high cardinal columns
+                                               resolutionType: DEDUP
+                                               severity: LOW
+                                       required:
+                                         - type
+                                         - id
+                                     edata:
+                                       type: object
+                                       properties:
+                                         type:
+                                           type: string
+                                       required:
+                                         - type
+                                     userdata:
+                                       type: object
+                                       properties:
+                                         district:
+                                           type: string
+                                         usersubtype:
+                                           type: string
+                                         usersignintype:
+                                           type: string
+                                         usertype:
+                                           type: string
+                                         userlogintype:
+                                           type: string
+                                         state:
+                                           type: string
+                                       required:
+                                         - subject
+                                         - district
+                                         - usersubtype
+                                         - grade
+                                         - usersignintype
+                                         - usertype
+                                         - userlogintype
+                                         - state
+                                     devicedata:
+                                       type: object
+                                       properties:
+                                         statecustomcode:
+                                           type: string
+                                         country:
+                                           type: string
+                                         iso3166statecode:
+                                           type: string
+                                         city:
+                                           type: string
+                                         countrycode:
+                                           type: string
+                                         state:
+                                           type: string
+                                         devicespec:
+                                           type: object
+                                           properties:
+                                             idisk:
+                                               type: string
+                                             webview:
+                                               type: string
+                                             os:
+                                               type: string
+                                             scrn:
+                                               type: string
+                                             sims:
+                                               type: string
+                                             cpu:
+                                               type: string
+                                             id:
+                                               type: string
+                                             camera:
+                                               type: string
+                                             edisk:
+                                               type: string
+                                             make:
+                                               type: string
+                                           required:
+                                             - idisk
+                                             - webview
+                                             - os
+                                             - scrn
+                                             - sims
+                                             - cpu
+                                             - id
+                                             - camera
+                                             - edisk
+                                             - make
+                                         statecode:
+                                           type: string
+                                         firstaccess:
+                                           type: integer
+                                         districtcustom:
+                                           type: string
+                                         statecustomname:
+                                           type: string
+                                         userdeclared:
+                                           type: object
+                                           properties:
+                                             district:
+                                               type: string
+                                             state:
+                                               type: string
+                                           required:
+                                             - district
+                                             - state
+                                       required:
+                                         - statecustomcode
+                                         - country
+                                         - iso3166statecode
+                                         - city
+                                         - countrycode
+                                         - state
+                                         - devicespec
+                                         - statecode
+                                         - firstaccess
+                                         - districtcustom
+                                         - statecustomname
+                                         - userdeclared
+                                     context:
+                                       type: object
+                                       properties:
+                                         cdata:
+                                           type: array
+                                           items:
+                                             type: object
+                                             properties:
+                                               id:
+                                                 type: string
+                                                 format: uuid
+                                               type:
+                                                 type: string
+                                             required:
+                                               - id
+                                               - type
+                                         env:
+                                           type: string
+                                         channel:
+                                           type: string
+                                         pdata:
+                                           type: object
+                                           properties:
+                                             id:
+                                               type: string
+                                             pid:
+                                               type: string
+                                             ver:
+                                               type: string
+                                           required:
+                                             - id
+                                             - pid
+                                             - ver
+                                         sid:
+                                           type: string
+                                           format: uuid
+                                           suggestions:
+                                             - message: The Property 'context.sid' appears to be 'uuid' format type.
+                                               advice: Suggest to not to index the high cardinal columns
+                                               resolutionType: DEDUP
+                                               severity: LOW
+                                         did:
+                                           type: string
+                                         rollup:
+                                           type: object
+                                           properties:
+                                             l1:
+                                               type: string
+                                           required:
+                                             - l1
+                                         items:
+                                           cdata:
+                                             properties:
+                                               id:
+                                                 suggestions:
+                                                   - message: The Property 'context.cdata[*].id' appears to be 'uuid' format type.
+                                                     advice: Suggest to not to index the high cardinal columns
+                                                     resolutionType: DEDUP
+                                                     severity: LOW
+                                       required:
+                                         - cdata
+                                         - env
+                                         - channel
+                                         - pdata
+                                         - sid
+                                         - did
+                                         - rollup
+                                     object:
+                                       type: object
+                                       properties:
+                                         id:
+                                           type: string
+                                         type:
+                                           type: string
+                                         version:
+                                           type: string
+                                         rollup:
+                                           type: object
+                                       required:
+                                         - id
+                                         - type
+                                         - version
+                                         - rollup
+                                   required:
+                                     - eid
+                                     - ver
+                                     - syncts
+                                     - ets
+                                     - flags
+                                     - derivedlocationdata
+                                     - mid
+                                     - type
+                                     - actor
+                                     - edata
+                                     - userdata
+                                     - devicedata
+                                     - context
+                                     - object
+                                  denorm_config:
+                                   redis_db_host: redis_host
+                                   redis_db_port: redis_port
+                                   denorm_fields:
+                                     denorm_key: ''
+                                     redis_db: 1
+                                     denorm_out_field: metadata
+                                  router_config:
+                                   topic: ''
+                                  status: ACTIVE
+                                  version: v1
+                                  created_by: SYSTEM
+                                  updated_by: SYSTEM
+                                  created_date: '2023-03-27T11:40:43.269Z'
+                                  updated_date: '2023-03-27T11:40:43.265Z'
+                                  published_date: '2023-03-24T06:49:32.091Z'
+                                             
+                                  
+                                  
+        DatasetListBadRequest:
+            description: Bad Request
+            content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                id:
+                                    type: string
+                                    example: obsrv.config.dataset.list
+                                ver:
+                                    type: string
+                                    example: v1
+                                ts:
+                                    type: string
+                                    example: 1672679516875
+                                params:
+                                    type: object
+                                    properties:
+                                        status:
+                                            type: string
+                                            example: FAILED
+                                        errmsg:
+                                            type: string
+                                            example: must have required property 'filters'
+                                responseCode:
+                                    type: string
+                                    example: BAD_REQUEST
+                                result:
+                                    type: object
+        
+        DatasetReadResponse:
+            description: OK
+            content:
+              application/json:
+                  schema:
+                      type: object
+                      properties:
+                          id: 
+                              type: string
+                              example: obsrv.config.dataset.read
+                          ver:
+                              type: string
+                              example: v1
+                          ts:
+                              type: string
+                              example: 1672679516875
+                          params:
+                              type: object
+                              properties:
+                                  status:
+                                      type: string
+                                      example: SUCCESS
+                                  errmsg:
+                                      type: string
+                                      example: ""
+                          responseCode:
+                              type: string
+                              example: OK
+                          result:
+                                type: object
+                                example: 
+                                  id: 9e107d9d-763f-4f4-9d61-687ea72
+                                  dataset_name: telemetry-raw
+                                  dataset_slug: telemetry-raw
+                                  validation_config:
+                                    validate: true
+                                    mode: Strict
+                                  extraction_config:
+                                   is_batch_event: false
+                                   extraction_key: ''
+                                   dedup_config:
+                                     drop_duplicates: true
+                                     dedup_key: id
+                                     dedup_period: 3
+                                  dedup_config:
+                                   drop_duplicates: true
+                                   dedup_key: id
+                                   dedup_period: 3
+                                  data_schema:
+                                   type: object
+                                   properties:
+                                     eid:
+                                       type: integer
+                                     ver:
+                                       type: string
+                                     syncts:
+                                       type: integer
+                                     ets:
+                                       type: integer
+                                     flags:
+                                       type: object
+                                       properties:
+                                         ex_processed:
+                                           type: boolean
+                                         pp_validation_processed:
+                                           type: boolean
+                                         pp_duplicate_skipped:
+                                           type: boolean
+                                         device_denorm:
+                                           type: boolean
+                                         user_denorm:
+                                           type: boolean
+                                         loc_denorm:
+                                           type: boolean
+                                       required:
+                                         - ex_processed
+                                         - pp_validation_processed
+                                         - pp_duplicate_skipped
+                                         - device_denorm
+                                         - user_denorm
+                                         - loc_denorm
+                                     derivedlocationdata:
+                                       type: object
+                                       properties:
+                                         district:
+                                           type: string
+                                         from:
+                                           type: string
+                                         state:
+                                           type: string
+                                       required:
+                                         - district
+                                         - from
+                                         - state
+                                     mid:
+                                       type: string
+                                       format: uuid
+                                       suggestions:
+                                         - message: The Property 'mid' appears to be 'uuid' format type.
+                                           advice: Suggest to not to index the high cardinal columns
+                                           resolutionType: DEDUP
+                                           severity: LOW
+                                     type:
+                                       type: string
+                                     actor:
+                                       type: object
+                                       properties:
+                                         type:
+                                           type: string
+                                         id:
+                                           type: string
+                                           format: uuid
+                                           suggestions:
+                                             - message: The Property 'actor.id' appears to be 'uuid' format type.
+                                               advice: Suggest to not to index the high cardinal columns
+                                               resolutionType: DEDUP
+                                               severity: LOW
+                                       required:
+                                         - type
+                                         - id
+                                     edata:
+                                       type: object
+                                       properties:
+                                         type:
+                                           type: string
+                                       required:
+                                         - type
+                                     userdata:
+                                       type: object
+                                       properties:
+                                         district:
+                                           type: string
+                                         usersubtype:
+                                           type: string
+                                         usersignintype:
+                                           type: string
+                                         usertype:
+                                           type: string
+                                         userlogintype:
+                                           type: string
+                                         state:
+                                           type: string
+                                       required:
+                                         - subject
+                                         - district
+                                         - usersubtype
+                                         - grade
+                                         - usersignintype
+                                         - usertype
+                                         - userlogintype
+                                         - state
+                                     devicedata:
+                                       type: object
+                                       properties:
+                                         statecustomcode:
+                                           type: string
+                                         country:
+                                           type: string
+                                         iso3166statecode:
+                                           type: string
+                                         city:
+                                           type: string
+                                         countrycode:
+                                           type: string
+                                         state:
+                                           type: string
+                                         devicespec:
+                                           type: object
+                                           properties:
+                                             idisk:
+                                               type: string
+                                             webview:
+                                               type: string
+                                             os:
+                                               type: string
+                                             scrn:
+                                               type: string
+                                             sims:
+                                               type: string
+                                             cpu:
+                                               type: string
+                                             id:
+                                               type: string
+                                             camera:
+                                               type: string
+                                             edisk:
+                                               type: string
+                                             make:
+                                               type: string
+                                           required:
+                                             - idisk
+                                             - webview
+                                             - os
+                                             - scrn
+                                             - sims
+                                             - cpu
+                                             - id
+                                             - camera
+                                             - edisk
+                                             - make
+                                         statecode:
+                                           type: string
+                                         firstaccess:
+                                           type: integer
+                                         districtcustom:
+                                           type: string
+                                         statecustomname:
+                                           type: string
+                                         userdeclared:
+                                           type: object
+                                           properties:
+                                             district:
+                                               type: string
+                                             state:
+                                               type: string
+                                           required:
+                                             - district
+                                             - state
+                                       required:
+                                         - statecustomcode
+                                         - country
+                                         - iso3166statecode
+                                         - city
+                                         - countrycode
+                                         - state
+                                         - devicespec
+                                         - statecode
+                                         - firstaccess
+                                         - districtcustom
+                                         - statecustomname
+                                         - userdeclared
+                                     context:
+                                       type: object
+                                       properties:
+                                         cdata:
+                                           type: array
+                                           items:
+                                             type: object
+                                             properties:
+                                               id:
+                                                 type: string
+                                                 format: uuid
+                                               type:
+                                                 type: string
+                                             required:
+                                               - id
+                                               - type
+                                         env:
+                                           type: string
+                                         channel:
+                                           type: string
+                                         pdata:
+                                           type: object
+                                           properties:
+                                             id:
+                                               type: string
+                                             pid:
+                                               type: string
+                                             ver:
+                                               type: string
+                                           required:
+                                             - id
+                                             - pid
+                                             - ver
+                                         sid:
+                                           type: string
+                                           format: uuid
+                                           suggestions:
+                                             - message: The Property 'context.sid' appears to be 'uuid' format type.
+                                               advice: Suggest to not to index the high cardinal columns
+                                               resolutionType: DEDUP
+                                               severity: LOW
+                                         did:
+                                           type: string
+                                         rollup:
+                                           type: object
+                                           properties:
+                                             l1:
+                                               type: string
+                                           required:
+                                             - l1
+                                         items:
+                                           cdata:
+                                             properties:
+                                               id:
+                                                 suggestions:
+                                                   - message: The Property 'context.cdata[*].id' appears to be 'uuid' format type.
+                                                     advice: Suggest to not to index the high cardinal columns
+                                                     resolutionType: DEDUP
+                                                     severity: LOW
+                                       required:
+                                         - cdata
+                                         - env
+                                         - channel
+                                         - pdata
+                                         - sid
+                                         - did
+                                         - rollup
+                                     object:
+                                       type: object
+                                       properties:
+                                         id:
+                                           type: string
+                                         type:
+                                           type: string
+                                         version:
+                                           type: string
+                                         rollup:
+                                           type: object
+                                       required:
+                                         - id
+                                         - type
+                                         - version
+                                         - rollup
+                                   required:
+                                     - eid
+                                     - ver
+                                     - syncts
+                                     - ets
+                                     - flags
+                                     - derivedlocationdata
+                                     - mid
+                                     - type
+                                     - actor
+                                     - edata
+                                     - userdata
+                                     - devicedata
+                                     - context
+                                     - object
+                                  denorm_config:
+                                   redis_db_host: redis_host
+                                   redis_db_port: redis_port
+                                   denorm_fields:
+                                     denorm_key: ''
+                                     redis_db: 1
+                                     denorm_out_field: metadata
+                                  router_config:
+                                   topic: ''
+                                  status: ACTIVE
+                                  version: v1
+                                  created_by: SYSTEM
+                                  updated_by: SYSTEM
+                                  created_date: '2023-03-27T11:40:43.269Z'
+                                  updated_date: '2023-03-27T11:40:43.265Z'
+                                  published_date: '2023-03-24T06:49:32.091Z'
+        DatasetReadNotFound:
+            description: Not Found
+            content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                id:
+                                    type: string
+                                    example: obsrv.config.dataset.read
+                                ver:
+                                    type: string
+                                    example: v1
+                                ts:
+                                    type: string
+                                    example: 1672679516875
+                                params:
+                                    type: object
+                                    properties:
+                                        status:
+                                            type: string
+                                            example: FAILED
+                                        errmsg:
+                                            type: string
+                                            example: Record not found
+                                responseCode:
+                                    type: string
+                                    example: NOT_FOUND
+                                result:
+                                    type: object
+        DatasetPresetResponse:
+          description: OK
+          content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                id:
+                                    type: string
+                                    example: obsrv.config.dataset.preset
+                                ver:
+                                    type: string
+                                    example: v1
+                                ts:
+                                    type: string
+                                    example: 1672679516875
+                                params:
+                                    type: object
+                                    properties:
+                                        status:
+                                            type: string
+                                            example: SUCCESS
+                                        errmsg:
+                                            type: string
+                                            example: ""
+                                responseCode:
+                                    type: string
+                                    example: OK
+                                result:
+                                    type: object
+                                    example:
+                                      validation_config:
+                                        validate: true
+                                        mode: Strict
+                                      extraction_config:
+                                        is_batch_event: false
+                                        extraction_key: ''
+                                        dedup_config:
+                                          drop_duplicates: true
+                                          dedup_key: id
+                                          dedup_period: 3
+                                      dedup_config:
+                                        drop_duplicates: true
+                                        dedup_key: id
+                                        dedup_period: 3
+                                      denorm_config:
+                                        redis_db_host: redis_host
+                                        redis_db_port: redis_port
+                                        denorm_fields:
+                                          denorm_key: ''
+                                          redis_db: 1
+                                          denorm_out_field: metadata
+                                      router_config:
+                                        topic: ''
+                                      status: ACTIVE
+                                      version: v1
+                                      created_by: SYSTEM
+                                      updated_by: SYSTEM
+        DataInResponse:
+            description: OK
+            content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                id:
+                                    type: string
+                                    example: obsrv.config.data.in
+                                ver:
+                                    type: string
+                                    example: v1
+                                ts:
+                                    type: string
+                                    example: 1672679516875
+                                params:
+                                    type: object
+                                    properties:
+                                        status:
+                                            type: string
+                                            example: SUCCESS
+                                        errmsg:
+                                            type: string
+                                            example: ""
+                                responseCode:
+                                    type: string
+                                    example: OK
+                                result:
+                                    type: object
+                                    properties:
+                                      message:
+                                          type: string
+                                          example: "The data has been successfully ingested"
+                                       
+                            
+        DataInBadRequest:
+            description: Bad Request
+            content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                id:
+                                    type: string
+                                    example: obsrv.config.data.in
+                                ver:
+                                    type: string
+                                    example: v1
+                                ts:
+                                    type: string
+                                    example: 1672679516875
+                                params:
+                                    type: object
+                                    properties:
+                                        status:
+                                            type: string
+                                            example: FAILED
+                                        errmsg:
+                                            type: string
+                                            example:  datasetId parameter in url cannot be empty
+                                responseCode:
+                                    type: string
+                                    example: BAD_REQUEST
+                                result:
+                                    type: object
+                            
 paths:
       
       /obsrv/v1/query:
         post:
-            summary: Obsrv Native Query API
+            summary: Perform a native query to fetch data from analytical data source
             description: |
-                The provided endpoint allows users to query using the native Druid query language. also it allows to perform the filters and aggregations on the data. all the requests goes through the schema validation and query rules validation (if configured). This ensures that any queries submitted conform to the predefined schema and query rules, thus minimizing the possibility of errors or data inconsistencies. By leveraging the native Druid query language through this endpoint, users can more effectively and efficiently query their data, ultimately improving the quality and accuracy of the insights derived from it.
-            tags: [Obsrv Read API(s)]
+                This endpoint of the READ API provides a way to construction of the queries to read data such as a Native 
+                JSON query. The READ API also allows filters on the date ranges within which the query will be applied to. 
+                The context information in the READ API is required.
+            tags: [Obsrv Query APIs]
             requestBody:
                 required: true
                 content:
@@ -384,10 +3680,12 @@ paths:
                     
       /obsrv/v1/sql-query:
         post:
-            summary: Obsrv SQL Query API
+            summary: Perform a sql query to fetch data from analytical data source
             description: |
-                The provided endpoint allows users to query using the sql format query language. also it allows to perform the filters and aggregations on the data. all the requests goes through the schema validation and dataset query rules validation (if configured). This ensures that any queries submitted conform to the predefined schema and query rules, thus minimizing the possibility of errors or data inconsistencies.
-            tags: [Obsrv Read API(s)]
+                This endpoint of the READ API provides a way to construction of the queries to read data such as a Native 
+                JSON query. The READ API also allows filters on the date ranges within which the query will be applied to. 
+                The context information in the READ API is optional.
+            tags: [Obsrv Query APIs]
             requestBody:
                 required: true
                 content:
@@ -401,6 +3699,176 @@ paths:
                 200:
                     $ref: "#/components/responses/SqlResponseSchema"
                 400:
-                    description: 
                     $ref: "#/components/responses/BadRequestResponseSchemaSql"
-               
+      
+      /obsrv/v1/data/:datasetId:
+        post:
+            summary: to ingest data into kafka
+            description: ""
+            tags: [Obsrv Data IN API]
+            requestBody: 
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DataIngest"
+                        examples:
+                            Example-1:
+                                $ref: "#/components/examples/DataIngest"
+            responses: 
+                200:
+                    $ref: "#/components/responses/DataInResponse"
+                400:
+                    $ref: "#/components/responses/DataInBadRequest"
+      /obsrv/v1/datasets:
+        post:
+            summary: creating datasets into postgres tables
+            description: This API allows you to create new datasets in the PostgreSQL database used by the analytical data source.  
+            tags: [Obsrv Dataset APIs]
+            requestBody:  
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DatasetCreate"
+                        examples:
+                            Example-1:
+                                $ref: "#/components/examples/DatasetCreate"
+            responses:
+                200: 
+                    $ref: "#/components/responses/DatasetCreateResponseSchema"
+                400:
+                    $ref: "#/components/responses/DatasetCreateBadRequest"
+                409:
+                    $ref: "#/components/responses/DatasetCreateDuplicate"
+        patch:
+            summary: API to update existing records in database
+            description:  This API allows you to update existing datasets in the PostgreSQL database used by the analytical data source.  
+            tags: [Obsrv Dataset APIs]
+            requestBody: 
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DatasetUpdate"
+                        examples:
+                            Example-1:
+                                $ref: "#/components/examples/DatasetUpdate"
+            responses:
+                200: 
+                    $ref: "#/components/responses/DatasetUpdateResponseSchema"
+                400:
+                    $ref: "#/components/responses/DatasetUpdateBadRequest"
+      /obsrv/v1/datasets/:datasetId:
+        get:
+            summary: API to read records from database
+            description: This API allows you to retrieve records from a dataset in the PostgreSQL. A successful response will return a status code of 200. If the dataset does not exist, a status code of 404 will be returned
+            tags: [Obsrv Dataset APIs]
+            responses:
+                200: 
+                    $ref: "#/components/responses/DatasetReadResponse"
+                404:
+                    $ref: "#/components/responses/DatasetReadNotFound"
+      /obsrv/v1/datasets/list:
+        post:
+            summary: API to list records from database
+            description: This API allows you to retrieve a list of records from a dataset in the PostgreSQL database used by the analytical data source. You can specify filters to narrow down the results.
+            tags: [Obsrv Dataset APIs]
+            requestBody:
+              required: true
+              content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DatasetList"
+                        examples:
+                            Example-1:
+                                $ref: "#/components/examples/DatasetList"
+            responses:
+                200:
+                    $ref: "#/components/responses/DatasetListResponse"
+                400:
+                    $ref: "#/components/responses/DatasetListBadRequest"
+      /obsrv/v1/datasets/preset:
+        get: 
+            summary: API to return default values for config
+            description: ""
+            tags: [Obsrv Dataset APIs]
+            responses:
+                200:
+                    $ref: "#/components/responses/DatasetPresetResponse"
+      /obsrv/v1/datasources:
+        post:
+            summary: creating datasources into postgres tables
+            description:  This API allows you to create new datasource in the PostgreSQL database. 
+            tags: [Obsrv Datasource APIs]
+            requestBody:  
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DatasourceCreate"
+                        examples:
+                            Example-1:
+                                $ref: "#/components/examples/DatasourceCreate"
+            responses:
+                200: 
+                    $ref: "#/components/responses/DatasourceCreateResponseSchema"
+                400:
+                    $ref: "#/components/responses/DatasourceCreateBadRequest"
+                409:
+                    $ref: "#/components/responses/DatasourceCreateDuplicate"
+        patch:
+            summary: API to update existing records in database
+            description:  This API allows you to update existing datasource in the PostgreSQL database. 
+            tags: [Obsrv Datasource APIs]
+            requestBody: 
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DatasourceUpdate"
+                        examples:
+                            Example-1:
+                                $ref: "#/components/examples/DatasourceUpdate"
+            responses:
+                200: 
+                    $ref: "#/components/responses/DatasourceUpdateResponseSchema"
+                400:
+                    $ref: "#/components/responses/DatasourceUpdateBadRequest"
+      /obsrv/v1/datasources/:datasourceId:
+        get:
+            summary: API to read records from database
+            description: This API allows you to retrieve records from a datasource in the PostgreSQL. A successful response will return a status code of 200. If the datasource does not exist, a status code of 404 will be returned
+            tags: [Obsrv Datasource APIs]
+            responses:
+                200: 
+                    $ref: "#/components/responses/DatasourceReadResponse"
+                404:
+                    $ref: "#/components/responses/DatasourceReadNotFound"
+      /obsrv/v1/datasources/list:
+        post:
+            summary: API to list records from database
+            description: This API allows you to retrieve a list of records from a dataset in the PostgreSQL database used by the analytical data source. You can specify filters to narrow down the results.
+            tags: [Obsrv Datasource APIs]
+            requestBody:
+              required: true
+              content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DatasourceList"
+                        examples:
+                            Example-1:
+                                $ref: "#/components/examples/DatasourceList"
+            responses:
+                200:
+                    $ref: "#/components/responses/DatasourceListResponse"
+                400:
+                    $ref: "#/components/responses/DatasourceListBadRequest"
+      /obsrv/v1/datasources/preset:
+        get: 
+            summary: API to return default values for config
+            description: ""
+            tags: [Obsrv Datasource APIs]
+            responses:
+                200:
+                    $ref: "#/components/responses/DatasourcePresetResponse"
