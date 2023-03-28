@@ -79,9 +79,6 @@
                 }
             }
         },
-        "client_state": {
-            "type": "object"
-        },
         "router_config": {
             "type": "object",
             "properties": {
