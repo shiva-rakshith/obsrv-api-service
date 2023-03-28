@@ -29,10 +29,10 @@ class KafkaDispatcher extends winston.Transport {
         this.producer.on('ready', () => console.log('kafka dispatcher is ready'));
         this.producer.on('error', (err) => console.error('Unable to connect to kafka', err));
     }
-    log(level, msg, meta, callback) {
+    log(level, msg, mid, callback) {
         this.producer.send([{
             topic: this.options.topic,
-            key: meta.mid,
+            key: mid,
             messages: msg,
             attributes: this.compression_attribute
         }], callback);

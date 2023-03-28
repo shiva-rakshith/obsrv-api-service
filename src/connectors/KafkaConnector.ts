@@ -17,7 +17,7 @@ export class KafkaConnector {
     }
 
     async execute(req: any, res: any) {
-        await telemetryService.dispatch(req, res)
+        return await telemetryService.dispatch(req, res)
     }
 
     close() {
