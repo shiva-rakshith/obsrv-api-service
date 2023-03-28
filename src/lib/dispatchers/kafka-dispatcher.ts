@@ -17,8 +17,7 @@ class KafkaDispatcher extends TransportStream {
   private compression_attribute: number
   private client: any
   public producer!: HighLevelProducer
-  private producerReady: boolean = false
-
+ 
   constructor(options?: KafkaDispatcherOptions) {
     super(options)
     this.options = _.defaults(options, {
@@ -37,33 +36,21 @@ class KafkaDispatcher extends TransportStream {
     }
     this.client = new KafkaClient(this.options)
     this.producer = new HighLevelProducer(this.client)
-
-    // Listen to the ready event on the producer to know when it is ready to send messages
+     // Listen to the ready event on the producer to know when it is ready to send messages
+     
+     this.producer.on('error', (err) => {
+      console.log(err, "error")
+      throw new Error(err)
+    })
     this.producer.on('ready', () => {
-      this.producerReady = true
+      console.log("connected succesfully")
     })
-
-    // Handle producer connection errors
-    this.producer.on('error', (err) => {
-      console.error('Producer error:', err)
-    })
-
-    // Handle client connection errors
-    this.client.on('error', (err:any) => {
-      console.error('Client error:', err)
-    })
+    
   }
 
-  private isProducerReady(): boolean {
-    return this.producerReady
-  }
-
+   
   log(info: { topic: any; message: any }) {
-    if (!this.isProducerReady()) {
-       return Promise.reject("producer error")
-    }
-    return new Promise((resolve, reject) => {
-      setImmediate(() => {
+       setImmediate(() => {
         this.emit('logged', info);
       })
       this.producer.send([{
@@ -72,26 +59,22 @@ class KafkaDispatcher extends TransportStream {
         attributes: this.compression_attribute
       }], (err, data) => {
         if (err) {
-          reject(err)
+          throw new Error("error occured while sending data to kafka")
         } else {
-          resolve(data)
+          return
         }
       })
-    })
   }
 
+
   health(callback: (healthStatus: boolean) => void) {
-    this.client.topicExists(this.options.topic, (err:any) => {
+    this.client.topicExists(this.options.topic, (err: any) => {
       if (err) {
         callback(false)
       } else {
         callback(true)
       }
     })
-  }
-
-  closeConnection() {
-    return this.producer.close()
   }
 }
 

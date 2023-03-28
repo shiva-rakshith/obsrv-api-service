@@ -22,7 +22,7 @@ const defaultFileOptions: DailyRotateFile.DailyRotateFileTransportOptions = {
 
 class Dispatcher {
     private logger: Logger;
-    private options: DispatcherOptions;
+    private options!: DispatcherOptions;
 
     constructor(options: DispatcherOptions) {
         if (!options) throw new Error("Dispatcher options are required");
@@ -44,8 +44,8 @@ class Dispatcher {
         }
     }
 
-    dispatch(mid: string, message: string, callback?: () => void): void {
-        this.logger.log("info", message, { mid })
+    dispatch(mid: string, message: string, callback?: () => void): any {
+        return this.logger.log("info", message, { mid }, callback)
     }
 
     health(callback: (status: boolean) => void): void {

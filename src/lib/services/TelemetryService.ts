@@ -14,15 +14,7 @@ interface Message {
   [key: string]: any;
 }
 
-interface TelemetryConfig {
-  localStorageEnabled: string;
-  telemetryProxyEnabled: string;
-  proxyAuthKey: string;
-  proxyURL: string;
-  [key: string]: any;
-  dispatcher: "kafka" | "file" | "console"
-}
-
+ 
 class TelemetryService {
   private config: any;
   private dispatcher: Dispatcher | undefined;
@@ -30,9 +22,10 @@ class TelemetryService {
   constructor(DispatcherClass: typeof Dispatcher, config: any) {
     this.config = config;
     this.dispatcher = this.config.localStorageEnabled === 'true' ? new DispatcherClass(config) : undefined;
+    
   }
 
-  public dispatch(req: Request, res: Response): void {
+  public dispatch(req: Request, res: Response): any {
     const message: Message = req.body;
     message.did = req.get('x-device-id');
     message.channel = req.get('x-channel-id');
@@ -43,7 +36,7 @@ class TelemetryService {
     if (this.config.localStorageEnabled === 'true' || this.config.telemetryProxyEnabled === 'true') {
       if (this.config.localStorageEnabled === 'true' && this.config.telemetryProxyEnabled !== 'true') {
         // Store locally and respond back with proper status code
-        this.dispatcher!.dispatch(message.mid, data, this.getRequestCallBack(req, res))
+        return this.dispatcher!.dispatch(message.mid, data)
       } else if (this.config.localStorageEnabled === 'true' && this.config.telemetryProxyEnabled === 'true') {
         // Store locally and proxy to the specified URL. If the proxy fails ignore the error as the local storage is successful. Do a sync later
         const options = this.getProxyRequestObj(req, data);

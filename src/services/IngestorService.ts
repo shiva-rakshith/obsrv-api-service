@@ -12,7 +12,7 @@ export class IngestorService {
     private kafkaConnector: any;
     constructor(kafkaConnector: any) {
         this.kafkaConnector = kafkaConnector
-        this.init()
+        // this.init()
     }
     public init = () => {
         this.kafkaConnector.connect()
