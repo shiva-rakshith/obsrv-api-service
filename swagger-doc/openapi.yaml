@@ -3701,11 +3701,17 @@ paths:
                 400:
                     $ref: "#/components/responses/BadRequestResponseSchemaSql"
       
-      /obsrv/v1/data/:datasetId:
+      /obsrv/v1/data/{datasetId}:
         post:
             summary: to ingest data into kafka
             description: ""
             tags: [Obsrv Data IN API]
+            parameters:
+              - name: datasetId
+                in: path
+                required: true
+                schema:
+                    type: string
             requestBody: 
                 required: true
                 content:
@@ -3759,16 +3765,24 @@ paths:
                     $ref: "#/components/responses/DatasetUpdateResponseSchema"
                 400:
                     $ref: "#/components/responses/DatasetUpdateBadRequest"
-      /obsrv/v1/datasets/:datasetId:
-        get:
-            summary: API to read records from database
-            description: This API allows you to retrieve records from a dataset in the PostgreSQL. A successful response will return a status code of 200. If the dataset does not exist, a status code of 404 will be returned
-            tags: [Obsrv Dataset APIs]
-            responses:
-                200: 
-                    $ref: "#/components/responses/DatasetReadResponse"
-                404:
-                    $ref: "#/components/responses/DatasetReadNotFound"
+      /obsrv/v1/datasets/{datasetId}:
+         get:
+          summary: API to read records from database
+          description: This API allows you to retrieve records from a dataset in the PostgreSQL. A successful response will return a status code of 200. If the dataset does not exist, a status code of 404 will be returned.
+          tags:
+              - Obsrv Dataset APIs
+          parameters:
+              - name: datasetId
+                in: path
+                required: true
+                schema:
+                    type: string
+                    format: uuid
+          responses:
+                  200: 
+                      $ref: "#/components/responses/DatasetReadResponse"
+                  404:
+                      $ref: "#/components/responses/DatasetReadNotFound"
       /obsrv/v1/datasets/list:
         post:
             summary: API to list records from database
@@ -3835,11 +3849,18 @@ paths:
                     $ref: "#/components/responses/DatasourceUpdateResponseSchema"
                 400:
                     $ref: "#/components/responses/DatasourceUpdateBadRequest"
-      /obsrv/v1/datasources/:datasourceId:
+      /obsrv/v1/datasources/{datasourceId}:
         get:
             summary: API to read records from database
             description: This API allows you to retrieve records from a datasource in the PostgreSQL. A successful response will return a status code of 200. If the datasource does not exist, a status code of 404 will be returned
             tags: [Obsrv Datasource APIs]
+            parameters:
+              - name: datasourceId
+                in: path
+                required: true
+                schema:
+                    type: string
+                    format: uuid
             responses:
                 200: 
                     $ref: "#/components/responses/DatasourceReadResponse"
