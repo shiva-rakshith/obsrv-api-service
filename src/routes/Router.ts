@@ -12,19 +12,21 @@ import { routesConfig } from "../configs/RoutesConfig";
 import { IngestorService } from "../services/IngestorService";
 import { metricsHandler } from "../helpers/prometheus";
 import { KafkaDispatcher } from "../connectors/KafkaDispatcher";
-
+ 
 const validationService = new ValidationService();
 
 const queryService = new QueryService(new HTTPConnector(`${config.query_api.druid.host}:${config.query_api.druid.port}`))
 
-export const kafkaConnector = new KafkaConnector(config.dataset_api.kafka);
+// export const kafkaConnector = new KafkaConnector(config.dataset_api.kafka.config);
+
+export const kafkaConnector = new KafkaConnector()
 
 export const dbConnector = new DbConnector(config.db_connector_config);
 
 export const datasourceService = new DataSourceService(dbConnector);
 export const datasetService = new DatasetService(dbConnector);
 export const ingestorService = new IngestorService(kafkaConnector);
-
+ 
 dbConnector.init()
 
 const router = express.Router();

@@ -18,6 +18,7 @@
     "http-errors": "^2.0.0",
     "http-status": "^1.5.3",
     "json-merger": "^1.1.9",
+    "kafka-js": "0.0.0",
     "kafka-node": "^5.0.0",
     "kafkajs": "^2.2.3",
     "kafkajs-snappy": "^1.1.0",
@@ -26,7 +27,9 @@
     "moment": "^2.29.4",
     "pg": "^8.8.0",
     "prom-client": "^14.2.0",
+    "request": "^2.88.2",
     "winston": "^3.8.2",
+    "winston-daily-rotate-file": "^4.7.1",
     "winston-transport": "^4.5.0"
   },
   "devDependencies": {
@@ -42,8 +45,10 @@
     "@types/mock-knex": "^0.4.4",
     "@types/node": "^18.11.9",
     "@types/pg": "^8.6.6",
+    "@types/request": "^2.48.8",
     "@types/sinon": "^10.0.13",
     "@types/sinon-chai": "^3.2.9",
+    "@types/uuid": "^9.0.1",
     "chai": "^4.3.6",
     "chai-as-promised": "^7.1.1",
     "chai-http": "^4.3.0",

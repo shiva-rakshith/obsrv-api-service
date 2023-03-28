@@ -9,8 +9,8 @@ const responseHandler = ResponseHandler;
 
 
 export class IngestorService {
-    private kafkaConnector: IConnector;
-    constructor(kafkaConnector: IConnector) {
+    private kafkaConnector: any;
+    constructor(kafkaConnector: any) {
         this.kafkaConnector = kafkaConnector
         this.init()
     }
@@ -29,12 +29,12 @@ export class IngestorService {
         // TODO: Perform all necessary validations that can be done without slowing down the ingestion
         // 1. Check if the dataset is active
         // 2. Check if the data is as per the extraction config
-        req.body.data = Object.assign(req.body.data, { "dataset": this.getDatasetId(req) })
-        this.kafkaConnector.execute(config.dataset_api.kafka.topics.create, { "value": JSON.stringify(req.body.data) })
+        req.body = Object.assign(req.body.data, { "dataset": this.getDatasetId(req) })
+        this.kafkaConnector.execute(req, res)
             .then(() => {
                 responseHandler.successResponse(req, res, { status: 200, data: { "message": constants.DATASET.CREATED } })
             }).catch((error: any) => {
-                console.error(error.message)
+                console.error(error.message, "erro")
                 next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
             })
     }
