@@ -2,7 +2,8 @@ import { v1 as uuidv1 } from 'uuid';
 import { Request, Response } from 'express';
 import request from 'request';
 import { Dispatcher } from '../dispatchers/dispatcher';
-import { config } from '../configs/Config';
+const envVariables = require('../envVariables')
+
 
 interface Message {
   did?: string;
@@ -124,4 +125,4 @@ class TelemetryService {
   }
 }
 
-export default new TelemetryService(Dispatcher, config.envVariables);
+export default new TelemetryService(Dispatcher, envVariables);

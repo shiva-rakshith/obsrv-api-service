@@ -11,8 +11,7 @@ import { DbConnector } from "../connectors/DbConnector";
 import { routesConfig } from "../configs/RoutesConfig";
 import { IngestorService } from "../services/IngestorService";
 import { metricsHandler } from "../helpers/prometheus";
-import { KafkaDispatcher } from "../connectors/KafkaDispatcher";
- 
+  
 const validationService = new ValidationService();
 
 const queryService = new QueryService(new HTTPConnector(`${config.query_api.druid.host}:${config.query_api.druid.port}`))

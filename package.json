@@ -67,7 +67,7 @@
   },
   "nyc": {
     "exclude": [
-      "**/test/*.ts"
+      "**/test/*.ts", "**/lib/*.ts"
     ],
     "extension": [
       ".ts"

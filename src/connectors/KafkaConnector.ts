@@ -1,6 +1,5 @@
 import { IConnector } from "../models/IngestionModels";
-import { KafkaDispatcher } from "./KafkaDispatcher";
-import telemetryService from "../services/TelemetryService";
+import telemetryService from "../lib/services/TelemetryService";
 import { kafkaConnector } from "../routes/Router";
 
 export class KafkaConnector {
