@@ -25,7 +25,7 @@ export class DbConnector implements IConnector {
     }
 
     async connect() {
-        return await this.pool.raw("SELECT 1+1;")
+        await this.pool.select(1)
     }
 
     async close() {

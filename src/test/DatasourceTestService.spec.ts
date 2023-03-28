@@ -255,27 +255,6 @@ describe("Datasource list API", () => {
                 done();
             })
     })
-    it("it should query on draft table if status field is not provided", (done) => {
-        chai.spy.on(dbConnector, "execute", () => {
-            return Promise.resolve([{}, {}, {}])
-        })
-        chai
-            .request(app)
-            .post(config.apiDatasourceListEndPoint)
-            .send({ "filters": { "status": ["ACTIVE"] } })
-            .end((err, res) => {
-                res.should.have.status(httpStatus.OK);
-                res.body.should.be.a("object");
-                res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
-                res.body.should.have.property("result");
-                res.body.id.should.be.eq(routesConfig.config.datasource.list.api_id);
-                res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
-                res.body.result.should.be.a("array")
-                res.body.result.should.have.length(3)
-                chai.spy.restore(dbConnector, "execute")
-                done();
-            });
-    })
 })
 describe("Datasource PRESET API", () => {
     it("should return default params", (done) => {

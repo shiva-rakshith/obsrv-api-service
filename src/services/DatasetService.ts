@@ -14,7 +14,6 @@ export class DatasetService {
         this.table = "datasets"
     }
     public save = (req: Request, res: Response, next: NextFunction) => {
-        // TODO: Where is the user context passed?
         const dataset = new Datasets(req.body)
         req.body = dataset.setValues()
         this.dbConnector.execute("insert", { "table": this.table, "fields": req.body })
