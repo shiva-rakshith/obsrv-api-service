@@ -58,9 +58,9 @@ describe("DATA INGEST API", () => {
             .post("/obsrv/v1/data/ /")
             .send(TestDataIngestion.SAMPLE_INPUT)
             .end((err, res) => {
-                res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
+                res.should.have.status(httpStatus.BAD_REQUEST);
                 res.body.should.be.a("object");
-                res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
+                res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
                 res.body.should.have.property("result");
                 res.body.id.should.be.eq(routesConfig.data_ingest.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
