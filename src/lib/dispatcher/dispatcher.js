@@ -33,17 +33,16 @@ class Dispatcher {
   }
 
   dispatch(mid, message, callback) {
-    this.logger.log("info", message, mid, callback);
+    this.logger.log("info", message, { mid: mid }, callback);
   }
 
   health(callback) {
     if (this.options.dispatcher === "kafka") {
       this.logger.transports["kafka"].health(callback);
     } else if (this.options.dispatcher === "console") {
-      callback(true);
+      callback(null, true);
     } else {
-      // need to add health method for file/cassandra
-      callback(false);
+      callback("telemetry service is not healthy");
     }
   }
 }

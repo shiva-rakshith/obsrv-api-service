@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/app.js",
   "scripts": {
-    "start": "tsc && ts-node ./src/app.ts",
+    "start": "ts-node ./src/app.ts",
     "test": "nyc mocha ./src/test/*.spec.ts --exit",
     "build": "tsc -P ."
   },
@@ -20,9 +20,8 @@
     "http-errors": "^2.0.0",
     "http-status": "^1.5.3",
     "json-merger": "^1.1.9",
-    "kafka-js": "0.0.0",
-    "kafka-node": "~2.6.1",
-    "kafkajs": "^2.2.3",
+    "kafka-node": "^5.0.0",
+    "kafkajs": "^2.2.4",
     "kafkajs-snappy": "^1.1.0",
     "knex": "^2.4.2",
     "lodash": "^4.17.21",
@@ -72,7 +71,8 @@
     "exclude": [
       "**/test/*.ts",
       "**/lib/**/*.js",
-      "**/lib/**/*.ts"
+      "**/lib/**/*.ts",
+      "**/managers/**/*.ts"
     ],
     "extension": [
       ".ts"

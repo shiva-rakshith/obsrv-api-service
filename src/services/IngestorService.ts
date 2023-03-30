@@ -1,41 +1,31 @@
 import { Request, Response, NextFunction } from "express";
-import { ResponseHandler } from "../helpers/ResponseHandler";
-import { config } from "../configs/Config";
 import constants from "../resources/Constants.json"
-import httpStatus from "http-status";
+import { ResponseHandler } from "../helpers/ResponseHandler";
 import _ from 'lodash'
-import { IConnector } from "../models/IngestionModels";
-const responseHandler = ResponseHandler;
-
+import httpStatus from "http-status";
 
 export class IngestorService {
-    private kafkaConnector: IConnector;
-    constructor(kafkaConnector: IConnector) {
+    private kafkaConnector: any;
+    constructor(kafkaConnector: any) {
         this.kafkaConnector = kafkaConnector
         this.init()
     }
-    public init = () => {
+    public init() {
         this.kafkaConnector.connect()
-            .then(() => console.info("Kafka Connection Established..."))
-            .catch((err: Error) => console.error(`Kafka Connection failed ${err.message}`))
-    }
-    // TODO: Support the following ingestion types:
-    // 1. Ingest a json zip stream
-    // 2. Ingest a normal json batch data
-    // 3. Ingest a single event
-    // 4. Ingest a csv file
-    // 5. Ingest a parquet/grpc file
-    public create = (req: Request, res: Response, next: NextFunction) => {
-        // TODO: Perform all necessary validations that can be done without slowing down the ingestion
-        // 1. Check if the dataset is active
-        // 2. Check if the data is as per the extraction config
-        req.body.data = Object.assign(req.body.data, { "dataset": this.getDatasetId(req) })
-        this.kafkaConnector.execute(config.dataset_api.kafka.topics.create, { "value": JSON.stringify(req.body.data) })
             .then(() => {
-                responseHandler.successResponse(req, res, { status: 200, data: { "message": constants.DATASET.CREATED } })
+                console.log("kafka connection arranged succesfully...")
+            })
+            .catch((error: any) => {
+                console.log("error while connecting to kafka", error.message)
+            })
+    }
+    public create = (req: Request, res: Response, next: NextFunction) => {
+        req.body = Object.assign(req.body.data, { "dataset": this.getDatasetId(req) });
+        this.kafkaConnector.execute(req, res)
+            .then(() => {
+                ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.DATASET.CREATED } })
             }).catch((error: any) => {
-                console.error(error.message)
-                next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
+                next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message || "", errCode: error.code || httpStatus["500_NAME"] })
             })
     }
     private getDatasetId(req: Request) {

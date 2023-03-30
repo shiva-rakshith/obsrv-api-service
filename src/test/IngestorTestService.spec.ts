@@ -1,5 +1,5 @@
 import app from "../app";
-import chai from "chai";
+import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import spies from "chai-spies";
 import httpStatus from "http-status";
@@ -15,7 +15,7 @@ chai.use(chaiHttp);
 
 describe("DATA INGEST API", () => {
     it("it should ingest data successfully", (done) => {
-        chai.spy.on(kafkaConnector, "execute", () => {
+        chai.spy.on(kafkaConnector.telemetryService, "dispatch", () => {
             return Promise.resolve("data ingested")
         })
         chai
@@ -29,12 +29,12 @@ describe("DATA INGEST API", () => {
                 res.body.should.have.property("result");
                 res.body.id.should.be.eq(routesConfig.data_ingest.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
-                chai.spy.restore(kafkaConnector, "execute")
+                chai.spy.restore(kafkaConnector.telemetryService, "dispatch")
                 done();
             });
     });
     it("it should ingest data successfully", (done) => {
-        chai.spy.on(kafkaConnector, "execute", () => {
+        chai.spy.on(kafkaConnector.telemetryService, "dispatch", () => {
             return Promise.reject("error connecting to kafka")
         })
         chai
@@ -48,7 +48,7 @@ describe("DATA INGEST API", () => {
                 res.body.should.have.property("result");
                 res.body.id.should.be.eq(routesConfig.data_ingest.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
-                chai.spy.restore(kafkaConnector, "execute")
+                chai.spy.restore(kafkaConnector.telemetryService, "dispatch")
                 done();
             });
     });
@@ -67,6 +67,23 @@ describe("DATA INGEST API", () => {
                 done();
             });
     });
-    
-    
+    it("it should not establish connection with kafka", (done) => {
+        chai.spy.on(kafkaConnector.telemetryService, "health", () => {
+            return Promise.reject("error connecting to kafka")
+        })
+        ingestorService.init()
+        expect(kafkaConnector.telemetryService.health).to.be.called
+        chai.spy.restore(kafkaConnector.telemetryService, "health")
+        done();
+    });
+    it("it should establish connection with kafka", (done) => {
+        chai.spy.on(kafkaConnector.telemetryService, "health", () => {
+            return Promise.resolve("connected to kafka")
+        })
+        ingestorService.init()
+        expect(kafkaConnector.telemetryService.health).to.be.called
+        chai.spy.restore(kafkaConnector.telemetryService, "health")
+        done();
+    });
+
 })

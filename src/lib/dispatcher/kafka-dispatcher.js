@@ -1,48 +1,56 @@
-const winston = require('winston'),
-    kafka = require('kafka-node'),
-    _ = require('lodash'),
-    HighLevelProducer = kafka.HighLevelProducer,
-    defaultOptions = {
-        kafkaHost: 'localhost:9092',
-        maxAsyncRequests: 100,
-        topic: 'local.ingest',
-        compression_type: 'none'
-    }
+const winston = require("winston");
+const { Kafka } = require("kafkajs");
+const _ = require("lodash");
 
 class KafkaDispatcher extends winston.Transport {
-    constructor(options) {
-        super();
-        this.name = 'kafka';
-        this.options = _.assignInWith(defaultOptions, options, (objValue, srcValue) => srcValue ? srcValue : objValue);
-        if (this.options.compression_type == 'snappy') {
-            this.compression_attribute = 2;
-        } else if(this.options.compression_type == 'gzip') {
-            this.compression_attribute = 1;
-        } else {
-            this.compression_attribute = 0;
-        }
-        this.client = new kafka.KafkaClient({
-            kafkaHost: this.options.kafkaHost,
-            maxAsyncRequests: this.options.maxAsyncRequests
-        })
-        this.producer = new HighLevelProducer(this.client);
-        this.producer.on('ready', () => console.log('kafka dispatcher is ready'));
-        this.producer.on('error', (err) => console.error('Unable to connect to kafka', err));
+  constructor(options) {
+    super();
+    this.name = "kafka";
+    this.options = options.kafka;
+    if (this.options.compression_type == "snappy") {
+      this.compression_attribute = 2;
+    } else if (this.options.compression_type == "gzip") {
+      this.compression_attribute = 1;
+    } else {
+      this.compression_attribute = 0;
     }
-    log(level, msg, mid, callback) {
-        this.producer.send([{
-            topic: this.options.topic,
-            key: mid,
-            messages: msg,
-            attributes: this.compression_attribute
-        }], callback);
+    this.client = new Kafka(this.options.config);
+    this.producer = this.client.producer();
+    this.init();
+  }
+  async init() {
+    await this.producer
+      .connect()
+      .then(() => {
+        console.log("kafka dispatcher is ready");
+      })
+      .catch((err) => {
+        console.error("Unable to connect to kafka", err.message);
+      });
+  }
+  async log(level, msg, mid, callback) {
+    try {
+      await this.producer.send({
+        topic: this.options.topics.create,
+        messages: [{ value: msg }],
+      });
+      callback(null, true);
+    } catch (err) {
+      callback(err);
     }
-    health(callback) {
-        this.client.topicExists(this.options.topic, (err) => {
-            if (err) callback(false);
-            else callback(true);
-        });
+  }
+
+  async health(callback) {
+    try {
+      const admin = this.client.admin();
+      await admin.connect();
+      await admin.listTopics();
+      await admin.disconnect();
+      callback(null, true);
+    } catch (error) {
+      callback(error);
     }
+  }
 }
 
 winston.transports.Kafka = KafkaDispatcher;

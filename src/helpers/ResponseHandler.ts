@@ -13,7 +13,7 @@ type extendedErrorRequestHandler = ErrorRequestHandler & {
 
 const ResponseHandler = {
   successResponse: (req: Request, res: Response, result: Result) => {
-    res.status(result.status).json(ResponseHandler.refactorResponse({ id: (req as any).id, result: result.data }));
+    res.status(result.status || 200).json(ResponseHandler.refactorResponse({ id: (req as any).id, result: result.data }));
   },
 
   routeNotFound: (req: Request, res: Response, next: NextFunction) => {
