@@ -15,8 +15,8 @@ export class DataSourceService {
     }
     public save = (req: Request, res: Response, next: NextFunction) => {
         const datasource = new Datasources(req.body)
-        req.body = datasource.setValues()
-        this.connector.execute("insert", { "table": this.table, "fields": req.body })
+        const datasourceRecord = datasource.setValues()
+        this.connector.execute("insert", { "table": this.table, "fields": datasourceRecord })
             .then(() => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASOURCE_SAVED, "id": datasource.getDataSourceId() } })
             }).catch((error: any) => {
@@ -26,8 +26,8 @@ export class DataSourceService {
     }
     public update = (req: Request, res: Response, next: NextFunction) => {
         const datasource = new Datasources(req.body)
-        req.body = datasource.getValues()
-        this.connector.execute("update", { "table": this.table, "fields": { "filters": { "id": datasource.getDataSourceId() }, "values": req.body } })
+        const datasourceRecord = datasource.getValues()
+        this.connector.execute("update", { "table": this.table, "fields": { "filters": { "id": datasource.getDataSourceId() }, "values": datasourceRecord } })
             .then(() => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASOURCE_UPDATED, "id": datasource.getDataSourceId() } })
             }).catch((error: any) => {
@@ -37,7 +37,8 @@ export class DataSourceService {
     }
     public read = (req: Request, res: Response, next: NextFunction) => {
         let status: any = req.query.status
-        this.connector.execute("read", { "table": this.table, "fields": { "filters": { "id": req.params.datasourceId } } })
+        const id = req.params.datasourceId
+        this.connector.execute("read", { "table": this.table, "fields": { "filters": { "id": id, "status": status } } })
             .then((data: any[]) => {
                 !_.isEmpty(data) ? ResponseHandler.successResponse(req, res, { status: 200, data: _.first(data) }) : (() => {
                     throw constants.RECORD_NOT_FOUND
@@ -48,7 +49,8 @@ export class DataSourceService {
             });
     }
     public list = (req: Request, res: Response, next: NextFunction) => {
-        this.connector.execute("read", { "table": this.table, "fields": req.body })
+        const fields = req.body
+        this.connector.execute("read", { "table": this.table, "fields": fields })
             .then((data: any) => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: data })
             }).catch((error: any) => {

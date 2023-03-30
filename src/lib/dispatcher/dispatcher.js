@@ -33,7 +33,7 @@ class Dispatcher {
   }
 
   dispatch(mid, message, callback) {
-    this.logger.log("info", message,  mid , callback);
+    this.logger.log("info", message, mid, callback);
   }
 
   health(callback) {

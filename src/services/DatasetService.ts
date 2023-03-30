@@ -15,10 +15,10 @@ export class DatasetService {
     }
     public save = (req: Request, res: Response, next: NextFunction) => {
         const dataset = new Datasets(req.body)
-        req.body = dataset.setValues()
-        this.dbConnector.execute("insert", { "table": this.table, "fields": req.body })
+        const datasetRecord: any = dataset.setValues()
+        this.dbConnector.execute("insert", { "table": this.table, "fields": datasetRecord })
             .then(() => {
-                ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_SAVED, "dataset_id": req.body.id } })
+                ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_SAVED, "dataset_id": datasetRecord.id } })
             }).catch((error: any) => {
                 console.error(error.message)
                 next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
@@ -26,10 +26,10 @@ export class DatasetService {
     }
     public update = (req: Request, res: Response, next: NextFunction) => {
         const dataset = new Datasets(req.body)
-        req.body = dataset.getValues()
-        this.dbConnector.execute("update", { "table": this.table, "fields": { "filters": { "id": req.body.id }, "values": req.body } })
+        const datasetRecord = dataset.getValues()
+        this.dbConnector.execute("update", { "table": this.table, "fields": { "filters": { "id": datasetRecord.id }, "values": datasetRecord } })
             .then(() => {
-                ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_UPDATED, "dataset_id": req.body.id } })
+                ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_UPDATED, "dataset_id": datasetRecord.id } })
             }).catch((error: any) => {
                 console.error(error.message)
                 next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
@@ -37,7 +37,8 @@ export class DatasetService {
     }
     public read = (req: Request, res: Response, next: NextFunction) => {
         let status: any = req.query.status
-        this.dbConnector.execute("read", { "table": this.table, "fields": { "filters": { "id": req.params.datasetId, "status": status } } })
+        const id = req.params.datasetId
+        this.dbConnector.execute("read", { "table": this.table, "fields": { "filters": { "id": id, "status": status } } })
             .then((data: any[]) => {
                 !_.isEmpty(data) ? ResponseHandler.successResponse(req, res, { status: 200, data: _.first(data) }) : (() => {
                     throw constants.RECORD_NOT_FOUND
@@ -48,7 +49,8 @@ export class DatasetService {
             });
     }
     public list = (req: Request, res: Response, next: NextFunction) => {
-        this.dbConnector.execute("read", { "table": this.table, "fields": req.body })
+        const fields = req.body
+        this.dbConnector.execute("read", { "table": this.table, "fields": fields })
             .then((data: any) => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: data })
             }).catch((error: any) => {

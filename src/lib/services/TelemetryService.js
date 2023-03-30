@@ -22,7 +22,7 @@ class TelemetryService {
         if (this.config.localStorageEnabled === 'true' || this.config.telemetryProxyEnabled === 'true') {
             if (this.config.localStorageEnabled === 'true' && this.config.telemetryProxyEnabled !== 'true') {
                 // Store locally and respond back with proper status code
-                return this.dispatcher.dispatch(message.mid, data);
+                this.dispatcher.dispatch(message.mid, data, this.getRequestCallBack(req, res));
             } else if (this.config.localStorageEnabled === 'true' && this.config.telemetryProxyEnabled === 'true') {
                 // Store locally and proxy to the specified URL. If the proxy fails ignore the error as the local storage is successful. Do a sync later
                 const options = this.getProxyRequestObj(req, data);
@@ -66,6 +66,7 @@ class TelemetryService {
         }
     }
     sendError(res, options) {
+        console.log("error")
         const resObj = {
             id: options.id,
             ver: options.ver || '1.0',
@@ -77,6 +78,7 @@ class TelemetryService {
         res.json(resObj);
     }
     sendSuccess(res, options) {
+        console.log("success")
         const resObj = {
             id: options.id,
             ver: options.ver || '1.0',

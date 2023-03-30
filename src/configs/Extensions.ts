@@ -1,6 +1,6 @@
 
-export const extensions: Array<IExtensionConfig>  = [
-   
+export const extensions: Array<IExtensionConfig> = [
+
 ]
 
 
