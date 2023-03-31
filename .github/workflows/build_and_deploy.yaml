@@ -45,7 +45,7 @@ jobs:
           path: deploy
           ref: ${{ vars.DEPLOY_REPO_REF }}
 
-      - name: Run terraform init and apply
+      - name: Run terraform init and  apply
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
