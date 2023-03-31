@@ -10,6 +10,6 @@ const config = {
   druidEndPoint: "/druid/v2",
   druidSqlEndPoint: "/druid/v2/sql/",
   druidStatus: "/status",
-  druidHealth: "/status/health",
+  druidHealth: "/status/healths",
 };
 export { config };
