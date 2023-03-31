@@ -29,7 +29,8 @@
     "router_config": {
         "topic": ""
     },
-    "status": "DRAFT",
+    "status": "ACTIVE",
+    "version":"v1",
     "created_by": "SYSTEM",
     "updated_by": "SYSTEM"
 }

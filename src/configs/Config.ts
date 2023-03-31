@@ -1,3 +1,4 @@
+ 
 export const config = {
   "api_port": process.env.api_port || 3000,
   "query_api": {
@@ -8,7 +9,27 @@ export const config = {
       "native_query_path": "/druid/v2"
     }
   },
-  "dataset_api": {
+  "db_connector_config": {
+    client: "postgresql",
+    connection: {
+      host: process.env.postgres_host || 'localhost',
+      port: process.env.postgres_port || 5432,
+      database: process.env.postgres_database || 'sb-obsrv',
+      user: process.env.postgres_username || 'obsrv',
+      password: process.env.postgres_password || '5b-0b5rv',
+    }
+  },
+  "telemetry_service_config": {
+    level: process.env.telemetry_log_level || 'info',
+    localStorageEnabled: process.env.telemetry_local_storage_enabled || 'true',
+    dispatcher: process.env.telemetry_local_storage_type || 'kafka',
+    telemetryProxyEnabled: process.env.telemetry_proxy_enabled,
+    proxyURL: process.env.telemetry_proxy_url,
+    proxyAuthKey: process.env.telemetry_proxy_auth_key,
+    compression_type: process.env.telemetry_kafka_compression || 'none',
+    filename: process.env.telemetry_file_filename || 'telemetry-%DATE%.log',
+    maxSize: process.env.telemetry_file_maxsize || '100m',
+    maxFiles: process.env.telemetry_file_maxfiles || '100',
     "kafka": {
       "config": {
         "brokers": [`${process.env.kafka_host || 'localhost'}:${process.env.kafka_port || 9092}`],
@@ -24,16 +45,5 @@ export const config = {
         "mutate": `${process.env.system_env || 'local'}.mutation`
       }
     }
-  },
-  "db_connector_config": {
-    client: "postgresql",
-    connection: {
-      host: process.env.postgres_host || 'localhost',
-      port: process.env.postgres_port || 5432,
-      database: process.env.postgres_database || 'sb-obsrv',
-      user: process.env.postgres_username || 'obsrv',
-      password: process.env.postgres_password || '5b-0b5rv',
-    }
   }
-
 }

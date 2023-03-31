@@ -4,8 +4,10 @@ import { ResponseHandler } from "./helpers/ResponseHandler";
 import { loadExtensions } from "./managers/Extensions";
 import { router } from "./routes/Router";
 import { scrapMetrics } from './helpers/prometheus'
+import bodyParser from "body-parser";
 const app: Application = express();
-
+ 
+app.use(bodyParser.json({ limit: '5mb'}));
 app.use(express.json());
 app.use(scrapMetrics());
 

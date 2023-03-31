@@ -12,7 +12,10 @@ export class RequestsValidator implements IValidator {
         [routesConfig.data_ingest.api_id, "DataIngestionReq.json"],
         [routesConfig.config.dataset.save.api_id, "DatasetSaveReq.json"],
         [routesConfig.config.datasource.save.api_id, "DatasourceSaveReq.json"],
-        [routesConfig.config.dataset.list.api_id, "DatasetListReq.json"]
+        [routesConfig.config.dataset.list.api_id, "DatasetListReq.json"],
+        [routesConfig.config.datasource.list.api_id, "DatasetListReq.json"],
+        [routesConfig.config.dataset.update.api_id, "DatasetUpdateReq.json"],
+        [routesConfig.config.datasource.update.api_id, "DatasourceUpdateReq.json"]
     ]);
     private validator: Ajv;
 
@@ -28,7 +31,7 @@ export class RequestsValidator implements IValidator {
         if (!validRequestObj) {
             let error = this.validator.errors;
             let errorMessage = error![0].instancePath.replace("/", "") + " " + error![0].message;
-            return { error: httpStatus["400_NAME"], isValid: false, message: errorMessage, code: httpStatus[400] };
+            return { error: httpStatus["400_NAME"], isValid: false, message: errorMessage, code: httpStatus["400_NAME"] };
         } else {
             return { isValid: true, message: "Validation Success", code: httpStatus[200] };
         }

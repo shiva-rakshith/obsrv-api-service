@@ -85,10 +85,7 @@
                 "topic": {
                     "type": "string"
                 }
-            },
-            "required": [
-                "topic"
-            ]
+            }
         },
         "status": {
             "type": "string",
@@ -117,8 +114,7 @@
         }
     },
     "required": [
-        "id",
-        "router_config"
+        "id"
     ],
     "additionalProperties": false
 }

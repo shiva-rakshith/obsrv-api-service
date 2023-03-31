@@ -1,49 +1,61 @@
 import constants from "../resources/Constants.json";
 import { NextFunction, Request, Response } from "express";
 import { ResponseHandler } from "../helpers/ResponseHandler";
-import errorResponse from "http-errors"
 import httpStatus from "http-status";
 import { IConnector } from "../models/IngestionModels";
 import { Datasources } from "../helpers/Datasources";
 import _ from "lodash";
 
 export class DataSourceService {
+    private table: string
     private connector: any;
     constructor(connector: IConnector) {
         this.connector = connector
+        this.table = "datasources"
     }
     public save = (req: Request, res: Response, next: NextFunction) => {
         const datasource = new Datasources(req.body)
-        this.connector.execute("insert", { "table": 'datasources', "fields": datasource.setValues() })
+        const datasourceRecord = datasource.setValues()
+        this.connector.execute("insert", { "table": this.table, "fields": datasourceRecord })
             .then(() => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASOURCE_SAVED, "id": datasource.getDataSourceId() } })
             }).catch((error: any) => {
-                next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
+                console.error(error.message)
+                next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
             });
     }
     public update = (req: Request, res: Response, next: NextFunction) => {
         const datasource = new Datasources(req.body)
-        this.connector.execute("update", { "table": 'datasources', "fields": { "filters": { "id": datasource.getDataSourceId() }, "values": datasource.getValues() } })
+        const datasourceRecord = datasource.getValues()
+        this.connector.execute("update", { "table": this.table, "fields": { "filters": { "id": datasource.getDataSourceId() }, "values": datasourceRecord } })
             .then(() => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASOURCE_UPDATED, "id": datasource.getDataSourceId() } })
             }).catch((error: any) => {
-                next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
+                console.error(error.message)
+                next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
             });
     }
     public read = (req: Request, res: Response, next: NextFunction) => {
-        this.connector.execute("read", { "table": 'datasources', "fields": { "filters": { "id": req.params.datasourceId } } })
+        let status: any = req.query.status
+        const id = req.params.datasourceId
+        this.connector.execute("read", { "table": this.table, "fields": { "filters": { "id": id, "status": status } } })
             .then((data: any[]) => {
-                ResponseHandler.successResponse(req, res, { status: 200, data: _.first(data) })
+                !_.isEmpty(data) ? ResponseHandler.successResponse(req, res, { status: 200, data: _.first(data) }) : (() => {
+                    throw constants.RECORD_NOT_FOUND
+                })()
             }).catch((error: any) => {
-                next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
+                console.error(error.message)
+                next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
             });
     }
     public list = (req: Request, res: Response, next: NextFunction) => {
-        this.connector.execute("read", { "table": 'datasources', "fields": req.body })
+        const fields = req.body
+        this.connector.execute("read", { "table": this.table, "fields": fields })
             .then((data: any) => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: data })
             }).catch((error: any) => {
-                next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
+                console.error(error.message)
+                next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
             });
     }
     public preset = (req: Request, res: Response, next: NextFunction) => {
@@ -53,15 +65,9 @@ export class DataSourceService {
             ResponseHandler.successResponse(req, res, { status: 200, data: configDefault })
         }
         catch (error: any) {
-            next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
+            console.error(error.message)
+            next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
         }
     }
-    public publish = (req: Request, res: Response, next: NextFunction) => {
-        this.connector.execute("update", { "table": 'datasources', "fields": { "filters": { "id": req.params.datasourceId }, "values": { "status": "LIVE", "updated_date": new Date, "published_date": new Date } } })
-            .then(() => {
-                ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASOURCE_PUBLISHED, "dataset_id": req.body.id } })
-            }).catch((error: any) => {
-                next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message))
-            });
-    }
+
 }

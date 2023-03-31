@@ -1,0 +1,39 @@
+name: Deploy workflow for Obsrv-API
+
+on:
+  push:
+    tags:
+      - "*/*"
+
+jobs:
+  docker:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
+      - name: Authenticate Docker
+        run: |
+          docker login -u "sanketikahub" -p "${{ secrets.DOCKER_PASSWORD }}" docker.io
+
+      - name: Build Docker image
+        run: |
+          docker build -t sanketikahub/obsrv-api-service:1.0.0 -f Dockerfile .
+          docker push sanketikahub/obsrv-api-service:1.0.0
+
+      - name: Fetch kubeconfig
+        run: |
+          aws eks --region us-east-2 update-kubeconfig --name obsrv-dev-eks
+          kubectl get ns
+
+      - name: Go to obsrv-api-service  helm chart
+        run: |
+          ls  
+          cd helm_charts/obsrv-api-service/
+          helm upgrade --install -f ../../env/dev/values.yaml obsrv-api-service . -n obsrv-api-service-dev --create-namespace --atomic

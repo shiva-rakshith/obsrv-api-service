@@ -13,14 +13,14 @@ type extendedErrorRequestHandler = ErrorRequestHandler & {
 
 const ResponseHandler = {
   successResponse: (req: Request, res: Response, result: Result) => {
-    res.status(result.status).json(ResponseHandler.refactorResponse({ id: (req as any).id, result: result.data }));
+    res.status(result.status || 200).json(ResponseHandler.refactorResponse({ id: (req as any).id, result: result.data }));
   },
 
   routeNotFound: (req: Request, res: Response, next: NextFunction) => {
-    next({ statusCode: httpStatus.NOT_FOUND, message: constants.ERROR_MESSAGE.ROUTE_NOT_FOUND, errCode: httpStatus['404_NAME'] });
+    next({ statusCode: httpStatus.NOT_FOUND, message: constants.ERROR_MESSAGE.ROUTE_NOT_FOUND, errCode: httpStatus["404_NAME"] });
   },
 
-  refactorResponse: ({ id = routesConfig.default.api_id, ver = "v1", params = { status: httpStatus[200], errmsg: "" }, responseCode = httpStatus[200], result = {} }): IResponse => {
+  refactorResponse: ({ id = routesConfig.default.api_id, ver = "v1", params = { status: constants.STATUS.SUCCESS, errmsg: "" }, responseCode = httpStatus["200_NAME"], result = {} }): IResponse => {
     return <IResponse>{ id, ver, ts: Date.now(), params, responseCode, result }
   },
 
@@ -28,7 +28,7 @@ const ResponseHandler = {
     const { statusCode, message, errCode } = error;
     failedApiCallsMetric.inc();
     const { id } = req as any;
-    res.status(statusCode || httpStatus.INTERNAL_SERVER_ERROR).json(ResponseHandler.refactorResponse({ id: id, params: { status: httpStatus[400], errmsg: message, }, responseCode: errCode || httpStatus["500_NAME"] }));
+    res.status(statusCode || httpStatus.INTERNAL_SERVER_ERROR).json(ResponseHandler.refactorResponse({ id: id, params: { status: constants.STATUS.FAILURE, errmsg: message, }, responseCode: errCode || httpStatus["500_NAME"] }));
   },
 
   setApiId: (id: string) => (req: Request, res: Response, next: NextFunction) => {
