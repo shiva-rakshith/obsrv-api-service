@@ -110,8 +110,7 @@
             "type": "string"
         },
         "published_date": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
         }
     },
     "required": [

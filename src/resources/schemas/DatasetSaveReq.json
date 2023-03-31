@@ -7,7 +7,7 @@
         "dataset_name": {
             "type": "string"
         },
-        "dataset_slug":{
+        "dataset_slug": {
             "type": "string"
         },
         "extraction_config": {
@@ -83,7 +83,7 @@
             "type": "object",
             "properties": {
                 "topic": {
-                    "type": "string" 
+                    "type": "string"
                 }
             },
             "required": [
@@ -113,8 +113,7 @@
             "type": "string"
         },
         "published_date": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
         }
     },
     "required": [
