@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/app.js",
   "scripts": {
-    "start": "ts-node ./src/app.ts",
+    "start": "tsc && ts-node ./src/app.ts",
     "test": "nyc mocha ./src/test/*.spec.ts --exit",
     "build": "tsc -P ."
   },
@@ -71,7 +71,6 @@
     "exclude": [
       "**/test/*.ts",
       "**/lib/**/*.js",
-      "**/lib/**/*.ts",
       "**/managers/**/*.ts"
     ],
     "extension": [

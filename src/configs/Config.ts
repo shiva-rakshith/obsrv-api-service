@@ -36,7 +36,7 @@ export const config = {
         "clientId": process.env.client_id || "obsrv-apis",
         "retry": {
           "initialRetryTime": process.env.kafka_initial_retry_time ? parseInt(process.env.kafka_initial_retry_time) : 3000,
-          "retries": process.env.kafka_retries ? parseInt(process.env.kafka_retries) : 1
+          "retries": process.env.kafka_retries ? parseInt(process.env.kafka_retries) : 5
         },
         "connectionTimeout": process.env.kafka_connection_timeout ? parseInt(process.env.kafka_connection_timeout) : 5000
       },

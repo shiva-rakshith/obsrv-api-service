@@ -1,7 +1,7 @@
 const uuidv1 = require("uuid/v1"),
   request = require("request"),
   DispatcherClass = require("../dispatcher/dispatcher").Dispatcher;
-config = require("../../configs/Config").config;
+const config = require("../../configs/Config").config;
 const responseHandler = require("../../helpers/ResponseHandler").ResponseHandler;
 
 // TODO: Make this efficient. Implementation to be similar to typesafe config. Right now one configuration holds
