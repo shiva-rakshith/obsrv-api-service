@@ -36,15 +36,20 @@ export const routesConfig = {
         method: "post",
         path: "/obsrv/v1/datasets/list"
       },
-      preset:{
+      preset: {
         api_id: "obsrv.config.dataset.preset",
         method: "get",
         path: "/obsrv/v1/datasets/preset"
       },
-      publish:{
+      publish: {
         api_id: "obsrv.config.dataset.publish",
         method: "get",
         path: "/obsrv/v1/datasets/publish/:datasetId"
+      },
+      slugIdentification: {
+        api_id: "obsrv.config.dataset.slug.identification",
+        method: "get",
+        path: "/obsrv/v1/datasets/slug/identification/:datasetSlugId"
       }
     },
     datasource: {
@@ -68,12 +73,12 @@ export const routesConfig = {
         method: "post",
         path: "/obsrv/v1/datasources/list"
       },
-      preset:{
+      preset: {
         api_id: "obsrv.config.datasource.preset",
         method: "get",
         path: "/obsrv/v1/datasources/preset"
       },
-      publish:{
+      publish: {
         api_id: "obsrv.config.datasource.publish",
         method: "get",
         path: "/obsrv/v1/datasources/publish/:datasourceId"

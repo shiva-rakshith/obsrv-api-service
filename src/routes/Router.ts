@@ -16,7 +16,6 @@ const validationService = new ValidationService();
 
 const queryService = new QueryService(new HTTPConnector(`${config.query_api.druid.host}:${config.query_api.druid.port}`))
 
-// export const kafkaConnector = new KafkaConnector(config.dataset_api.kafka.config)
 export const kafkaConnector = new KafkaConnector()
 
 export const dbConnector = new DbConnector(config.db_connector_config);
@@ -42,7 +41,7 @@ router.patch(`${routesConfig.config.dataset.update.path}`, ResponseHandler.setAp
 router.get(`${routesConfig.config.dataset.preset.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.preset.api_id), datasetService.preset);
 router.get(`${routesConfig.config.dataset.read.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.read.api_id), datasetService.read);
 router.post(`${routesConfig.config.dataset.list.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.list.api_id), validationService.validateRequestBody, datasetService.list);
-
+router.get(`${routesConfig.config.dataset.slugIdentification.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.slugIdentification.api_id), datasetService.slugIdentification)
 
 /** DataSource API(s) */
 router.post(`${routesConfig.config.datasource.save.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.save.api_id), validationService.validateRequestBody, datasourceService.save);

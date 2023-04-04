@@ -11,7 +11,8 @@ export class DbConnector implements IConnector {
     public typeToMethod = {
         insert: this.insertRecord,
         update: this.updateRecord,
-        read: this.readRecord
+        read: this.readRecord,
+        isUniqueSlug: this.isUniqueDatasetSlug
     }
     public method: any
     constructor(config: DbConnectorConfig) {
@@ -38,7 +39,7 @@ export class DbConnector implements IConnector {
     }
 
     public async insertRecord(table: string, fields: any) {
-        let fetchedRecords = await this.pool(table).select().where('id', '=', fields.id)
+        const fetchedRecords = _.isUndefined(fields.dataset_slug) ? await this.pool(table).select().where('id', '=', fields.id) : await this.pool(table).select().where('id', '=', fields.id).orWhere('dataset_slug', '=', fields.dataset_slug)
         return fetchedRecords.length > 0 ? (() => { throw constants.DUPLICATE_RECORD })() : await this.pool(table).insert(fields)
     }
 
@@ -70,5 +71,10 @@ export class DbConnector implements IConnector {
             return query.offset(offset).limit(limit)
         }
         return await query
+    }
+
+    public async isUniqueDatasetSlug(table: string, fields: any) {
+        const matchedRecords = await this.pool(table).select().where('dataset_slug', '=', fields.dataset_slug)
+        return matchedRecords.length > 0 ? false : true
     }
 }
