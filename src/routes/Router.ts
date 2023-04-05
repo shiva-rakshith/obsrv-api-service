@@ -41,7 +41,6 @@ router.patch(`${routesConfig.config.dataset.update.path}`, ResponseHandler.setAp
 router.get(`${routesConfig.config.dataset.preset.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.preset.api_id), datasetService.preset);
 router.get(`${routesConfig.config.dataset.read.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.read.api_id), datasetService.read);
 router.post(`${routesConfig.config.dataset.list.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.list.api_id), validationService.validateRequestBody, datasetService.list);
-router.get(`${routesConfig.config.dataset.slugIdentification.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.slugIdentification.api_id), datasetService.slugIdentification)
 
 /** DataSource API(s) */
 router.post(`${routesConfig.config.datasource.save.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.save.api_id), validationService.validateRequestBody, datasourceService.save);

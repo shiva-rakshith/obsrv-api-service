@@ -11,8 +11,7 @@ export class DbConnector implements IConnector {
     public typeToMethod = {
         insert: this.insertRecord,
         update: this.updateRecord,
-        read: this.readRecord,
-        isUniqueSlug: this.isUniqueDatasetSlug
+        read: this.readRecord
     }
     public method: any
     constructor(config: DbConnectorConfig) {
@@ -71,10 +70,5 @@ export class DbConnector implements IConnector {
             return query.offset(offset).limit(limit)
         }
         return await query
-    }
-
-    public async isUniqueDatasetSlug(table: string, fields: any) {
-        const matchedRecords = await this.pool(table).select().where('dataset_slug', '=', fields.dataset_slug)
-        return matchedRecords.length > 0 ? false : true
     }
 }

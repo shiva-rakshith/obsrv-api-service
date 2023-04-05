@@ -45,11 +45,6 @@ export const routesConfig = {
         api_id: "obsrv.config.dataset.publish",
         method: "get",
         path: "/obsrv/v1/datasets/publish/:datasetId"
-      },
-      slugIdentification: {
-        api_id: "obsrv.config.dataset.slug.identification",
-        method: "get",
-        path: "/obsrv/v1/datasets/slug/identification/:datasetSlugId"
       }
     },
     datasource: {

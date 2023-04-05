@@ -68,14 +68,4 @@ export class DatasetService {
             next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
         };
     }
-    public slugIdentification = async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const dataset_slug = req.params.datasetSlugId
-            const isUniqueSlug = await this.dbConnector.execute("isUniqueSlug", { "table": this.table, "fields": { "dataset_slug": dataset_slug } })
-            ResponseHandler.successResponse(req, res, { status: 200, data: { "slugId": dataset_slug, "isUnique": isUniqueSlug } })
-        } catch (error: any) {
-            console.error(error.message)
-            next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
-        };
-    }
 }
