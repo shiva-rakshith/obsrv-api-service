@@ -39,7 +39,6 @@ export class IngestorService {
     }
     private async getTopic(datasetId: string) {
         const fetchedRecord: any = await dbConnector.execute("read", { "table": "datasets", "fields": { "filters": { "id": datasetId } } })
-        console.log(fetchedRecord, "fetchedrecord")
         return !_.isEmpty(fetchedRecord) ? fetchedRecord[0].dataset_config.entry_topic : (() => { throw constants.DATASET_ID_NOT_FOUND })()
     }
 }
