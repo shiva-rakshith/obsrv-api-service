@@ -21,8 +21,8 @@ export const defaultConfig = {
             "dedup_period": 3
         },
         "denorm_config": {
-            "redis_db_host": "redis_host",
-            "redis_db_port": "redis_port",
+            "redis_db_host": config.redis_config.redis_host,
+            "redis_db_port": config.redis_config.redis_port,
             "denorm_fields": {
                 "denorm_key": "",
                 "redis_db": 1,
@@ -67,8 +67,8 @@ export const defaultConfig = {
             "dedup_period": 3
         },
         "denorm_config": {
-            "redis_db_host": "redis_host",
-            "redis_db_port": "redis_port",
+            "redis_db_host": config.redis_config.redis_host,
+            "redis_db_port": config.redis_config.redis_port,
             "denorm_fields": {
                 "denorm_key": "",
                 "redis_db": 1,
