@@ -30,3 +30,15 @@ export interface DenormFieldConfig {
 export interface RouterConfig {
   topic: string;
 }
+
+export interface DatasetConfig {
+  data_key: string;
+  timestamp_key: string;
+  exclude_fields: string[];
+  entry_topic: string;
+  redis_db_host: string;
+  redis_db_port: number;
+  redis_db: number;
+  index_data: boolean;
+}
+

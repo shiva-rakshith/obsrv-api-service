@@ -1,7 +1,7 @@
 {
     "type": "object",
     "properties": {
-        "id": {
+        "datasource":{
             "type": "string"
         },
         "dataset_id": {
@@ -10,7 +10,7 @@
         "ingestion_spec": {
             "type": "object"
         },
-        "datasource": {
+        "datasource_ref": {
             "type": "string"
         },
         "retention_period": {
@@ -34,6 +34,9 @@
             "type": "string"
         },
         "updated_by": {
+            "type": "string"
+        },
+        "version": {
             "type": "string"
         },
         "published_date": {

@@ -7,7 +7,7 @@ import { TestDataIngestion } from "./Fixtures";
 import { config } from "./Config";
 import { routesConfig } from "../configs/RoutesConfig";
 import constants from "../resources/Constants.json"
-import { ingestorService, kafkaConnector } from "../routes/Router";
+import { dbConnector, ingestorService, kafkaConnector } from "../routes/Router";
 
 chai.use(spies);
 chai.should();
@@ -15,6 +15,9 @@ chai.use(chaiHttp);
 
 describe("DATA INGEST API", () => {
     it("it should ingest data successfully", (done) => {
+        chai.spy.on(dbConnector, "execute", () => {
+            return Promise.resolve([{ "dataset_config": { "entry_topic": "topic" } }])
+        })
         chai.spy.on(kafkaConnector.telemetryService, "dispatch", () => {
             return Promise.resolve("data ingested")
         })
@@ -29,11 +32,15 @@ describe("DATA INGEST API", () => {
                 res.body.should.have.property("result");
                 res.body.id.should.be.eq(routesConfig.data_ingest.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
+                chai.spy.restore(dbConnector, "execute")
                 chai.spy.restore(kafkaConnector.telemetryService, "dispatch")
                 done();
             });
     });
-    it("it should ingest data successfully", (done) => {
+    it("it should not ingest data successfully", (done) => {
+        chai.spy.on(dbConnector, "execute", () => {
+            return Promise.resolve([{ "dataset_config": { "entry_topic": "topic" } }])
+        })
         chai.spy.on(kafkaConnector.telemetryService, "dispatch", () => {
             return Promise.reject("error connecting to kafka")
         })
@@ -48,6 +55,7 @@ describe("DATA INGEST API", () => {
                 res.body.should.have.property("result");
                 res.body.id.should.be.eq(routesConfig.data_ingest.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+                chai.spy.restore(dbConnector, "execute")
                 chai.spy.restore(kafkaConnector.telemetryService, "dispatch")
                 done();
             });

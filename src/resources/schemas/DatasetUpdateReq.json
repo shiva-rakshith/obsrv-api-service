@@ -4,10 +4,10 @@
         "id": {
             "type": "string"
         },
-        "dataset_name": {
+        "name": {
             "type": "string"
         },
-        "dataset_slug": {
+        "type": {
             "type": "string"
         },
         "extraction_config": {
@@ -84,6 +84,41 @@
             "properties": {
                 "topic": {
                     "type": "string"
+                }
+            },
+            "required": [
+                "topic"
+            ]
+        },
+        "dataset_config": {
+            "type": "object",
+            "properties": {
+                "data_key": {
+                    "type": "string"
+                },
+                "timestamp_key": {
+                    "type": "string"
+                },
+                "exclude_fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "entry_topic": {
+                    "type": "string"
+                },
+                "redis_db_host": {
+                    "type": "string"
+                },
+                "redis_db_port": {
+                    "type": "number"
+                },
+                "redis_db": {
+                    "type": "number"
+                },
+                "index_data": {
+                    "type": "boolean"
                 }
             }
         },

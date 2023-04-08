@@ -21,6 +21,7 @@
     "DATASOURCE_PUBLISHED": "The datasource configuration has been published successfully"
   },
   "RECORD_NOT_FOUND": { "message": "Record not found", "status": 404 , "code": "NOT_FOUND"},
+  "DATASET_ID_NOT_FOUND": { "message": "Dataset Id not found, Failed to ingest", "status": 404 , "code": "NOT_FOUND"},
   "DUPLICATE_RECORD": {"message": "Record already Exists", "status": 409, "code": "CONFLICT"},
   "FAILED_RECORD_UPDATE": {"message": "Failed to update Record", "status": 400, "code": "BAD_REQUEST"},
   "EMPTY_DATASET_ID": {"message": "datasetId parameter in url cannot be empty", "statusCode": 400, "errCode": "BAD_REQUEST"}

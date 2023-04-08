@@ -36,14 +36,18 @@ export const config = {
         "clientId": process.env.client_id || "obsrv-apis",
         "retry": {
           "initialRetryTime": process.env.kafka_initial_retry_time ? parseInt(process.env.kafka_initial_retry_time) : 3000,
-          "retries": process.env.kafka_retries ? parseInt(process.env.kafka_retries) : 5
+          "retries": process.env.kafka_retries ? parseInt(process.env.kafka_retries) : 1
         },
         "connectionTimeout": process.env.kafka_connection_timeout ? parseInt(process.env.kafka_connection_timeout) : 5000
       },
       "topics": {
-        "create": `${process.env.system_env || 'local'}.ingest`,
-        "mutate": `${process.env.system_env || 'local'}.mutation`
+        "createDataset": `${process.env.system_env || 'local'}.ingest`,
+        "createMasterDataset": `${process.env.system_env || 'local'}.masterdata.ingest`
       }
     }
-  }
+  },
+  "redis_config":{
+    "redis_host": process.env.redis_host || 'localhost',
+    "redis_port": process.env.redis_port || 6379
+  } 
 }

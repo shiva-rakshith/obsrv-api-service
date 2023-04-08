@@ -17,7 +17,7 @@ export const routesConfig = {
   config: {
     dataset: {
       save: {
-        api_id: "obsrv.config.dataset.save",
+        api_id: "obsrv.config.dataset.create",
         method: "post",
         path: "/obsrv/v1/datasets"
       },
@@ -40,11 +40,6 @@ export const routesConfig = {
         api_id: "obsrv.config.dataset.preset",
         method: "get",
         path: "/obsrv/v1/datasets/preset"
-      },
-      publish: {
-        api_id: "obsrv.config.dataset.publish",
-        method: "get",
-        path: "/obsrv/v1/datasets/publish/:datasetId"
       }
     },
     datasource: {
@@ -72,13 +67,63 @@ export const routesConfig = {
         api_id: "obsrv.config.datasource.preset",
         method: "get",
         path: "/obsrv/v1/datasources/preset"
+      }
+    },
+    dataset_source_config: {
+      save: {
+        api_id: "obsrv.config.dataset.source.config.create",
+        method: "post",
+        path: "/obsrv/v1/datasets/source/config"
       },
-      publish: {
-        api_id: "obsrv.config.datasource.publish",
+      read: {
+        api_id: "obsrv.config.dataset.source.config.read",
         method: "get",
-        path: "/obsrv/v1/datasources/publish/:datasourceId"
+        path: "/obsrv/v1/datasets/source/config/:datasetId"
+      },
+      update: {
+        api_id: "obsrv.config.dataset.source.config.update",
+        method: "patch",
+        path: "/obsrv/v1/datasets/source/config"
+      },
+      list: {
+        api_id: "obsrv.config.dataset.source.config.list",
+        method: "post",
+        path: "/obsrv/v1/datasets/source/config/list"
+      },
+      preset: {
+        api_id: "obsrv.config.dataset.source.config.preset",
+        method: "get",
+        path: "/obsrv/v1/datasets/source/config/preset"
+      }
+    },
+    dataset_transformation: {
+      save: {
+        api_id: "obsrv.config.dataset.transformation.create",
+        method: "post",
+        path: "/obsrv/v1/datasets/transformation"
+      },
+      read: {
+        api_id: "obsrv.config.dataset.transformation.read",
+        method: "get",
+        path: "/obsrv/v1/datasets/transformation/:datasetId"
+      },
+      update: {
+        api_id: "obsrv.config.dataset.transformation.update",
+        method: "patch",
+        path: "/obsrv/v1/datasets/transformation"
+      },
+      list: {
+        api_id: "obsrv.config.dataset.transformation.list",
+        method: "post",
+        path: "/obsrv/v1/datasets/transformation/list"
+      },
+      preset: {
+        api_id: "obsrv.config.dataset.transformation.preset",
+        method: "get",
+        path: "/obsrv/v1/datasets/transformation/preset"
       }
     }
+
   },
   data_ingest: {
     api_id: "obsrv.dataset.data.in",

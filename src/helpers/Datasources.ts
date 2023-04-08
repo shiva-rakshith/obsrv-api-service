@@ -7,6 +7,7 @@ export class Datasources {
     private dataset_id: string
     private ingestion_spec: object
     private datasource: string
+    private datasource_ref: string
     private retention_period: object
     private archival_policy: object
     private purge_policy: object
@@ -14,23 +15,25 @@ export class Datasources {
     private status: string
     private created_by: string
     private updated_by: string
+    private version: string
     private published_date: Date
-
     constructor(payload: any) {
         this.dataset_id = payload.dataset_id
         this.ingestion_spec = payload.ingestion_spec
         this.datasource = payload.datasource
+        this.datasource_ref = payload.datasource_ref
         this.retention_period = payload.retentionPeriod
         this.archival_policy = payload.archivalPolicy
         this.purge_policy = payload.purgePolicy
         this.backup_config = payload.backup_config
         this.status = payload.status
+        this.version = payload.version
         this.created_by = payload.created_by
         this.updated_by = payload.updated_by
         this.published_date = payload.published_date
     }
     public getValues() {
-        return Object.assign(this.removeNullValues({ id: this.getDataSourceId(), dataset_id: this.dataset_id, ingestion_spec: this.ingestion_spec, datasource: this.datasource, retention_period: this.retention_period, archival_policy: this.archival_policy, purge_policy: this.purge_policy, backup_config: this.backup_config, status: this.status, created_by: this.created_by, updated_by: this.updated_by, published_date: this.published_date }), { "updated_date": new Date })
+        return Object.assign(this.removeNullValues({ dataset_id: this.dataset_id, ingestion_spec: this.ingestion_spec, datasource: this.datasource, datasource_ref: this.datasource_ref, retention_period: this.retention_period, archival_policy: this.archival_policy, purge_policy: this.purge_policy, backup_config: this.backup_config, status: this.status,version: this.version, created_by: this.created_by, updated_by: this.updated_by, published_date: this.published_date }), { "updated_date": new Date })
     }
 
     public setValues() {
@@ -45,9 +48,5 @@ export class Datasources {
     }
     public getDefaults() {
         return configDefault
-    }
-
-    public getDataSourceId() {
-        return `${this.dataset_id}_${this.datasource}`
     }
 }

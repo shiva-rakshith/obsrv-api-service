@@ -3,7 +3,7 @@ import constants from "../resources/Constants.json"
 import { ResponseHandler } from "../helpers/ResponseHandler";
 import _ from 'lodash'
 import httpStatus from "http-status";
-
+import { dbConnector } from "../routes/Router";
 export class IngestorService {
     private kafkaConnector: any;
     constructor(kafkaConnector: any) {
@@ -19,18 +19,27 @@ export class IngestorService {
                 console.log("error while connecting to kafka", error.message)
             })
     }
-    public create = (req: Request, res: Response, next: NextFunction) => {
-        req.body = Object.assign(req.body.data, { "dataset": this.getDatasetId(req) });
-        this.kafkaConnector.execute(req, res)
-            .then(() => {
-                ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.DATASET.CREATED } })
-            }).catch((error: any) => {
-                next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message || "", errCode: error.code || httpStatus["500_NAME"] })
-            })
+    public create = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const datasetId = this.getDatasetId(req);
+            req.body = { ...req.body.data, dataset: datasetId };
+            const topic = await this.getTopic(datasetId);
+            await this.kafkaConnector.execute(req, res, topic);
+            ResponseHandler.successResponse(req, res, { status: 200, data: { message: constants.DATASET.CREATED } });
+        } catch (error: any) {
+            console.log(error.message);
+            next({ statusCode: error.statusCode || httpStatus.INTERNAL_SERVER_ERROR, message: error.message || "", errCode: error.errCode || httpStatus["500_NAME"] });
+        }
+
     }
     private getDatasetId(req: Request) {
         let datasetId = req.params.datasetId.trim()
         if (!_.isEmpty(datasetId)) return datasetId
         throw constants.EMPTY_DATASET_ID
+    }
+    private async getTopic(datasetId: string) {
+        const fetchedRecord: any = await dbConnector.execute("read", { "table": "datasets", "fields": { "filters": { "id": datasetId } } })
+        console.log(fetchedRecord, "fetchedrecord")
+        return !_.isEmpty(fetchedRecord) ? fetchedRecord[0].dataset_config.entry_topic : (() => { throw constants.DATASET_ID_NOT_FOUND })()
     }
 }

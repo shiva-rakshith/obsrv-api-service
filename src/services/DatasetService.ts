@@ -22,7 +22,7 @@ export class DatasetService {
             }).catch((error: any) => {
                 console.error(error.message)
                 next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
-            });
+            })
     }
     public update = (req: Request, res: Response, next: NextFunction) => {
         const dataset = new Datasets(req.body)

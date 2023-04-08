@@ -1,0 +1,54 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "dataset_id": {
+      "type": "string"
+    },
+    "field_key": {
+      "type": "string"
+    },
+    "transformation_function": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "condition": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "expr": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "expr"
+          ]
+        },
+        "expr": {
+          "type": "string"
+        }
+      },
+      "required": []
+    },
+    "status": {
+      "type": "string"
+    },
+    "created_by": {
+      "type": "string"
+    },
+    "updated_by": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "dataset_id"
+  ]
+}

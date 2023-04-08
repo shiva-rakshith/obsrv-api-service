@@ -10,12 +10,18 @@ export class RequestsValidator implements IValidator {
         [routesConfig.query.native_query.api_id, "QueryRequest.json"],
         [routesConfig.query.sql_query.api_id, "QueryRequest.json"],
         [routesConfig.data_ingest.api_id, "DataIngestionReq.json"],
-        [routesConfig.config.dataset.save.api_id, "DatasetSaveReq.json"],
+        [routesConfig.config.dataset.save.api_id, "DatasetCreateReq.json"],
         [routesConfig.config.datasource.save.api_id, "DatasourceSaveReq.json"],
         [routesConfig.config.dataset.list.api_id, "DatasetListReq.json"],
         [routesConfig.config.datasource.list.api_id, "DatasetListReq.json"],
         [routesConfig.config.dataset.update.api_id, "DatasetUpdateReq.json"],
-        [routesConfig.config.datasource.update.api_id, "DatasourceUpdateReq.json"]
+        [routesConfig.config.datasource.update.api_id, "DatasourceUpdateReq.json"],
+        [routesConfig.config.dataset_source_config.save.api_id, "DatasetSourceConfigSaveReq.json"],
+        [routesConfig.config.dataset_source_config.update.api_id, "DatasetSourceConfigUpdateReq.json"],
+        [routesConfig.config.dataset_transformation.save.api_id, "DatasetTransformationSaveReq.json"],
+        [routesConfig.config.dataset_transformation.update.api_id, "DatasetTransformationUpdateReq.json"],
+        [routesConfig.config.dataset_source_config.list.api_id, "DatasetListReq.json"],
+        [routesConfig.config.dataset_transformation.list.api_id, "DatasetListReq.json"]
     ]);
     private validator: Ajv;
 

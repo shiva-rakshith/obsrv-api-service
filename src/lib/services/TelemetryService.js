@@ -12,7 +12,7 @@ class TelemetryService {
     this.config = config;
     this.dispatcher = this.config.localStorageEnabled === "true" ? new Dispatcher(config) : undefined;
   }
-  dispatch(req, res) {
+  dispatch(req, res, ...params) {
     const message = req.body;
     message.did = req.get("x-device-id");
     message.channel = req.get("x-channel-id");
@@ -25,7 +25,7 @@ class TelemetryService {
         // Store locally and respond back with proper status code
         // this.dispatcher.dispatch(message.mid, data, this.getRequestCallBack(req, res));
         return new Promise(async (resolve, reject) => {
-          await this.dispatcher.dispatch(message.mid, data, (err, response) => {
+          await this.dispatcher.dispatch(message.mid, data, params, (err, response) => {
             if (err) {
               return reject(err);
             } else {
