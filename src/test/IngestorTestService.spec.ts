@@ -60,6 +60,26 @@ describe("DATA INGEST API", () => {
                 done();
             });
     });
+    it("it should not ingest data successfully", (done) => {
+        chai.spy.on(dbConnector, "execute", () => {
+            return Promise.resolve([])
+        })
+
+        chai
+            .request(app)
+            .post(config.apiDatasetIngestEndPoint)
+            .send(TestDataIngestion.SAMPLE_INPUT)
+            .end((err, res) => {
+                res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
+                res.body.should.be.a("object");
+                res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
+                res.body.should.have.property("result");
+                res.body.id.should.be.eq(routesConfig.data_ingest.api_id);
+                res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+                chai.spy.restore(dbConnector, "execute")
+                done();
+            });
+    });
     it("it should not ingest data when datasetid param is empty", (done) => {
         chai
             .request(app)

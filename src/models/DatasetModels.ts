@@ -13,7 +13,7 @@ export interface IConnector {
 }
 
 export interface IValidator {
-    validate(data: any, id?: string): ValidationStatus;
+    validate(data: any, id?: string): ValidationStatus | Promise<ValidationStatus>;
 }
 
 export interface Params {

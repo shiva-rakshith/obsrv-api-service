@@ -15,9 +15,16 @@ const config = {
   apiDatasourceReadEndPoint: `${routesConfig.config.datasource.read.path}`,
   apiDatasourceListEndPoint: `${routesConfig.config.datasource.list.path}`,
   apiDatasourcePresetEndPoint: `${routesConfig.config.datasource.preset.path}`,
-
-
-
+  apiDatasetSourceConfigSaveEndPoint: `${routesConfig.config.dataset_source_config.save.path}`,
+  apiDatasetSourceConfigUpdateEndPoint: `${routesConfig.config.dataset_source_config.update.path}`,
+  apiDatasetSourceConfigReadEndPoint: `${routesConfig.config.dataset_source_config.read.path}`,
+  apiDatasetSourceConfigListEndPoint: `${routesConfig.config.dataset_source_config.list.path}`,
+  apiDatasetSourceConfigPresetEndPoint: `${routesConfig.config.dataset_source_config.preset.path}`,
+  apiDatasetTransformationSaveEndPoint: `${routesConfig.config.dataset_transformation.save.path}`,
+  apiDatasetTransformationUpdateEndPoint: `${routesConfig.config.dataset_transformation.update.path}`,
+  apiDatasetTransformationReadEndPoint: `${routesConfig.config.dataset_transformation.read.path}`,
+  apiDatasetTransformationListEndPoint: `${routesConfig.config.dataset_transformation.list.path}`,
+  apiDatasetTransformationPresetEndPoint: `${routesConfig.config.dataset_transformation.preset.path}`,
 
   druidHost: "http://localhost",
   druidPort: 8888,

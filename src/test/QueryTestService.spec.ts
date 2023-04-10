@@ -7,12 +7,16 @@ import { TestDruidQuery } from "./Fixtures";
 import { config } from "./Config";
 import constants from "../resources/Constants.json";
 import { routesConfig } from "../configs/RoutesConfig";
+import { dbConnector } from "../routes/Router";
 chai.should();
 chai.use(chaiHttp);
 
 describe("QUERY API", () => {
     describe("If service is down", () => {
         it("it should raise error when native query endpoint is called", (done) => {
+            chai.spy.on(dbConnector, "readRecord", () => {
+                return [{ "datasource_ref": "sample_ref" }]
+            })
             nock(config.druidHost + ":" + config.druidPort)
                 .post(config.druidEndPoint)
                 .reply(500)
@@ -24,10 +28,14 @@ describe("QUERY API", () => {
                     res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
                     res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
                     nock.cleanAll();
+                    chai.spy.restore(dbConnector, "readRecord")
                     done();
                 });
         });
         it("should raise error when sql query endpoint is called", (done) => {
+            chai.spy.on(dbConnector, "readRecord", () => {
+                return [{ "datasource_ref": "sample_ref" }]
+            })
             nock(config.druidHost + ":" + config.druidPort)
                 .post(config.druidSqlEndPoint)
                 .reply(500)
@@ -39,18 +47,24 @@ describe("QUERY API", () => {
                     res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
                     res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
                     nock.cleanAll();
+                    chai.spy.restore(dbConnector, "readRecord")
                     done();
                 });
         });
     });
     describe("POST /query/v2/native-query", () => {
         beforeEach(() => {
+            chai.spy.on(dbConnector, "readRecord", () => {
+                return [{ "datasource_ref": "sample_ref" }]
+            })
             nock(config.druidHost + ":" + config.druidPort)
                 .post(config.druidEndPoint)
                 .reply(200, [{ events: [] }]);
         });
         afterEach(() => {
-            nock.cleanAll();
+            nock.cleanAll()
+            chai.spy.restore(dbConnector, "readRecord")
+
         });
         it("it should fetch information from druid data source", (done) => {
             chai
@@ -156,6 +170,7 @@ describe("QUERY API", () => {
         });
         // // todo
         it("it should skip validation and allow druid for query if rules does not exist for datasource", (done) => {
+
             chai
                 .request(app)
                 .post(config.apiDruidEndPoint)
@@ -216,9 +231,16 @@ describe("QUERY API", () => {
     });
     describe("POST /druid/v2/sql", () => {
         beforeEach(() => {
+            chai.spy.on(dbConnector, "readRecord", () => {
+                return [{ "datasource_ref": "sample_ref" }]
+            })
             nock(config.druidHost + ":" + config.druidPort)
                 .post(config.druidSqlEndPoint)
-                .reply(200);
+                .reply(200, [{ events: [] }]);
+        });
+        afterEach(() => {
+            chai.spy.restore(dbConnector, "readRecord")
+            nock.cleanAll()
         });
         it("it should allow druid to query when a valid sql query is given", (done) => {
             chai

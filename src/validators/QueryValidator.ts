@@ -1,31 +1,33 @@
 import httpStatus from "http-status";
-import _ from "lodash";
-import moment, { Moment } from "moment";
+import _, { pullAll } from "lodash";
+import moment, { Moment, relativeTimeRounding } from "moment";
 import { queryRules } from "../configs/QueryRules";
 import { IValidator } from "../models/DatasetModels";
 import { ICommonRules, ILimits, IQuery, IQueryTypeRules, IRules } from "../models/QueryModels";
 import { ValidationStatus } from "../models/ValidationModels";
 import constants from "../resources/Constants.json";
+import { dbConnector } from "../routes/Router";
 import { routesConfig } from "../configs/RoutesConfig";
 export class QueryValidator implements IValidator {
     private limits: ILimits;
     constructor() {
         this.limits = queryRules
     }
-    validate(data: any, id: string): ValidationStatus {
+    public async validate(data: any, id: string): Promise<ValidationStatus> {
+        let validationStatus
         switch (id) {
             case routesConfig.query.native_query.api_id:
-                return this.validateNativeQuery(data)
+                validationStatus = await this.validateNativeQuery(data)
+                return validationStatus.isValid ? this.setDatasourceRef(data) : validationStatus
             case routesConfig.query.sql_query.api_id:
-                return this.validateSqlQuery(data)
+                validationStatus = await this.validateSqlQuery(data)
+                return validationStatus.isValid ? this.setDatasourceRef(data) : validationStatus
             default:
                 return <ValidationStatus>{ isValid: false }
         }
     }
 
     private validateNativeQuery(data: any): ValidationStatus {
-        // const validation = this.validateConfiguration(data)
-        // if (!validation.isValid) return validation
         let queryObj: IQuery = data;
         this.setQueryLimits(data, this.limits.common);
         let dataSourceLimits = this.getDataSourceLimits(this.getDataSource(data));
@@ -33,8 +35,6 @@ export class QueryValidator implements IValidator {
     }
 
     private validateSqlQuery(data: any): ValidationStatus {
-        // const validation = this.validateConfiguration(data)
-        // if (!validation.isValid) return validation
         this.setQueryLimits(data, this.limits.common);
         let dataSourceLimits = this.getDataSourceLimits(this.getDataSource(data));
         return (!_.isEmpty(dataSourceLimits)) ? this.validateQueryRules(data, dataSourceLimits.queryRules.scan) : { isValid: true };
@@ -118,13 +118,25 @@ export class QueryValidator implements IValidator {
         }
     }
 
-    // public validateConfiguration = (data: any): ValidationStatus => {
-    //     let dataSource: string = this.getDataSource(data);
-    //     let dataSourceLimits = this.getDataSourceLimits(dataSource);
-    //     const rules = (dataSource != data.context.dataSource) || (_.isUndefined(dataSourceLimits))
-    //     return rules ?
-    //         { isValid: false, message: "Data source Rules Not found", code: httpStatus[404] }
-    //         : { isValid: true }
-    // };
+    public async setDatasourceRef(payload: any): Promise<ValidationStatus> {
+        try {
+            let dataSource = this.getDataSource(payload)
+            let dataSourceRef = await this.getDataSourceRef(dataSource)
+            if (payload.querySql) {
+                payload.querySql.query = payload.querySql.query.replace(dataSource, dataSourceRef)
+            }
+            else {
+                payload.query.dataSource = dataSourceRef
+            }
+            return { isValid: true };
+        } catch (error: any) {
+            console.log(error.message)
+            return { isValid: false, message: "error ocuured while fetching datasource record", code: httpStatus["400_NAME"] };
+        }
+    }
 
+    public async getDataSourceRef(datasource: string): Promise<string> {
+        const record: any = await dbConnector.readRecord("datasources", { "filters": { "datasource": datasource } })
+        return record[0].datasource_ref
+    }
 }
