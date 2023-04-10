@@ -23,11 +23,7 @@ export const defaultConfig = {
         "denorm_config": {
             "redis_db_host": config.redis_config.redis_host,
             "redis_db_port": config.redis_config.redis_port,
-            "denorm_fields": {
-                "denorm_key": "",
-                "redis_db": 1,
-                "denorm_out_field": "metadata"
-            }
+            "denorm_fields": []
         },
         "router_config": {
             "topic": ""
@@ -39,7 +35,6 @@ export const defaultConfig = {
             "entry_topic": config.telemetry_service_config.kafka.topics.createMasterDataset,
             "redis_db_host": config.redis_config.redis_host,
             "redis_db_port": config.redis_config.redis_port,
-            "redis_db": 3,
             "index_data": false
         },
         "status": "ACTIVE",
@@ -69,11 +64,7 @@ export const defaultConfig = {
         "denorm_config": {
             "redis_db_host": config.redis_config.redis_host,
             "redis_db_port": config.redis_config.redis_port,
-            "denorm_fields": {
-                "denorm_key": "",
-                "redis_db": 1,
-                "denorm_out_field": "metadata"
-            }
+            "denorm_fields": []
         },
         "router_config": {
             "topic": ""
@@ -85,7 +76,6 @@ export const defaultConfig = {
             "entry_topic": config.telemetry_service_config.kafka.topics.createDataset,
             "redis_db_host": config.redis_config.redis_host,
             "redis_db_port": config.redis_config.redis_port,
-            "redis_db": 3,
             "index_data": true
         },
         "status": "ACTIVE",

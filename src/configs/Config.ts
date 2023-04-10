@@ -1,4 +1,4 @@
- 
+
 export const config = {
   "api_port": process.env.api_port || 3000,
   "query_api": {
@@ -46,8 +46,12 @@ export const config = {
       }
     }
   },
-  "redis_config":{
+  "dataset_types": {
+    normalDataset: "dataset",
+    masterDataset: "master"
+  },
+  "redis_config": {
     "redis_host": process.env.redis_host || 'localhost',
     "redis_port": process.env.redis_port || 6379
-  } 
+  }
 }

@@ -2,6 +2,7 @@ import _ from 'lodash'
 import { ValidationConfig, ExtractionConfig, DedupConfig, DenormConfig, RouterConfig, DatasetConfig } from '../models/ConfigModels'
 import { defaultConfig } from '../resources/schemas/DatasetConfigDefault'
 import { SchemaMerger } from '../generators/SchemaMerger'
+import { config } from '../configs/Config'
 let schemaMerger = new SchemaMerger()
 export class Datasets {
     private id: string
@@ -53,7 +54,7 @@ export class Datasets {
     }
 
     public getDefaults() {
-        if (this.type == 'master') {
+        if (this.type == config.dataset_types.masterDataset) {
             return defaultConfig.master
         }
         else {
