@@ -48,7 +48,7 @@
     }
   },
   "required": [
-    "id",
+    "field_key",
     "dataset_id"
   ]
 }

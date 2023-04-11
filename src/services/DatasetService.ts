@@ -13,16 +13,25 @@ export class DatasetService {
         this.dbConnector = dbConnector
         this.table = "datasets"
     }
-    public save = (req: Request, res: Response, next: NextFunction) => {
-        const dataset = new Datasets(req.body)
-        const datasetRecord: any = dataset.setValues()
-        this.dbConnector.execute("insert", { "table": this.table, "fields": datasetRecord })
-            .then(() => {
-                ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_SAVED, "dataset_id": datasetRecord.id } })
-            }).catch((error: any) => {
-                console.error(error.message)
-                next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
-            })
+    public save = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const fetchedRecord = await this.dbConnector.execute("read", { table: this.table, fields: { "filters": { "dataset_id": req.body.dataset_id } } })
+            if (fetchedRecord.length > 0) { throw constants.DUPLICATE_RECORD }
+
+            const dataset = new Datasets(req.body)
+            const datasetRecord: any = dataset.setValues()
+            this.dbConnector.execute("insert", { "table": this.table, "fields": datasetRecord })
+                .then(() => {
+                    ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_SAVED, "dataset_id": datasetRecord.id } })
+                }).catch((error: any) => {
+                    console.error(error.message)
+                    next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
+                })
+        }
+        catch (error: any) {
+            next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] });
+
+        }
     }
     public update = (req: Request, res: Response, next: NextFunction) => {
         const dataset = new Datasets(req.body)
@@ -36,9 +45,9 @@ export class DatasetService {
             });
     }
     public read = (req: Request, res: Response, next: NextFunction) => {
-        let status: any = req.query.status
+        let status: any = req.query.status;
         const id = req.params.datasetId
-        this.dbConnector.execute("read", { "table": this.table, "fields": { "filters": { "id": id, "status": status } } })
+        this.dbConnector.execute("read", { "table": this.table, "fields": { "filters": { "id": id, ...(status && { status }) } } })
             .then((data: any[]) => {
                 !_.isEmpty(data) ? ResponseHandler.successResponse(req, res, { status: 200, data: _.first(data) }) : (() => {
                     throw constants.RECORD_NOT_FOUND
@@ -57,15 +66,5 @@ export class DatasetService {
                 console.error(error.message)
                 next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
             });
-    }
-    public preset = (req: Request, res: Response, next: NextFunction) => {
-        try {
-            let dataset = new Datasets({})
-            let configDefault = dataset.getDefaults()
-            ResponseHandler.successResponse(req, res, { status: 200, data: configDefault })
-        } catch (error: any) {
-            console.error(error.message)
-            next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
-        };
     }
 }

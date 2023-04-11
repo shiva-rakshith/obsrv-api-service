@@ -13,16 +13,25 @@ export class DataSourceService {
         this.connector = connector
         this.table = "datasources"
     }
-    public save = (req: Request, res: Response, next: NextFunction) => {
-        const datasource = new Datasources(req.body)
-        const datasourceRecord: any = datasource.setValues()
-        this.connector.execute("insert", { "table": this.table, "fields": datasourceRecord })
-            .then(() => {
-                ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASOURCE_SAVED, "id": datasourceRecord.datasource } })
-            }).catch((error: any) => {
-                console.error(error.message)
-                next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
-            });
+    public save = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const fetchedRecord = await this.connector.execute("read", { table: this.table, fields: { filters: { "dataset_id": req.body.dataset_id, "datasource": req.body.datasource } } })
+            if (fetchedRecord.length > 0) { throw constants.DUPLICATE_RECORD }
+
+            const datasource = new Datasources(req.body)
+            const datasourceRecord: any = datasource.setValues()
+            this.connector.execute("insert", { "table": this.table, "fields": datasourceRecord })
+                .then(() => {
+                    ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASOURCE_SAVED, "id": datasourceRecord.datasource } })
+                }).catch((error: any) => {
+                    console.error(error.message)
+                    next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
+                })
+        }
+        catch (error: any) {
+            next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] });
+
+        }
     }
     public update = (req: Request, res: Response, next: NextFunction) => {
         const datasource = new Datasources(req.body)
@@ -36,9 +45,9 @@ export class DataSourceService {
             });
     }
     public read = (req: Request, res: Response, next: NextFunction) => {
-        let status: any = req.query.status
-        const id = req.params.datasourceId
-        this.connector.execute("read", { "table": this.table, "fields": { "filters": { "datasource": id, "status": status } } })
+        let status: any = req.query.status;
+        const id = req.params.datasetId
+        this.connector.execute("read", { "table": this.table, "fields": { "filters": { "id": id, ...(status && { status }) } } })
             .then((data: any[]) => {
                 !_.isEmpty(data) ? ResponseHandler.successResponse(req, res, { status: 200, data: _.first(data) }) : (() => {
                     throw constants.RECORD_NOT_FOUND
@@ -58,16 +67,4 @@ export class DataSourceService {
                 next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
             });
     }
-    public preset = (req: Request, res: Response, next: NextFunction) => {
-        try {
-            let datasource = new Datasources({})
-            let configDefault = datasource.getDefaults()
-            ResponseHandler.successResponse(req, res, { status: 200, data: configDefault })
-        }
-        catch (error: any) {
-            console.error(error.message)
-            next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
-        }
-    }
-
 }

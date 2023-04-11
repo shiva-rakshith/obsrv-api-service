@@ -8,6 +8,7 @@ export class Datasets {
     private id: string
     private type: string
     private name: string
+    private dataset_id: string
     private validation_config: ValidationConfig
     private extraction_config: ExtractionConfig
     private dedup_config: DedupConfig
@@ -16,12 +17,17 @@ export class Datasets {
     private denorm_config: DenormConfig
     private dataset_config: DatasetConfig
     private status: string
-    private version: string
     private created_by: string
     private updated_by: string
     private published_date: Date
     constructor(payload: any) {
-        this.id = payload.id
+        if (payload.id) {
+            this.id = payload.id
+        }
+        else {
+            this.id = payload.dataset_id
+        }
+        this.dataset_id = payload.dataset_id
         this.type = payload.type
         this.name = payload.name
         this.validation_config = payload.validation_config
@@ -32,14 +38,13 @@ export class Datasets {
         this.denorm_config = payload.denorm_config
         this.dataset_config = payload.dataset_config
         this.status = payload.status
-        this.version = payload.version
         this.created_by = payload.created_by
         this.updated_by = payload.updated_by
         this.published_date = payload.published_date
     }
 
     public getValues() {
-        return Object.assign(this.removeNullValues({ id: this.id, type: this.type, name: this.name, validation_config: this.validation_config, extraction_config: this.extraction_config, dedup_config: this.dedup_config, data_schema: this.data_schema, router_config: this.router_config, denorm_config: this.denorm_config, dataset_config: this.dataset_config, status: this.status, version: this.version, created_by: this.created_by, updated_by: this.updated_by, published_date: this.published_date }), { "updated_date": new Date })
+        return Object.assign(this.removeNullValues({ id: this.id, dataset_id: this.dataset_id, type: this.type, name: this.name, validation_config: this.validation_config, extraction_config: this.extraction_config, dedup_config: this.dedup_config, data_schema: this.data_schema, router_config: this.router_config, denorm_config: this.denorm_config, dataset_config: this.dataset_config, status: this.status, created_by: this.created_by, updated_by: this.updated_by, published_date: this.published_date }), { "updated_date": new Date })
     }
 
     public setValues() {

@@ -36,9 +36,6 @@
         "updated_by": {
             "type": "string"
         },
-        "version": {
-            "type": "string"
-        },
         "published_date": {
             "type": "string"
         }
@@ -47,6 +44,5 @@
         "dataset_id",
         "datasource",
         "published_date"
-    ],
-    "additionalProperties": false
-}
+    ]
+ }

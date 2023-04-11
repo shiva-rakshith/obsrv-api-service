@@ -4,6 +4,7 @@ import { SchemaMerger } from '../generators/SchemaMerger'
 let schemaMerger = new SchemaMerger
 
 export class Datasources {
+    private id: string
     private dataset_id: string
     private ingestion_spec: object
     private datasource: string
@@ -18,6 +19,12 @@ export class Datasources {
     private version: string
     private published_date: Date
     constructor(payload: any) {
+        if (payload.id) {
+            this.id = payload.id
+        }
+        else {
+            this.id = payload.dataset_id + '_' + payload.datasource
+        }
         this.dataset_id = payload.dataset_id
         this.ingestion_spec = payload.ingestion_spec
         this.datasource = payload.datasource
@@ -33,7 +40,7 @@ export class Datasources {
         this.published_date = payload.published_date
     }
     public getValues() {
-        return Object.assign(this.removeNullValues({ dataset_id: this.dataset_id, ingestion_spec: this.ingestion_spec, datasource: this.datasource, datasource_ref: this.datasource_ref, retention_period: this.retention_period, archival_policy: this.archival_policy, purge_policy: this.purge_policy, backup_config: this.backup_config, status: this.status,version: this.version, created_by: this.created_by, updated_by: this.updated_by, published_date: this.published_date }), { "updated_date": new Date })
+        return Object.assign(this.removeNullValues({ id: this.id, dataset_id: this.dataset_id, ingestion_spec: this.ingestion_spec, datasource: this.datasource, datasource_ref: this.datasource_ref, retention_period: this.retention_period, archival_policy: this.archival_policy, purge_policy: this.purge_policy, backup_config: this.backup_config, status: this.status, version: this.version, created_by: this.created_by, updated_by: this.updated_by, published_date: this.published_date }), { "updated_date": new Date })
     }
 
     public setValues() {

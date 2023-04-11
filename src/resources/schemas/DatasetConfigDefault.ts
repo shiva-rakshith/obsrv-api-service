@@ -38,7 +38,6 @@ export const defaultConfig = {
             "index_data": false
         },
         "status": "ACTIVE",
-        "version": "v1",
         "created_by": "SYSTEM",
         "updated_by": "SYSTEM"
     },
@@ -79,7 +78,6 @@ export const defaultConfig = {
             "index_data": true
         },
         "status": "ACTIVE",
-        "version": "v1",
         "created_by": "SYSTEM",
         "updated_by": "SYSTEM"
     },
@@ -93,14 +91,7 @@ export const defaultConfig = {
     },
     "transformations": {
         "field_key": "",
-        "transformation_function": {
-            "type": "",
-            "condition": {
-                "type": "",
-                "expr": ""
-            },
-            "expr": ""
-        },
+        "transformation_function": { "type": "", "condition": { "type": "", "expr": "" }, "expr": "" },
         "status": 'ACTIVE',
         "created_by": 'SYSTEM',
         "updated_by": 'SYSTEM'

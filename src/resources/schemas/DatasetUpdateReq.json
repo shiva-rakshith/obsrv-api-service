@@ -129,9 +129,6 @@
                 "DISABLED"
             ]
         },
-        "version": {
-            "type": "string"
-        },
         "created_by": {
             "type": "string"
         },
@@ -149,7 +146,6 @@
         }
     },
     "required": [
-        "id"
-    ],
-    "additionalProperties": false
+        "dataset_id"
+    ]
 }

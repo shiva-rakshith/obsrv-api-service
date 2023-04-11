@@ -129,9 +129,6 @@
                 "DISABLED"
             ]
         },
-        "version": {
-            "type": "string"
-        },
         "created_by": {
             "type": "string"
         },
@@ -149,10 +146,9 @@
         }
     },
     "required": [
-        "id",
+        "dataset_id",
         "router_config",
         "type",
         "published_date"
-    ],
-    "additionalProperties": false
-}
+    ]
+ }

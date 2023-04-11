@@ -27,7 +27,7 @@
         }
     },
     "required": [
-        "id",
+        "connector_type",
         "dataset_id"
     ]
 }

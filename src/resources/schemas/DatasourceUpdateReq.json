@@ -1,7 +1,7 @@
 {
     "type": "object",
     "properties": {
-        "datasource":{
+        "datasource": {
             "type": "string"
         },
         "dataset_id": {
@@ -27,16 +27,15 @@
         },
         "status": {
             "type": "string",
-            "enum":["ACTIVE", "DISABLED" ]
-
+            "enum": [
+                "ACTIVE",
+                "DISABLED"
+            ]
         },
         "created_by": {
             "type": "string"
         },
         "updated_by": {
-            "type": "string"
-        },
-        "version": {
             "type": "string"
         },
         "published_date": {
@@ -46,6 +45,5 @@
     "required": [
         "dataset_id",
         "datasource"
-    ],
-    "additionalProperties": false
+    ]
 }

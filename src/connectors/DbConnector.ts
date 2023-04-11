@@ -38,8 +38,7 @@ export class DbConnector implements IConnector {
     }
 
     public async insertRecord(table: string, fields: any) {
-        const fetchedRecords = _.isUndefined(fields.datasource) ? await this.pool(table).select().where('id', '=', fields.id) : await this.pool(table).select().where('datasource', '=', fields.datasource)
-        return fetchedRecords.length > 0 ? (() => { throw constants.DUPLICATE_RECORD })() : await this.pool(table).insert(fields)
+        await this.pool(table).insert(fields)
     }
 
     public async updateRecord(table: string, fields: any) {
@@ -65,10 +64,6 @@ export class DbConnector implements IConnector {
             delete filters.status;
             builder.where(filters);
         })
-        let { offset, limit } = fields
-        if (offset || limit) {
-            return await query.offset(offset).limit(limit)
-        }
         return await query
     }
 }
