@@ -20,12 +20,7 @@ export const defaultConfig = {
             "dedup_key": "id",
             "dedup_period": 3
         },
-        "denorm_config": {
-            "redis_db_host": config.redis_config.redis_host,
-            "redis_db_port": config.redis_config.redis_port,
-            "denorm_fields": []
-        },
-        "router_config": {
+         "router_config": {
             "topic": ""
         },
         "dataset_config": {
@@ -59,11 +54,6 @@ export const defaultConfig = {
             "drop_duplicates": true,
             "dedup_key": "id",
             "dedup_period": 3
-        },
-        "denorm_config": {
-            "redis_db_host": config.redis_config.redis_host,
-            "redis_db_port": config.redis_config.redis_port,
-            "denorm_fields": []
         },
         "router_config": {
             "topic": ""
