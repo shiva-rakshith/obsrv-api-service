@@ -23,7 +23,6 @@ export class QueryValidator implements IValidator {
                 validationStatus = await this.validateNativeQuery(data)
                 datasource = this.getDataSource(data)
                 shouldSkip = _.includes(config.exclude_datasource_validation, datasource);
-                console.log("shouldskip", shouldSkip)
                 return validationStatus.isValid ? (shouldSkip ? validationStatus : this.setDatasourceRef(data)) : validationStatus
             case routesConfig.query.sql_query.api_id:
                 validationStatus = await this.validateSqlQuery(data)
