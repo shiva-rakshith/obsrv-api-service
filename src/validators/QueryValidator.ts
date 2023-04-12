@@ -8,6 +8,7 @@ import { ValidationStatus } from "../models/ValidationModels";
 import constants from "../resources/Constants.json";
 import { dbConnector } from "../routes/Router";
 import { routesConfig } from "../configs/RoutesConfig";
+import { config } from "../configs/Config";
 export class QueryValidator implements IValidator {
     private limits: ILimits;
     constructor() {
@@ -15,13 +16,20 @@ export class QueryValidator implements IValidator {
     }
     public async validate(data: any, id: string): Promise<ValidationStatus> {
         let validationStatus
+        let datasource
+        let shouldSkip
         switch (id) {
             case routesConfig.query.native_query.api_id:
                 validationStatus = await this.validateNativeQuery(data)
-                return validationStatus.isValid ? this.setDatasourceRef(data) : validationStatus
+                datasource = this.getDataSource(data)
+                shouldSkip = _.includes(config.exclude_datasource_validation, datasource);
+                console.log("shouldskip", shouldSkip)
+                return validationStatus.isValid ? (shouldSkip ? validationStatus : this.setDatasourceRef(data)) : validationStatus
             case routesConfig.query.sql_query.api_id:
                 validationStatus = await this.validateSqlQuery(data)
-                return validationStatus.isValid ? this.setDatasourceRef(data) : validationStatus
+                datasource = this.getDataSource(data)
+                shouldSkip = _.includes(config.exclude_datasource_validation, datasource);
+                return validationStatus.isValid ? (shouldSkip ? validationStatus : this.setDatasourceRef(data)) : validationStatus
             default:
                 return <ValidationStatus>{ isValid: false }
         }
@@ -122,6 +130,7 @@ export class QueryValidator implements IValidator {
         try {
             let dataSource = this.getDataSource(payload)
             let dataSourceRef = await this.getDataSourceRef(dataSource)
+
             if (payload.querySql) {
                 payload.querySql.query = payload.querySql.query.replace(dataSource, dataSourceRef)
             }
