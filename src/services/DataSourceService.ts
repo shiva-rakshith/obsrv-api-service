@@ -45,9 +45,9 @@ export class DataSourceService {
             });
     }
     public read = (req: Request, res: Response, next: NextFunction) => {
-        let status: any = req.query.status;
-        const id = req.params.datasetId
-        this.connector.execute("read", { "table": this.table, "fields": { "filters": { "id": id, ...(status && { status }) } } })
+        let status: any = req.query.status || "ACTIVE"
+        const id = req.params.datasourceId
+        this.connector.execute("read", { "table": this.table, "fields": { "filters": { "id": id, "status": status } } })
             .then((data: any[]) => {
                 !_.isEmpty(data) ? ResponseHandler.successResponse(req, res, { status: 200, data: _.first(data) }) : (() => {
                     throw constants.RECORD_NOT_FOUND

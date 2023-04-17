@@ -11,73 +11,19 @@
             "type": "string"
         },
         "extraction_config": {
-            "type": "object",
-            "properties": {
-                "is_batch_event": {
-                    "type": "boolean"
-                },
-                "extraction_key": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         },
         "validation_config": {
-            "type": "object",
-            "properties": {
-                "validate": {
-                    "type": "boolean"
-                },
-                "mode": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         },
         "dedup_config": {
-            "type": "object",
-            "properties": {
-                "drop_duplicates": {
-                    "type": "boolean"
-                },
-                "dedup_key": {
-                    "type": "string"
-                },
-                "dedup_period": {
-                    "type": "integer"
-                }
-            }
+            "type": "object"
         },
         "data_schema": {
-            "type": "object",
-            "properties": {
-                "type": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         },
         "denorm_config": {
-            "type": "object",
-            "properties": {
-                "redis_db_host": {
-                    "type": "string"
-                },
-                "redis_db_port": {
-                    "type": "string"
-                },
-                "denorm_fields": {
-                    "type": "object",
-                    "properties": {
-                        "denorm_key": {
-                            "type": "string"
-                        },
-                        "redis_db": {
-                            "type": "integer"
-                        },
-                        "denorm_out_field": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
+            "type": "object"
         },
         "router_config": {
             "type": "object",
@@ -145,7 +91,8 @@
             "type": "string"
         }
     },
-    "required": [
-        "dataset_id"
+    "oneOf": [
+        {"required": ["id"]},
+        {"required": ["dataset_id"]}
     ]
 }

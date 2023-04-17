@@ -9,13 +9,13 @@ export class Datasets {
     private type: string
     private name: string
     private dataset_id: string
-    private validation_config: ValidationConfig
-    private extraction_config: ExtractionConfig
-    private dedup_config: DedupConfig
+    private validation_config: object
+    private extraction_config: object
+    private dedup_config: object
     private data_schema: object
-    private router_config: RouterConfig
-    private denorm_config: DenormConfig
-    private dataset_config: DatasetConfig
+    private router_config: object
+    private denorm_config: object
+    private dataset_config: object
     private status: string
     private created_by: string
     private updated_by: string

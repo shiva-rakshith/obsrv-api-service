@@ -35,11 +35,6 @@ export const routesConfig = {
         api_id: "obsrv.config.dataset.list",
         method: "post",
         path: "/obsrv/v1/datasets/list"
-      },
-      preset: {
-        api_id: "obsrv.config.dataset.preset",
-        method: "get",
-        path: "/obsrv/v1/datasets/preset"
       }
     },
     datasource: {
@@ -62,11 +57,6 @@ export const routesConfig = {
         api_id: "obsrv.config.datasource.list",
         method: "post",
         path: "/obsrv/v1/datasources/list"
-      },
-      preset: {
-        api_id: "obsrv.config.datasource.preset",
-        method: "get",
-        path: "/obsrv/v1/datasources/preset"
       }
     },
     dataset_source_config: {
@@ -89,11 +79,6 @@ export const routesConfig = {
         api_id: "obsrv.config.dataset.source.config.list",
         method: "post",
         path: "/obsrv/v1/datasets/source/config/list"
-      },
-      preset: {
-        api_id: "obsrv.config.dataset.source.config.preset",
-        method: "get",
-        path: "/obsrv/v1/datasets/source/config/preset"
       }
     },
     dataset_transformation: {
@@ -116,11 +101,6 @@ export const routesConfig = {
         api_id: "obsrv.config.dataset.transformation.list",
         method: "post",
         path: "/obsrv/v1/datasets/transformation/list"
-      },
-      preset: {
-        api_id: "obsrv.config.dataset.transformation.preset",
-        method: "get",
-        path: "/obsrv/v1/datasets/transformation/preset"
       }
     }
 

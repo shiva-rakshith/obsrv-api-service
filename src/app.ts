@@ -7,7 +7,7 @@ import { scrapMetrics } from './helpers/prometheus'
 import bodyParser from "body-parser";
 const app: Application = express();
  
-app.use(bodyParser.json({ limit: '5mb'}));
+app.use(bodyParser.json({ limit: '100mb'}));
 app.use(express.json());
 app.use(scrapMetrics());
 
