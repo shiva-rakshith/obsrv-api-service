@@ -4,6 +4,7 @@ import { ResponseHandler } from "../helpers/ResponseHandler";
 import _ from 'lodash'
 import httpStatus from "http-status";
 import { dbConnector } from "../routes/Router";
+import { globalCache } from "../routes/Router";
 export class IngestorService {
     private kafkaConnector: any;
     constructor(kafkaConnector: any) {
@@ -38,7 +39,19 @@ export class IngestorService {
         throw constants.EMPTY_DATASET_ID
     }
     private async getTopic(datasetId: string) {
-        const fetchedRecord: any = await dbConnector.execute("read", { "table": "datasets", "fields": { "filters": { "id": datasetId } } })
-        return !_.isEmpty(fetchedRecord) ? fetchedRecord[0].dataset_config.entry_topic : (() => { throw constants.DATASET_ID_NOT_FOUND })()
+        const datasetConfigList = globalCache.get('dataset-config');
+        const datasetRecord = datasetConfigList.find((record: any) => record.id === datasetId);
+        if (!datasetRecord) {
+            console.log("dataset record not found in cache, fetching from db...")
+            const fetchedRecord: any = await dbConnector.execute("read", { "table": "datasets", "fields": { "filters": { "id": datasetId } } });
+            if (_.isEmpty(fetchedRecord)) {
+                throw constants.DATASET_ID_NOT_FOUND;
+            } else {
+                return fetchedRecord[0].dataset_config.entry_topic;
+            }
+        } else {
+            return datasetRecord.dataset_config.entry_topic;
+        }
     }
+
 }

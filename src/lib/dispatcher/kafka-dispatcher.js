@@ -30,7 +30,7 @@ class KafkaDispatcher extends winston.Transport {
   }
   async log(level, msg, kafkaTopics, callback) {
     try {
-      console.log(`pushing events to topic '${kafkaTopics[0]}'...`);
+      // console.log(`pushing events to topic '${kafkaTopics[0]}'...`);
       await this.producer.send({
         topic: kafkaTopics[0],
         messages: [{ value: msg }],

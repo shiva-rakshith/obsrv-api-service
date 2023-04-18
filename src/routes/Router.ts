@@ -27,43 +27,49 @@ export const datasetService = new DatasetService(dbConnector);
 export const datasetSourceConfigService = new DatasetSourceConfigService(dbConnector);
 export const datasetTransformationService = new DatasetTransformationService(dbConnector);
 export const ingestorService = new IngestorService(kafkaConnector);
+export const globalCache: any = new Map();
+const router = express.Router()
+dbConnector.pool.select().from('datasets')
+    .then(rows => {
+        globalCache.set("dataset-config", rows)
+        dbConnector.init()
+    })
+    .catch(err => {
+        console.error(err);
+    })
+    .finally(() => {
+        /** Query API(s) */
+        router.post(`${routesConfig.query.native_query.path}`, ResponseHandler.setApiId(routesConfig.query.native_query.api_id), validationService.validateRequestBody, validationService.validateQuery, queryService.executeNativeQuery);
+        router.post(`${routesConfig.query.sql_query.path}`, ResponseHandler.setApiId(routesConfig.query.sql_query.api_id), validationService.validateRequestBody, validationService.validateQuery, queryService.executeSqlQuery);
 
-dbConnector.init()
+        /** Ingestor API */
+        router.post(`${routesConfig.data_ingest.path}`, ResponseHandler.setApiId(routesConfig.data_ingest.api_id), validationService.validateRequestBody, ingestorService.create);
 
-const router = express.Router();
+        /** Dataset APIs */
+        router.post(`${routesConfig.config.dataset.save.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.save.api_id), validationService.validateRequestBody, datasetService.save);
+        router.patch(`${routesConfig.config.dataset.update.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.update.api_id), validationService.validateRequestBody, datasetService.update);
+        router.get(`${routesConfig.config.dataset.read.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.read.api_id), datasetService.read);
+        router.post(`${routesConfig.config.dataset.list.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.list.api_id), validationService.validateRequestBody, datasetService.list);
 
-/** Query API(s) */
-router.post(`${routesConfig.query.native_query.path}`, ResponseHandler.setApiId(routesConfig.query.native_query.api_id), validationService.validateRequestBody, validationService.validateQuery, queryService.executeNativeQuery);
-router.post(`${routesConfig.query.sql_query.path}`, ResponseHandler.setApiId(routesConfig.query.sql_query.api_id), validationService.validateRequestBody, validationService.validateQuery, queryService.executeSqlQuery);
+        /** Dataset Source Config APIs */
+        router.post(`${routesConfig.config.dataset_source_config.save.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_source_config.save.api_id), validationService.validateRequestBody, datasetSourceConfigService.save);
+        router.patch(`${routesConfig.config.dataset_source_config.update.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_source_config.update.api_id), validationService.validateRequestBody, datasetSourceConfigService.update);
+        router.get(`${routesConfig.config.dataset_source_config.read.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_source_config.read.api_id), datasetSourceConfigService.read);
+        router.post(`${routesConfig.config.dataset_source_config.list.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_source_config.list.api_id), validationService.validateRequestBody, datasetSourceConfigService.list);
 
-/** Ingestor API */
-router.post(`${routesConfig.data_ingest.path}`, ResponseHandler.setApiId(routesConfig.data_ingest.api_id), validationService.validateRequestBody, ingestorService.create);
+        /**Dataset Transformation APIs*/
+        router.post(`${routesConfig.config.dataset_transformation.save.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_transformation.save.api_id), validationService.validateRequestBody, datasetTransformationService.save);
+        router.patch(`${routesConfig.config.dataset_transformation.update.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_transformation.update.api_id), validationService.validateRequestBody, datasetTransformationService.update);
+        router.get(`${routesConfig.config.dataset_transformation.read.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_transformation.read.api_id), datasetTransformationService.read);
+        router.post(`${routesConfig.config.dataset_transformation.list.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_transformation.list.api_id), validationService.validateRequestBody, datasetTransformationService.list);
 
-/** Dataset APIs */
-router.post(`${routesConfig.config.dataset.save.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.save.api_id), validationService.validateRequestBody, datasetService.save);
-router.patch(`${routesConfig.config.dataset.update.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.update.api_id), validationService.validateRequestBody, datasetService.update);
-router.get(`${routesConfig.config.dataset.read.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.read.api_id), datasetService.read);
-router.post(`${routesConfig.config.dataset.list.path}`, ResponseHandler.setApiId(routesConfig.config.dataset.list.api_id), validationService.validateRequestBody, datasetService.list);
+        /** DataSource API(s) */
+        router.post(`${routesConfig.config.datasource.save.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.save.api_id), validationService.validateRequestBody, datasourceService.save);
+        router.patch(`${routesConfig.config.datasource.update.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.update.api_id), validationService.validateRequestBody, datasourceService.update);
+        router.get(`${routesConfig.config.datasource.read.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.read.api_id), datasourceService.read);
+        router.post(`${routesConfig.config.datasource.list.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.list.api_id), validationService.validateRequestBody, datasourceService.list);
 
-/** Dataset Source Config APIs */
-router.post(`${routesConfig.config.dataset_source_config.save.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_source_config.save.api_id), validationService.validateRequestBody, datasetSourceConfigService.save);
-router.patch(`${routesConfig.config.dataset_source_config.update.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_source_config.update.api_id), validationService.validateRequestBody, datasetSourceConfigService.update);
-router.get(`${routesConfig.config.dataset_source_config.read.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_source_config.read.api_id), datasetSourceConfigService.read);
-router.post(`${routesConfig.config.dataset_source_config.list.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_source_config.list.api_id), validationService.validateRequestBody, datasetSourceConfigService.list);
-
-/**Dataset Transformation APIs*/
-router.post(`${routesConfig.config.dataset_transformation.save.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_transformation.save.api_id), validationService.validateRequestBody, datasetTransformationService.save);
-router.patch(`${routesConfig.config.dataset_transformation.update.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_transformation.update.api_id), validationService.validateRequestBody, datasetTransformationService.update);
-router.get(`${routesConfig.config.dataset_transformation.read.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_transformation.read.api_id), datasetTransformationService.read);
-router.post(`${routesConfig.config.dataset_transformation.list.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_transformation.list.api_id), validationService.validateRequestBody, datasetTransformationService.list);
-
-/** DataSource API(s) */
-router.post(`${routesConfig.config.datasource.save.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.save.api_id), validationService.validateRequestBody, datasourceService.save);
-router.patch(`${routesConfig.config.datasource.update.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.update.api_id), validationService.validateRequestBody, datasourceService.update);
-router.get(`${routesConfig.config.datasource.read.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.read.api_id), datasourceService.read);
-router.post(`${routesConfig.config.datasource.list.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.list.api_id), validationService.validateRequestBody, datasourceService.list);
-
-// Prometheus metrics endpoint
-router.get(routesConfig.prometheus.path, metricsHandler)
-
+        // Prometheus metrics endpoint
+        router.get(routesConfig.prometheus.path, metricsHandler)
+    })
 export { router };
