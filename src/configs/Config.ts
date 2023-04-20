@@ -51,8 +51,8 @@ export const config = {
     masterDataset: "master"
   },
   "redis_config": {
-    "redis_host": process.env.redis_host || 'obsrv-redis-master.redis.svc.cluster.local',
+    "redis_host": process.env.redis_host || 'obsrv-redis-headless.redis.svc.cluster.local',
     "redis_port": process.env.redis_port || 6379
   },
-  "exclude_datasource_validation": ["system-stats"]
+  "exclude_datasource_validation": ["system-stats", "failed-events-summary"]
 }

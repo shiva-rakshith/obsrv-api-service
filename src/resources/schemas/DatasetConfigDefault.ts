@@ -23,15 +23,6 @@ export const defaultConfig = {
          "router_config": {
             "topic": ""
         },
-        "dataset_config": {
-            "data_key": "",
-            "timestamp_key": "",
-            "exclude_fields": [],
-            "entry_topic": config.telemetry_service_config.kafka.topics.createMasterDataset,
-            "redis_db_host": config.redis_config.redis_host,
-            "redis_db_port": config.redis_config.redis_port,
-            "index_data": false
-        },
         "status": "ACTIVE",
         "created_by": "SYSTEM",
         "updated_by": "SYSTEM"
@@ -57,15 +48,6 @@ export const defaultConfig = {
         },
         "router_config": {
             "topic": ""
-        },
-        "dataset_config": {
-            "data_key": "",
-            "timestamp_key": "",
-            "exclude_fields": [],
-            "entry_topic": config.telemetry_service_config.kafka.topics.createDataset,
-            "redis_db_host": config.redis_config.redis_host,
-            "redis_db_port": config.redis_config.redis_port,
-            "index_data": true
         },
         "status": "ACTIVE",
         "created_by": "SYSTEM",

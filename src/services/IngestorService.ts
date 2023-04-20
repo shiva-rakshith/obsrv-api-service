@@ -5,6 +5,7 @@ import _ from 'lodash'
 import httpStatus from "http-status";
 import { dbConnector } from "../routes/Router";
 import { globalCache } from "../routes/Router";
+import { refreshDatasetConfigs } from "../helpers/DatasetConfigs";
 export class IngestorService {
     private kafkaConnector: any;
     constructor(kafkaConnector: any) {
@@ -38,8 +39,9 @@ export class IngestorService {
         if (!_.isEmpty(datasetId)) return datasetId
         throw constants.EMPTY_DATASET_ID
     }
+
     private async getTopic(datasetId: string) {
-        const datasetConfigList = globalCache.get('dataset-config');
+        const datasetConfigList = globalCache.get('dataset-config')
         const datasetRecord = datasetConfigList.find((record: any) => record.id === datasetId);
         if (!datasetRecord) {
             console.log("dataset record not found in cache, fetching from db...")
@@ -47,6 +49,7 @@ export class IngestorService {
             if (_.isEmpty(fetchedRecord)) {
                 throw constants.DATASET_ID_NOT_FOUND;
             } else {
+                await refreshDatasetConfigs()
                 return fetchedRecord[0].dataset_config.entry_topic;
             }
         } else {

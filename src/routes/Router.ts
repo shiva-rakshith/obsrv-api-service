@@ -12,8 +12,7 @@ import { DatasetTransformationService } from "../services/DatasetTranformationSe
 import { DbConnector } from "../connectors/DbConnector";
 import { routesConfig } from "../configs/RoutesConfig";
 import { IngestorService } from "../services/IngestorService";
-import { metricsHandler } from "../helpers/prometheus";
-
+ 
 const validationService = new ValidationService();
 
 const queryService = new QueryService(new HTTPConnector(`${config.query_api.druid.host}:${config.query_api.druid.port}`))
@@ -69,7 +68,5 @@ dbConnector.pool.select().from('datasets')
         router.get(`${routesConfig.config.datasource.read.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.read.api_id), datasourceService.read);
         router.post(`${routesConfig.config.datasource.list.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.list.api_id), validationService.validateRequestBody, datasourceService.list);
 
-        // Prometheus metrics endpoint
-        router.get(routesConfig.prometheus.path, metricsHandler)
-    })
+      })
 export { router };
