@@ -48,7 +48,7 @@ export const config = {
   },
   "dataset_types": {
     normalDataset: "dataset",
-    masterDataset: "master"
+    masterDataset: "master-dataset"
   },
   "redis_config": {
     "redis_host": process.env.redis_host || 'obsrv-redis-headless.redis.svc.cluster.local',
