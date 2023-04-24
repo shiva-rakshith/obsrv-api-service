@@ -41,8 +41,9 @@ export class IngestorService {
     }
 
     private async getTopic(datasetId: string) {
+        await refreshDatasetConfigs()
         const datasetConfigList = globalCache.get('dataset-config')
-        const datasetRecord = datasetConfigList.find((record: any) => record.id === datasetId);
+        const datasetRecord = datasetConfigList.find((record: any) => record.id === datasetId)
         if (!datasetRecord) {
             console.log("dataset record not found in cache, fetching from db...")
             const fetchedRecord: any = await dbConnector.execute("read", { "table": "datasets", "fields": { "filters": { "id": datasetId } } });

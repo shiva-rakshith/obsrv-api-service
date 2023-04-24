@@ -18,7 +18,6 @@ export class DatasetService {
         try {
             const fetchedRecord = await this.dbConnector.execute("read", { table: this.table, fields: { "filters": { "dataset_id": req.body.dataset_id } } })
             if (fetchedRecord.length > 0) { throw constants.DUPLICATE_RECORD }
-
             const dataset = new Datasets(req.body)
             const datasetRecord: any = dataset.setValues()
             this.dbConnector.execute("insert", { "table": this.table, "fields": datasetRecord })
@@ -31,6 +30,7 @@ export class DatasetService {
                 })
         }
         catch (error: any) {
+            console.log(error.message)
             next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] });
 
         }
@@ -49,6 +49,7 @@ export class DatasetService {
                 });
         }
         catch (error: any) {
+            console.log(error.message)
             next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] });
 
         }

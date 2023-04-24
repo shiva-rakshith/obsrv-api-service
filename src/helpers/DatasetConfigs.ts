@@ -1,8 +1,9 @@
 import { dbConnector } from "../routes/Router"
 import { globalCache } from "../routes/Router";
 
+
 function getDatasetConfigs() {
-    return dbConnector.pool.select('*').from('datasets');
+    return dbConnector.listRecords('datasets')
 }
 
 export const refreshDatasetConfigs = async () => {

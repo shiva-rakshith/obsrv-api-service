@@ -11,7 +11,7 @@ export class DbConnector implements IConnector {
     public typeToMethod = {
         insert: this.insertRecord,
         update: this.updateRecord,
-        read: this.readRecord,
+        read: this.readRecords,
     }
     public method: any
     constructor(config: DbConnectorConfig) {
@@ -51,7 +51,7 @@ export class DbConnector implements IConnector {
         })
     }
 
-    public async readRecord(table: string, fields: any) {
+    public async readRecords(table: string, fields: any) {
         const query = this.pool.from(table).select().where((builder) => {
             const filters = fields.filters || {};
             if (filters.status) {
@@ -65,5 +65,9 @@ export class DbConnector implements IConnector {
             builder.where(filters);
         })
         return await query
+    }
+
+    public async listRecords(table: string) {
+        return await this.pool.select('*').from(table)
     }
 }
