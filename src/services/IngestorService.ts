@@ -29,7 +29,7 @@ export class IngestorService {
             await this.kafkaConnector.execute(req, res, topic);
             ResponseHandler.successResponse(req, res, { status: 200, data: { message: constants.DATASET.CREATED } });
         } catch (error: any) {
-            console.log(error.message);
+            console.error(error.message)
             next({ statusCode: error.statusCode || httpStatus.INTERNAL_SERVER_ERROR, message: error.message || "", errCode: error.errCode || httpStatus["500_NAME"] });
         }
 

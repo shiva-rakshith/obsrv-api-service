@@ -8,7 +8,9 @@ import { config } from "./Config";
 import constants from "../resources/Constants.json";
 import { routesConfig } from "../configs/RoutesConfig";
 import { dbConnector } from "../routes/Router";
+import { QueryValidator } from "../validators/QueryValidator";
 import chaiSpies from 'chai-spies'
+import { result } from "lodash";
 chai.use(chaiSpies)
 chai.should();
 chai.use(chaiHttp);
@@ -358,5 +360,38 @@ describe("QUERY API", () => {
                     done();
                 })
         })
+    })
+    describe("error scenarios", () => {
+        it("should handle the error", (done) => {
+            chai.spy.on(dbConnector, "readRecords", () => {
+                throw new Error("error occured while fetching records")
+            })
+            nock(config.druidHost + ":" + config.druidPort)
+                .post(config.druidSqlEndPoint)
+                .reply(200, [{ events: [] }]);
+
+            chai
+                .request(app)
+                .post(config.apiDruidEndPoint)
+                .send(JSON.parse(TestDruidQuery.VALID_QUERY))
+                .end((err, res) => {
+                    res.should.have.status(httpStatus.BAD_REQUEST);
+                    res.body.should.be.a("object");
+                    res.body.id.should.be.eq(routesConfig.query.native_query.api_id);
+                    res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
+                    res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
+                    res.body.result.should.be.empty;
+                    nock.cleanAll()
+                    chai.spy.restore(dbConnector, "readRecords")
+                    done();
+                })
+        })
+    })
+    it("should not validate if called with invalid url", async () => {
+        const queryValidator = new QueryValidator()
+        await queryValidator.validate({}, "obsrv.api")
+            .then((result) => {
+                result.isValid.should.be.equal(false)
+            })
     })
 })

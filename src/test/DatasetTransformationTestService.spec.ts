@@ -9,6 +9,7 @@ import { config } from "./Config";
 import { routesConfig } from "../configs/RoutesConfig";
 import { dbConnector } from "../routes/Router";
 import { DatasetTransformations } from "../helpers/DatasetTransformations";
+import { ResponseHandler } from "../helpers/ResponseHandler";
 
 chai.use(spies);
 chai.should();
@@ -31,6 +32,29 @@ describe("Dataset Transformation create API", () => {
                 res.body.id.should.be.eq(routesConfig.config.dataset_transformation.save.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
                 chai.spy.restore(dbConnector, "execute");
+                done();
+            });
+    });
+    it("should throw error", (done) => {
+        chai.spy.on(dbConnector, "execute", () => {
+            return Promise.resolve([])
+        })
+        chai.spy.on(ResponseHandler, "successResponse", ()=>{
+            throw new Error("Error occured while sending response")
+        })
+        chai
+            .request(app)
+            .post(config.apiDatasetTransformationSaveEndPoint)
+            .send(TestDatasetTransformation.VALID_SCHEMA)
+            .end((err, res) => {
+                res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
+                res.body.should.be.a("object")
+                res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
+                res.body.should.have.property("result")
+                res.body.id.should.be.eq(routesConfig.config.dataset_transformation.save.api_id);
+                res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+                chai.spy.restore(dbConnector, "execute")
+                chai.spy.restore(ResponseHandler, "successResponse");
                 done();
             });
     });
@@ -273,5 +297,6 @@ describe("Dataset Transformation list API", () => {
                 done();
             })
     })
+
 
 })

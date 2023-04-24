@@ -169,7 +169,6 @@ describe("Dataset update API", () => {
             .patch(config.apiDatasetUpdateEndPoint)
             .send(TestDataset.VALID_UPDATE_SCHEMA)
             .end((err, res) => {
-                console.log(res)
                 res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
                 res.body.should.be.a("object")
                 res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
@@ -314,15 +313,10 @@ describe("Dataset list API", () => {
 })
 
 describe("Error scenarios in Dataset API", () => {
-    beforeEach(() => {
+    it("should not insert a record in the database if it failes to update cache", (done) => {
         chai.spy.on(dbConnector, "listRecords", () => {
             return Promise.reject(new Error("error while connecting to postgres"))
         })
-    })
-    afterEach(() => {
-        chai.spy.restore(dbConnector, "listRecords")
-    })
-    it("should not insert a record in the database if it failes to update cache", (done) => {
         chai.spy.on(dbConnector, "execute", () => {
             return Promise.resolve([])
         })
@@ -337,7 +331,27 @@ describe("Error scenarios in Dataset API", () => {
                 res.body.should.have.property("result");
                 res.body.id.should.be.eq(routesConfig.config.dataset.save.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+                chai.spy.restore(dbConnector, "listRecords")
                 chai.spy.restore(dbConnector, "execute");
+                done()
+            })
+    })
+    it("should not update records in database", (done) => {
+        chai.spy.on(Datasets.prototype, "getValues", () => {
+            throw new Error("error occured while parsing data")
+        })
+        chai
+            .request(app)
+            .patch(config.apiDatasetUpdateEndPoint)
+            .send(TestDataset.VALID_UPDATE_SCHEMA)
+            .end((err, res) => {
+                res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
+                res.body.should.be.a("object")
+                res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
+                res.body.should.have.property("result");
+                res.body.id.should.be.eq(routesConfig.config.dataset.update.api_id)
+                res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+                chai.spy.restore(Datasets.prototype, "getValues")
                 done()
             })
     })

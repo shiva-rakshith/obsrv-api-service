@@ -9,6 +9,7 @@ import { config } from "./Config";
 import { routesConfig } from "../configs/RoutesConfig";
 import { dbConnector } from "../routes/Router";
 import { Datasources } from "../helpers/Datasources";
+import { ResponseHandler } from "../helpers/ResponseHandler";
 
 chai.use(spies);
 chai.should();
@@ -51,6 +52,29 @@ describe("Datasource create API", () => {
                 res.body.id.should.be.eq(routesConfig.config.datasource.save.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
                 chai.spy.restore(dbConnector, "execute");
+                done();
+            });
+    });
+    it("should throw error", (done) => {
+        chai.spy.on(dbConnector, "execute", () => {
+            return Promise.resolve([])
+        })
+        chai.spy.on(ResponseHandler, "successResponse", ()=>{
+            throw new Error("Error occured while sending response")
+        })
+        chai
+        .request(app)
+        .post(config.apiDatasourceSaveEndPoint)
+        .send(TestDataSource.VALID_SCHEMA)
+        .end((err, res) => {
+            res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
+            res.body.should.be.a("object");
+            res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
+            res.body.should.have.property("result");
+            res.body.id.should.be.eq(routesConfig.config.datasource.save.api_id);
+            res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+                chai.spy.restore(dbConnector, "execute");
+                chai.spy.restore(ResponseHandler, "successResponse")
                 done();
             });
     });
@@ -169,6 +193,25 @@ describe("Datasource read API", () => {
         chai
             .request(app)
             .get(config.apiDatasourceReadEndPoint.replace(":datasourceId", TestDataSource.SAMPLE_ID).concat('?status=ACTIVE'))
+            .end((err, res) => {
+                res.should.have.status(httpStatus.OK);
+                res.body.should.be.a("object");
+                res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
+                res.body.should.have.property("result");
+                res.body.id.should.be.eq(routesConfig.config.datasource.read.api_id);
+                res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
+                res.body.result.should.be.a("object")
+                chai.spy.restore(dbConnector, "execute")
+                done();
+            })
+    }),
+    it("should successfully retrieve records from database", (done) => {
+        chai.spy.on(dbConnector, "execute", () => {
+            return Promise.resolve([TestDataSource.VALID_RECORD])
+        })
+        chai
+            .request(app)
+            .get(config.apiDatasourceReadEndPoint.replace(":datasourceId", TestDataSource.SAMPLE_ID))
             .end((err, res) => {
                 res.should.have.status(httpStatus.OK);
                 res.body.should.be.a("object");

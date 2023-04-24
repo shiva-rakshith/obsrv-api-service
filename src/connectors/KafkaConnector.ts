@@ -16,6 +16,6 @@ export class KafkaConnector implements IConnector {
     }
 
     close() {
-        //TODO
+        throw new Error("Method not implemented")
     }
 }

@@ -1,13 +1,15 @@
 import { DbConnector } from "../connectors/DbConnector";
+import { KafkaConnector } from "../connectors/KafkaConnector";
+import { HTTPConnector } from "../connectors/HttpConnector";
 import chai from "chai";
 import chaiHttp from "chai-http";
 import spies from "chai-spies";
-
+ 
 chai.use(spies);
 chai.should();
 chai.use(chaiHttp);
 
-const config = {
+const dbConnectorConfig = {
     client: "postgresql",
     connection: {
         host: 'localhost',
@@ -20,17 +22,17 @@ const config = {
 
 describe("Testing Db connector", () => {
     it("should successfully arrange connection with database", (done) => {
-        const dbConnector = new DbConnector(config);
-        chai.spy.on(dbConnector, "connect", () => {
+        const dbConnector = new DbConnector(dbConnectorConfig);
+        chai.spy.on(dbConnector.pool, "select", () => {
             return Promise.resolve()
         })
         dbConnector.init()
-        chai.expect(dbConnector.connect).to.be.called
-        chai.spy.restore(dbConnector, "connect")
+        chai.expect(dbConnector.pool.select).to.be.called
+        chai.spy.restore(dbConnector.pool, "select")
         done()
     })
     it("should not connect to database", (done) => {
-        const dbConnector = new DbConnector(config);
+        const dbConnector = new DbConnector(dbConnectorConfig);
         chai.spy.on(dbConnector, "connect", () => {
             return Promise.reject("error occurred while connecting to postgres")
         })
@@ -40,7 +42,7 @@ describe("Testing Db connector", () => {
         done()
     })
     it("should not insert records into database", (done) => {
-        const dbConnector = new DbConnector(config);
+        const dbConnector = new DbConnector(dbConnectorConfig);
         chai.spy.on(dbConnector, "insertRecord", () => {
             return Promise.reject(new Error("error occurred while connecting to postgres"))
         })
@@ -50,7 +52,7 @@ describe("Testing Db connector", () => {
         done()
     })
     it("should insert record into database", (done) => {
-        const dbConnector = new DbConnector(config);
+        const dbConnector = new DbConnector(dbConnectorConfig);
         chai.spy.on(dbConnector, "insertRecord", () => {
             return Promise.resolve([])
         })
@@ -60,7 +62,7 @@ describe("Testing Db connector", () => {
         done()
     })
     it("should not update records in database", (done) => {
-        const dbConnector = new DbConnector(config);
+        const dbConnector = new DbConnector(dbConnectorConfig);
         chai.spy.on(dbConnector, "updateRecord", () => {
             return Promise.reject(new Error("error occurred while connecting to postgres"))
         })
@@ -70,7 +72,7 @@ describe("Testing Db connector", () => {
         done()
     })
     it("should update records in database", (done) => {
-        const dbConnector = new DbConnector(config);
+        const dbConnector = new DbConnector(dbConnectorConfig);
         chai.spy.on(dbConnector, "updateRecord", () => {
             return Promise.resolve([])
         })
@@ -80,7 +82,7 @@ describe("Testing Db connector", () => {
         done()
     })
     it("should throw error while updating records into database", (done) => {
-        const dbConnector = new DbConnector(config);
+        const dbConnector = new DbConnector(dbConnectorConfig);
         chai.spy.on(dbConnector.pool, "transaction", () => {
             return Promise.reject(new Error("error occurred while connecting to postgres"))
         })
@@ -90,7 +92,7 @@ describe("Testing Db connector", () => {
         done()
     })
     it("should not throw error while updating records into database", (done) => {
-        const dbConnector = new DbConnector(config);
+        const dbConnector = new DbConnector(dbConnectorConfig);
         chai.spy.on(dbConnector.pool, "transaction", () => {
             return (Promise.resolve([]))
         })
@@ -100,7 +102,7 @@ describe("Testing Db connector", () => {
         done()
     })
     it("should not retrieve records from database", (done) => {
-        const dbConnector = new DbConnector(config);
+        const dbConnector = new DbConnector(dbConnectorConfig);
         chai.spy.on(dbConnector, "readRecords", () => {
             return Promise.reject(new Error("error occurred while connecting to postgres"))
         })
@@ -110,7 +112,7 @@ describe("Testing Db connector", () => {
         done()
     })
     it("should retrieve records from database", (done) => {
-        const dbConnector = new DbConnector(config);
+        const dbConnector = new DbConnector(dbConnectorConfig);
         chai.spy.on(dbConnector, "readRecords", () => {
             return Promise.resolve([])
         })
@@ -120,7 +122,7 @@ describe("Testing Db connector", () => {
         done()
     })
     it("should not disconnect from the database", (done) => {
-        const dbConnector = new DbConnector(config);
+        const dbConnector = new DbConnector(dbConnectorConfig);
         chai.spy.on(dbConnector.pool, "destroy", () => {
             return Promise.reject(new Error("error occurred while disconnecting from postgres"))
         })
@@ -130,7 +132,7 @@ describe("Testing Db connector", () => {
         done()
     })
     it("should disconnect from the database", (done) => {
-        const dbConnector = new DbConnector(config);
+        const dbConnector = new DbConnector(dbConnectorConfig);
         chai.spy.on(dbConnector.pool, "destroy", () => {
             return Promise.resolve()
         })
@@ -139,4 +141,51 @@ describe("Testing Db connector", () => {
         chai.spy.restore(dbConnector.pool, "destroy")
         done()
     })
+    it("should list records", (done)=>{
+        const dbConnector = new DbConnector(dbConnectorConfig);
+        chai.spy.on(dbConnector.pool, "select", () => {
+            return Promise.resolve()
+        })
+        dbConnector.listRecords('datasets')
+        chai.expect(dbConnector.pool.select).to.not.throw
+        chai.spy.restore(dbConnector.pool, "select")
+        done()
+    })
+})
+describe('testing httpConnector', () => {
+    describe('execute', () => {
+        it('should throw an error', (done) => {
+            const sampleHttpInstance = new HTTPConnector('example.com');
+            const spy = chai.spy.on(sampleHttpInstance, 'execute');
+            (() => sampleHttpInstance.execute('sample string')).should.throw(Error);
+            spy.should.have.been.called.once;
+            chai.spy.restore(sampleHttpInstance, 'execute')
+            done()
+        });
+    });
+
+    describe('close', () => {
+        it('should throw an error', (done) => {
+            const sampleHttpInstance = new HTTPConnector('example.com');
+            const spy = chai.spy.on(sampleHttpInstance, 'close');
+            (() => sampleHttpInstance.close()).should.throw(Error);
+            spy.should.have.been.called.once;
+            chai.spy.restore(sampleHttpInstance, 'execute')
+            done()
+        });
+    });
+
+})
+describe("testing kafkaConnector", () => {
+    describe('close', () => {
+        it('should throw an error', (done) => {
+            const sampleKafkaInstance = new KafkaConnector();
+            const spy = chai.spy.on(sampleKafkaInstance, 'close');
+            (() => sampleKafkaInstance.close()).should.throw(Error);
+            spy.should.have.been.called.once;
+            chai.spy.restore(sampleKafkaInstance, 'execute')
+            done()
+        });
+    });
+
 })

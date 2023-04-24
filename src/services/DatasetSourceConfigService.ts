@@ -28,6 +28,7 @@ export class DatasetSourceConfigService {
                 })
         }
         catch (error: any) {
+            console.error(error.message)
             next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] });
 
         }
