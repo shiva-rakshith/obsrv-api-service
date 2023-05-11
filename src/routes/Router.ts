@@ -28,7 +28,7 @@ export const datasetTransformationService = new DatasetTransformationService(dbC
 export const ingestorService = new IngestorService(kafkaConnector);
 export const globalCache: any = new Map()
 const router = express.Router()
-
+dbConnector.init()
 /** Query API(s) */
 router.post(`${routesConfig.query.native_query.path}`, ResponseHandler.setApiId(routesConfig.query.native_query.api_id), validationService.validateRequestBody, validationService.validateQuery, queryService.executeNativeQuery);
 router.post(`${routesConfig.query.sql_query.path}`, ResponseHandler.setApiId(routesConfig.query.sql_query.api_id), validationService.validateRequestBody, validationService.validateQuery, queryService.executeSqlQuery);
