@@ -498,10 +498,7 @@ components:
                               enum:
                               - ACTIVE
                               - DISABLED
-                offset:
-                  type: integer
-                limit:
-                  type: integer
+                
     examples:
         DatasetSourceConfigCreate:
             value:
