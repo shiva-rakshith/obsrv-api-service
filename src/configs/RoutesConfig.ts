@@ -39,7 +39,7 @@ export const routesConfig = {
     },
     datasource: {
       save: {
-        api_id: "obsrv.config.datasource.save",
+        api_id: "obsrv.config.datasource.create",
         method: "post",
         path: "/obsrv/v1/datasources"
       },
