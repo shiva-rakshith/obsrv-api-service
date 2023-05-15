@@ -47,10 +47,7 @@ describe("DATA INGEST API", () => {
             return Promise.resolve([{}])
         })
         chai.spy.on(globalCache, 'get', () => {
-            return [{}]
-        })
-        chai.spy.on(dbConnector, "execute", () => {
-            return Promise.resolve([{ "id": ":datasetId", "dataset_config": { "entry_topic": "topic" } }])
+            return [{ "id": ":datasetId", "dataset_config": { "entry_topic": "topic" } }]
         })
         chai.spy.on(kafkaConnector.telemetryService, "dispatch", () => {
             return Promise.reject("error connecting to kafka")
@@ -68,7 +65,6 @@ describe("DATA INGEST API", () => {
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
                 chai.spy.restore(dbConnector, "listRecords")
                 chai.spy.restore(globalCache, 'get')
-                chai.spy.restore(dbConnector, "execute")
                 chai.spy.restore(kafkaConnector.telemetryService, "dispatch")
                 done()
             })
@@ -80,23 +76,20 @@ describe("DATA INGEST API", () => {
         chai.spy.on(dbConnector, "listRecords", () => {
             return Promise.resolve([{}])
         })
-        chai.spy.on(dbConnector, "execute", () => {
-            return Promise.resolve([])
-        })
+
         chai
             .request(app)
             .post(config.apiDatasetIngestEndPoint)
             .send(TestDataIngestion.SAMPLE_INPUT)
             .end((err, res) => {
-                res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
+                res.should.have.status(httpStatus.NOT_FOUND);
                 res.body.should.be.a("object");
-                res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
+                res.body.responseCode.should.be.eq(httpStatus["404_NAME"]);
                 res.body.should.have.property("result");
                 res.body.id.should.be.eq(routesConfig.data_ingest.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
                 chai.spy.restore(globalCache, "get")
                 chai.spy.restore(dbConnector, "listRecords")
-                chai.spy.restore(dbConnector, "execute")
                 done();
             });
     });
