@@ -16,7 +16,7 @@ export class DatasetSourceConfigService {
     public save = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const fetchedRecord = await this.dbConnector.execute("read", { table: this.table, fields: { filters: { "dataset_id": req.body.dataset_id, "connector_type": req.body.connector_type } } })
-            if (fetchedRecord.length > 0) { throw constants.DUPLICATE_RECORD }
+            if (!_.isEmpty(fetchedRecord)) { throw constants.DUPLICATE_RECORD }
             const datasetSourceConfig = new DatasetSourceConfigs(req.body)
             const datasetRecord: any = datasetSourceConfig.setValues()
             this.dbConnector.execute("insert", { "table": this.table, "fields": datasetRecord })

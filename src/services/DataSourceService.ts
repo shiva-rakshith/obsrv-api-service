@@ -16,7 +16,7 @@ export class DataSourceService {
     public save = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const fetchedRecord = await this.connector.execute("read", { table: this.table, fields: { filters: { "dataset_id": req.body.dataset_id, "datasource": req.body.datasource } } })
-            if (fetchedRecord.length > 0) { throw constants.DUPLICATE_RECORD }
+            if (!_.isEmpty(fetchedRecord)) { throw constants.DUPLICATE_RECORD }
 
             const datasource = new Datasources(req.body)
             const datasourceRecord: any = datasource.setValues()

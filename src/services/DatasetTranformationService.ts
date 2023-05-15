@@ -16,7 +16,7 @@ export class DatasetTransformationService {
     public save = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const fetchedRecord = await this.dbConnector.execute("read", { table: this.table, fields: { filters: { "dataset_id": req.body.dataset_id, "field_key": req.body.field_key } } })
-            if (fetchedRecord.length > 0) { throw constants.DUPLICATE_RECORD }
+            if (!_.isEmpty(fetchedRecord)) { throw constants.DUPLICATE_RECORD }
 
             const datasetTransformation = new DatasetTransformations(req.body)
             const datasetRecord: any = datasetTransformation.setValues()
