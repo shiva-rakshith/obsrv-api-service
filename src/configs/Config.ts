@@ -1,6 +1,7 @@
 
 export const config = {
   "api_port": process.env.api_port || 3000,
+  "body_parser_limit": process.env.body_parser_limit || "100mb",
   "query_api": {
     "druid": {
       "host": process.env.druid_host || "http://localhost",

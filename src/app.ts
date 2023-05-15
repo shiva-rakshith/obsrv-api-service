@@ -6,7 +6,7 @@ import { router } from "./routes/Router";
  import bodyParser from "body-parser";
 const app: Application = express();
  
-app.use(bodyParser.json({ limit: '100mb'}));
+app.use(bodyParser.json({ limit: config.body_parser_limit}));
 app.use(express.json());
  
 loadExtensions(app)
