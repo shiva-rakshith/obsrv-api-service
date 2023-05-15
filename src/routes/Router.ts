@@ -8,7 +8,7 @@ import { DatasetService } from "../services/DatasetService";
 import { KafkaConnector } from "../connectors/KafkaConnector";
 import { DataSourceService } from "../services/DataSourceService";
 import { DatasetSourceConfigService } from "../services/DatasetSourceConfigService";
-import { DatasetTransformationService } from "../services/DatasetTranformationService";
+import { DatasetTransformationService } from "../services/DatasetTransformationService";
 import { DbConnector } from "../connectors/DbConnector";
 import { routesConfig } from "../configs/RoutesConfig";
 import { IngestorService } from "../services/IngestorService";
