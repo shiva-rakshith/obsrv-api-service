@@ -121,7 +121,8 @@ export const processTelemetryAuditEvent = () => {
                 const telemetryEvent = getDefaults();
                 telemetryEvent.edata = edata;
                 telemetryEvent.object = { ...(object.id && object.type && { ...object, ver: '1.0.0' }) };
-                sendTelemetryEvents(telemetryEvent);
+                console.log(JSON.stringify(telemetryEvent));
+                // sendTelemetryEvents(telemetryEvent);
             }
         })
         next();
