@@ -38,13 +38,13 @@ export const defaultConfig = {
             "dedup_config": {
                 "drop_duplicates": true,
                 "dedup_key": "id",
-                "dedup_period": 20971520
+                "dedup_period": 1036800
             }
         },
         "dedup_config": {
             "drop_duplicates": true,
             "dedup_key": "id",
-            "dedup_period": 20971520
+            "dedup_period": 1036800
         },
         "router_config": {
             "topic": ""
