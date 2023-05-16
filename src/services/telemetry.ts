@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express"
 import { v4 } from 'uuid';
 import _ from 'lodash';
 import { config } from "../configs/Config";
+import axios from 'axios';
 
 export enum OperationType {
     CREATE = 1,
@@ -30,6 +31,15 @@ const getDefaults = () => {
         edata: {}
     };
 };
+
+const sendTelemetryEvents = async (event: Record<string, any>) => {
+    try {
+        const payload = { data: { id: v4(), events: [event] } }
+        await axios.post(`http://localhost:${config.api_port}/obsrv/v1/data/${config.telemetry_dataset}`, payload, {})
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 const getDefaultEdata = ({ action }: any) => ({
     startEts: Date.now(),
@@ -111,8 +121,7 @@ export const processTelemetryAuditEvent = () => {
                 const telemetryEvent = getDefaults();
                 telemetryEvent.edata = edata;
                 telemetryEvent.object = { ...(object.id && object.type && { ...object, ver: '1.0.0' }) };
-
-                console.log(JSON.stringify(telemetryEvent));
+                sendTelemetryEvents(telemetryEvent);
             }
         })
         next();
