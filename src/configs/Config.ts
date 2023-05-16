@@ -1,6 +1,7 @@
- 
+
 export const config = {
   "api_port": process.env.api_port || 3000,
+  "body_parser_limit": process.env.body_parser_limit || "100mb",
   "query_api": {
     "druid": {
       "host": process.env.druid_host || "http://localhost",
@@ -36,14 +37,23 @@ export const config = {
         "clientId": process.env.client_id || "obsrv-apis",
         "retry": {
           "initialRetryTime": process.env.kafka_initial_retry_time ? parseInt(process.env.kafka_initial_retry_time) : 3000,
-          "retries": process.env.kafka_retries ? parseInt(process.env.kafka_retries) : 5
+          "retries": process.env.kafka_retries ? parseInt(process.env.kafka_retries) : 1
         },
         "connectionTimeout": process.env.kafka_connection_timeout ? parseInt(process.env.kafka_connection_timeout) : 5000
       },
       "topics": {
-        "create": `${process.env.system_env || 'local'}.ingest`,
-        "mutate": `${process.env.system_env || 'local'}.mutation`
+        "createDataset": `${process.env.system_env || 'local'}.ingest`,
+        "createMasterDataset": `${process.env.system_env || 'local'}.masterdata.ingest`
       }
     }
-  }
+  },
+  "dataset_types": {
+    normalDataset: "dataset",
+    masterDataset: "master-dataset"
+  },
+  "redis_config": {
+    "redis_host": process.env.redis_host || 'obsrv-redis-headless.redis.svc.cluster.local',
+    "redis_port": process.env.redis_port || 6379
+  },
+  "exclude_datasource_validation": ["system-stats", "failed-events-summary"]
 }

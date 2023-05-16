@@ -28,14 +28,16 @@ class KafkaDispatcher extends winston.Transport {
         console.error("Unable to connect to kafka", err.message);
       });
   }
-  async log(level, msg, mid, callback) {
+  async log(level, msg, kafkaTopics, callback) {
     try {
+      console.log(`pushing events to topic '${kafkaTopics[0]}'...`);
       await this.producer.send({
-        topic: this.options.topics.create,
+        topic: kafkaTopics[0],
         messages: [{ value: msg }],
       });
       callback(null, true);
     } catch (err) {
+      console.log(err);
       callback(err);
     }
   }

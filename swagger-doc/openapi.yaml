@@ -33,20 +33,116 @@ tags:
        description: The Dataset APIs provide a way to interact with a database and   allow you to create, read, update records in the database, as well as list multiple records based on certain criteria.
      - name: Obsrv Datasource APIs
        description: The Datsources APIs provide a way to interact with a database and allow you to create, read, update records in the database, as well as list multiple records based on certain criteria.
+     - name: Obsrv Dataset Source Config APIs
+       description: The Dataset Source Config APIs provide a way to interact with a database and allow you to create, read, update records in the database, as well as list multiple records based on certain criteria.
+     - name: Obsrv Dataset Transformation APIs
+       description: The Dataset Transformation APIs provide a way to interact with a database and allow you to create, read, update records in the database, as well as list multiple records based on certain criteria.
+    
 
      
 components:
     schemas:
-        DatasetCreate:
-            description: id, router_config are required
+        DatasetSourceConfigCreate:
+            description: dataset_id, connector_type are required
             type: object
             properties:
               id:
                 type: string
-              dataset_name:
+              dataset_id:
                 type: string
-              dataset_slug:
+              connector_type:
                 type: string
+              connector_config:
+                type: object
+              status:
+                type: string
+              connector_stats:
+                type: object
+              created_by:
+                type: string
+              updated_by:
+                type: string
+              published_date:
+                type: string
+        DatasetSourceConfigUpdate: 
+            description: dataset_id, connector_type are required
+            type: object
+            properties:
+              id:
+                type: string
+              dataset_id:
+                type: string
+              connector_type:
+                type: string
+              connector_config:
+                type: object
+              status:
+                type: string
+              connector_stats:
+                type: object
+              created_by:
+                type: string
+              updated_by:
+                type: string
+              published_date:
+                type: string
+        DatasetTransformationCreate:
+            description: dataset_id, field_key are required
+            type: object
+            properties:
+              id:
+                type: string
+              dataset_id:
+                type: string
+              field_key:
+                type: string
+              transformation_function:
+                type: object
+              status:
+                type: string
+              created_by:
+                type: string
+              updated_by:
+                type: string
+              published_date:
+                type: string
+              
+        DatasetTransformationUpdate:
+            description: dataset_id, field_key are required
+            type: object
+            properties:
+              id:
+                type: string
+              dataset_id:
+                type: string
+              field_key:
+                type: string
+              transformation_function:
+                type: object
+              status:
+                type: string
+              created_by:
+                type: string
+              updated_by:
+                type: string
+              published_date:
+                type: string
+              
+        DatasetCreate:
+            description: dataset_id, type, router_config, published_date are required
+            type: object
+            properties:
+              id:
+                type: string
+              dataset_id:
+                type: string
+              name:
+                type: string
+              type: 
+                type: string
+                enum:
+                  - dataset
+                  - master-dataset
               extraction_config:
                 type: object
                 properties:
@@ -83,14 +179,16 @@ components:
                   redis_db_port:
                     type: string
                   denorm_fields:
-                    type: object
-                    properties:
-                      denorm_key:
-                        type: string
-                      redis_db:
-                        type: integer
-                      denorm_out_field:
-                        type: string
+                    type: array
+                    items: 
+                      type: string
+                      properties:
+                        denorm_key:
+                          type: string
+                        redis_db:
+                          type: integer
+                        denorm_out_field:
+                          type: string
               router_config:
                 type: object
                 properties:
@@ -103,29 +201,28 @@ components:
                 enum:
                   - ACTIVE
                   - DISABLED
-              version:
-                type: string
               created_by:
                 type: string
               updated_by:
-                type: string
-              created_date:
-                type: string
-              updated_date:
                 type: string
               published_date:
                 type: string
              
         DatasetUpdate:
-            description: id, router_config are required
+            description: dataset_id is required
             type: object
             properties:
               id:
                 type: string
-              dataset_name:
+              dataset_id:
                 type: string
-              dataset_slug:
+              name:
                 type: string
+              type: 
+                type: string
+                enum:
+                  - dataset
+                  - master-dataset
               extraction_config:
                 type: object
                 properties:
@@ -162,14 +259,16 @@ components:
                   redis_db_port:
                     type: string
                   denorm_fields:
-                    type: object
-                    properties:
-                      denorm_key:
-                        type: string
-                      redis_db:
-                        type: integer
-                      denorm_out_field:
-                        type: string
+                    type: array
+                    items: 
+                      type: string
+                      properties:
+                        denorm_key:
+                          type: string
+                        redis_db:
+                          type: integer
+                        denorm_out_field:
+                          type: string
               router_config:
                 type: object
                 properties:
@@ -182,15 +281,9 @@ components:
                 enum:
                   - ACTIVE
                   - DISABLED
-              version:
-                type: string
               created_by:
                 type: string
               updated_by:
-                type: string
-              created_date:
-                type: string
-              updated_date:
                 type: string
               published_date:
                 type: string
@@ -210,10 +303,40 @@ components:
                               enum:
                               - ACTIVE
                               - DISABLED
-                offset:
-                  type: integer
-                limit:
-                  type: integer
+                
+        DatasetSourceConfigList:
+            description: filters are required
+            type: object
+            properties:
+                filters:
+                    type: object
+                    properties: 
+                        status: 
+                            oneOf:
+                            - type: string
+                            - type: array
+                              items:
+                                  type: string
+                              enum:
+                              - ACTIVE
+                              - DISABLED
+        DatasetTransformationList:
+            description: filters are required
+            type: object
+            properties:
+                filters:
+                    type: object
+                    properties: 
+                        status: 
+                            oneOf:
+                            - type: string
+                            - type: array
+                              items:
+                                  type: string
+                              enum:
+                              - ACTIVE
+                              - DISABLED
+        
         DruidNativeQuery:
             description: context parameter is required
             type: object
@@ -296,6 +419,8 @@ components:
                  type: object
                datasource:
                  type: string
+               datasource_ref:
+                 type: string
                retention_period:
                  type: object
                archival_policy:
@@ -327,6 +452,8 @@ components:
                ingestion_spec:
                  type: object
                datasource:
+                 type: string
+               datasource_ref:
                  type: string
                retention_period:
                  type: object
@@ -371,12 +498,37 @@ components:
                               enum:
                               - ACTIVE
                               - DISABLED
-                offset:
-                  type: integer
-                limit:
-                  type: integer
+                
     examples:
-         
+        DatasetSourceConfigCreate:
+            value:
+                dataset_id: observations
+                connector_type: kafka
+                status: ACTIVE
+                published_date: '2023-03-24 12:19:32.091544'
+        DatasetSourceConfigUpdate:
+            value:
+                dataset_id: observations
+                connector_type: kafka
+                status: DISABLED
+        DatasetTransformationCreate:
+            value:
+                dataset_id: telemetry-raw
+                field_key: actor
+                transformation_function:
+                  type: mask
+                  condition: null
+                  expr: actor
+                status: ACTIVE
+                created_by: SYSTEM
+                updated_by: SYSTEM
+                published_date: '2023-05-02T18:30:00.000Z'
+                
+        DatasetTransformationUpdate:
+            value:
+                dataset_id: telemetry-raw
+                field_key: actor
+                status: DISABLED
         DruidNativeQuery:
             value:
                 context: 
@@ -399,18 +551,23 @@ components:
                     dataSource: telemetry-events
                 querySql:
                     query: "SELECT object_id AS contentId, COUNT(*) AS totalRatingsCount FROM \"telemetry-events\"  WHERE __time >= TIMESTAMP '2021-01-01' AND __time < TIMESTAMP '2021-01-02' GROUP BY object_id LIMIT 100"
-        DataIngest:
+        DataIngestBatch:
             value:
                 data:
                   id: telemetry-raw
                   events: []
+        DataIngestIndividualEvents:
+            value:
+                data:
+                  id: telemetry-raw
+                  event: {}
         DatasetCreate:
             value:
-                id: 9e107d9d-763f-4f4-9d61-00a0c91e6bf6
-                dataset_name: telemetry-raw
-                dataset_slug: telemetry-raw
+                dataset_id: telemetry-raw
+                name: telemetry-raw
+                type: dataset
                 router_config:
-                  topic: ''
+                  topic: 'telemetry-raw'
                 data_schema:
                   type: object
                   properties:
@@ -696,24 +853,27 @@ components:
                 published_date: '2023-03-24 12:19:32.091544'
         DatasetUpdate:
             value:
-                id: 9e107d9d-763f-4f4-9d61-00a0c91e6bf6
-                dataset_name: telemetry-raw
-                dataset_slug: telemetry-raw
-                router_config:
-                  topic: 'local.ingest'
-                extraction_config: 
-                  is_batch_event: true
-                  dedup_config:
-                    drop_duplicates: false
-                                   
+              dataset_id: telemetry-raw
+              type: dataset
+              name: telemetry-raw
+              router_config:
+                topic: telemetry-raw
+              denorm_config:
+                redis_db_host: localhost
+                redis_db_port: 6379
+              dataset_config:
+                data_key: id
+                redis_db_host: localhost
+                redis_db_port: 6379
+              extraction_config:
+                is_batch_event: true
+                extraction_key: events
         DatasetList:
             value:
               filters: ["ACTIVE", "DISABLED"]
-              limit: 100
-              offset: 0
         DatasourceCreate:
             value:
-              dataset_id: 9e107d9d-763f-4f4-9d61-00a0c91e6bf6
+              dataset_id: telemetry-raw
               ingestion_spec:
                 type: kafka
                 spec:
@@ -1125,12 +1285,13 @@ components:
                             name: ver
                     appendToExisting: false
               datasource: telemetry-rollup
+              datasource_ref: telemetry-rollup
               published_date: '2023-03-27T11:40:43.269Z'
               status: ACTIVE
               
         DatasourceUpdate:
             value:
-              dataset_id: 9e107d9d-763f-4f4-9d61-00a0c91e6bf6
+              dataset_id: telemetry-raw
               datasource: telemetry-rollup
               backup_config:
                 enabled: true
@@ -1138,8 +1299,12 @@ components:
         DatasourceList:
             value:
               filters: ["ACTIVE", "DISABLED"]
-              limit: 100
-              offset: 0
+        DatasetSourceConfigList:
+            value:
+              filters: ["ACTIVE", "DISABLED"]
+        DatasetTransformationList:
+            value:
+              filters: ["ACTIVE", "DISABLED"]
               
     responses:
         BadRequestResponseSchema:
@@ -1389,9 +1554,15 @@ components:
                       ts:
                         type: integer
                         example: 1679916559382
-                      message:
-                        type: string
-                        example: "The data has been successfully ingested"
+                      params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: SUCCESS
+                                    errmsg:
+                                        type: string
+                                        example: ""
                       responseCode:
                         type: string
                         example: "OK"
@@ -1406,8 +1577,8 @@ components:
             content:
                 application/json:
                   schema:
-                     type: object
-                     properties:
+                   type: object
+                   properties:
                       id:
                         type: string
                         example: "obsrv.dataset.data.in"
@@ -1417,14 +1588,52 @@ components:
                       ts:
                         type: integer
                         example: 1679916559382
-                      message:
-                        type: string
-                        example: "datasetId parameter in url cannot be empty"
+                      params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: FAILED
+                                    errmsg:
+                                        type: string
+                                        example: "datasetId parameter in url cannot be empty"
                       responseCode:
                         type: string
-                        example: "OK"
+                        example: "BAD_REQUEST"
                       result:
                         type: object
+                         
+        DataIngestNotFound:
+            description: Not Found
+            content:
+                application/json:
+                  schema:
+                   type: object
+                   properties:
+                      id:
+                        type: string
+                        example: "obsrv.dataset.data.in"
+                      ver:
+                        type: string
+                        example: "v1"
+                      ts:
+                        type: integer
+                        example: 1679916559382
+                      params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: FAILED
+                                    errmsg:
+                                        type: string
+                                        example: "Dataset Id not found, Failed to ingest"
+                      responseCode:
+                        type: string
+                        example: "NOT_FOUND"
+                      result:
+                        type: object
+                     
                          
         DatasourceCreateResponseSchema:
               description: OK
@@ -1435,7 +1644,7 @@ components:
                      properties:
                       id:
                         type: string
-                        example: "obsrv.config.datasource.save"
+                        example: "obsrv.config.datasource.create"
                       ver:
                         type: string
                         example: "v1"
@@ -1460,9 +1669,9 @@ components:
                           message:
                             type: string
                             example: "The datasource configuration has been saved successfully"
-                          dataset_id:
+                          id:
                             type: string
-                            example: "9e107d9d-763f-4f4-9d61-00a0c91e6bf6_telemetry-rollup"
+                            example: "telemetry-raw_telemetry-rollup"
         DatasourceUpdateResponseSchema:
               description: OK
               content:
@@ -1497,9 +1706,9 @@ components:
                           message:
                             type: string
                             example: "The datasource configuration has been updated successfully"
-                          dataset_id:
+                          id:
                             type: string
-                            example: "9e107d9d-763f-4f4-9d61-00a0c91e6bf6_telemetry-rollup"
+                            example: "telemetry-raw_telemetry-rollup"
         DatasourceCreateBadRequest:
             description: Bad Request
             content:
@@ -1509,7 +1718,7 @@ components:
                         properties:
                             id:
                                 type: string
-                                example: obsrv.config.datasource.save
+                                example: obsrv.config.datasource.create
                             ver:
                                 type: string
                                 example: v1
@@ -1569,7 +1778,7 @@ components:
                       properties:
                           id: 
                               type: string
-                              example: obsrv.config.datasource.save
+                              example: obsrv.config.datasource.create
                           ver:
                               type: string
                               example: v1
@@ -1623,13 +1832,13 @@ components:
                               items:  
                                 type: object
                                 example: 
-                                   id: 9e107d9d-763f-4f4-9d61-00a0c91e6bf6_telemetry-rollup
-                                   dataset_id: 9e107d9d-763f-4f4-9d61-00a0c91e6bf6
+                                   id: telemetry-raw_telemetry-rollup
+                                   dataset_id: telmetry-raw
                                    ingestion_spec:
                                      type: kafka
                                      spec:
                                        dataSchema:
-                                         dataSource: obsrv-telemetry-events
+                                         dataSource: telemetry-rollup
                                          dimensionsSpec:
                                            dimensions:
                                              - type: string
@@ -2036,6 +2245,7 @@ components:
                                                  name: ver
                                          appendToExisting: false
                                    datasource: telemetry-rollup
+                                   datasource_ref: telemetry-rollup
                                    retention_period: {}
                                    archival_policy: {}
                                    purge_policy: {}
@@ -2113,13 +2323,13 @@ components:
                           result:
                                 type: object
                                 example: 
-                                  id: 9e107d9d-763f-4f4-9d61-00a0c91e6bf6_telemetry-rollup
-                                  dataset_id: 9e107d9d-763f-4f4-9d61-00a0c91e6bf6
+                                  id: telemetry-raw_telemetry-rollup
+                                  dataset_id: telemetry-raw
                                   ingestion_spec:
                                     type: kafka
                                     spec:
                                       dataSchema:
-                                        dataSource: obsrv-telemetry-events
+                                        dataSource: telemetry-rollup
                                         dimensionsSpec:
                                           dimensions:
                                             - type: string
@@ -2526,6 +2736,7 @@ components:
                                                 name: ver
                                         appendToExisting: false
                                   datasource: telemetry-rollup
+                                  datasource_ref: telemetry-rollup
                                   retention_period: {}
                                   archival_policy: {}
                                   purge_policy: {}
@@ -2568,46 +2779,8 @@ components:
                                     example: NOT_FOUND
                                 result:
                                     type: object
-        DatasourcePresetResponse:
-          description: OK
-          content:
-                    application/json:
-                        schema:
-                            type: object
-                            properties:
-                                id:
-                                    type: string
-                                    example: obsrv.config.datasource.preset
-                                ver:
-                                    type: string
-                                    example: v1
-                                ts:
-                                    type: string
-                                    example: 1672679516875
-                                params:
-                                    type: object
-                                    properties:
-                                        status:
-                                            type: string
-                                            example: SUCCESS
-                                        errmsg:
-                                            type: string
-                                            example: ""
-                                responseCode:
-                                    type: string
-                                    example: OK
-                                result:
-                                    type: object
-                                    example:
-                                      retention_period: {}
-                                      archival_policy: {}
-                                      purge_policy: {}
-                                      backup_config: {}
-                                      status: ACTIVE
-                                      created_by: SYSTEM
-                                      updated_by: SYSTEM
+         
                                       
-                                    
         DatasetCreateResponseSchema:
               description: OK
               content:
@@ -2644,7 +2817,7 @@ components:
                             example: "The dataset configuration has been saved successfully"
                           dataset_id:
                             type: string
-                            example: "9e107d9d-763f-4f4-9d61-00a0c91e6bf6"
+                            example: "telemetry-raw"
         DatasetUpdateResponseSchema:
               description: OK
               content:
@@ -2681,7 +2854,7 @@ components:
                             example: "The dataset configuration has been updated successfully"
                           dataset_id:
                             type: string
-                            example: "9e107d9d-763f-4f4-9d61-00a0c91e6bf6"
+                            example: "telemetry-raw"
         DatasetCreateBadRequest:
             description: Bad Request
             content:
@@ -2706,7 +2879,7 @@ components:
                                         example: FAILED
                                     errmsg:
                                         type: string
-                                        example: must have required property 'id'
+                                        example: must have required property 'dataset_id'
                             responseCode:
                                 type: string
                                 example: BAD_REQUEST
@@ -2805,14 +2978,15 @@ components:
                               items:  
                                 type: object
                                 example: 
-                                  id: 9e107d9d-763f-4f4-9d61-687ea72
+                                  id: telemetry-raw
                                   dataset_name: telemetry-raw
+                                  type: dataset
                                   validation_config:
                                     validate: true
                                     mode: Strict
                                   extraction_config:
-                                   is_batch_event: false
-                                   extraction_key: ''
+                                   is_batch_event: true
+                                   extraction_key: 'events'
                                    dedup_config:
                                      drop_duplicates: true
                                      dedup_key: id
@@ -3103,14 +3277,16 @@ components:
                                      - context
                                      - object
                                   denorm_config:
-                                   redis_db_host: redis_host
-                                   redis_db_port: redis_port
-                                   denorm_fields:
-                                     denorm_key: ''
-                                     redis_db: 1
-                                     denorm_out_field: metadata
+                                    redis_db_host: localhost
+                                    redis_db_port: 6379
                                   router_config:
-                                   topic: ''
+                                    topic: telemtry-raw
+                                  dataset_config:  
+                                    data_key: null
+                                    timestamp_key: ets
+                                    redis_db_host: localhost
+                                    redis_db_port: 6379
+                                    redis_db: 0
                                   status: ACTIVE
                                   version: v1
                                   created_by: SYSTEM
@@ -3183,320 +3359,324 @@ components:
                           result:
                                 type: object
                                 example: 
-                                  id: 9e107d9d-763f-4f4-9d61-687ea72
-                                  dataset_name: telemetry-raw
-                                  dataset_slug: telemetry-raw
+                                  id: telemetry-raw
+                                  dataset_id: telemetry-raw
+                                  type: dataset
+                                  name: telemtry-raw
                                   validation_config:
                                     validate: true
                                     mode: Strict
                                   extraction_config:
-                                   is_batch_event: false
-                                   extraction_key: ''
-                                   dedup_config:
-                                     drop_duplicates: true
-                                     dedup_key: id
-                                     dedup_period: 3
+                                    is_batch_event: false
+                                    extraction_key: ''
+                                    dedup_config:
+                                      drop_duplicates: true
+                                      dedup_key: id
+                                      dedup_period: 3
                                   dedup_config:
-                                   drop_duplicates: true
-                                   dedup_key: id
-                                   dedup_period: 3
+                                    drop_duplicates: true
+                                    dedup_key: id
+                                    dedup_period: 3
                                   data_schema:
-                                   type: object
-                                   properties:
-                                     eid:
-                                       type: integer
-                                     ver:
-                                       type: string
-                                     syncts:
-                                       type: integer
-                                     ets:
-                                       type: integer
-                                     flags:
-                                       type: object
-                                       properties:
-                                         ex_processed:
-                                           type: boolean
-                                         pp_validation_processed:
-                                           type: boolean
-                                         pp_duplicate_skipped:
-                                           type: boolean
-                                         device_denorm:
-                                           type: boolean
-                                         user_denorm:
-                                           type: boolean
-                                         loc_denorm:
-                                           type: boolean
-                                       required:
-                                         - ex_processed
-                                         - pp_validation_processed
-                                         - pp_duplicate_skipped
-                                         - device_denorm
-                                         - user_denorm
-                                         - loc_denorm
-                                     derivedlocationdata:
-                                       type: object
-                                       properties:
-                                         district:
-                                           type: string
-                                         from:
-                                           type: string
-                                         state:
-                                           type: string
-                                       required:
-                                         - district
-                                         - from
-                                         - state
-                                     mid:
-                                       type: string
-                                       format: uuid
-                                       suggestions:
-                                         - message: The Property 'mid' appears to be 'uuid' format type.
-                                           advice: Suggest to not to index the high cardinal columns
-                                           resolutionType: DEDUP
-                                           severity: LOW
-                                     type:
-                                       type: string
-                                     actor:
-                                       type: object
-                                       properties:
-                                         type:
-                                           type: string
-                                         id:
-                                           type: string
-                                           format: uuid
-                                           suggestions:
-                                             - message: The Property 'actor.id' appears to be 'uuid' format type.
-                                               advice: Suggest to not to index the high cardinal columns
-                                               resolutionType: DEDUP
-                                               severity: LOW
-                                       required:
-                                         - type
-                                         - id
-                                     edata:
-                                       type: object
-                                       properties:
-                                         type:
-                                           type: string
-                                       required:
-                                         - type
-                                     userdata:
-                                       type: object
-                                       properties:
-                                         district:
-                                           type: string
-                                         usersubtype:
-                                           type: string
-                                         usersignintype:
-                                           type: string
-                                         usertype:
-                                           type: string
-                                         userlogintype:
-                                           type: string
-                                         state:
-                                           type: string
-                                       required:
-                                         - subject
-                                         - district
-                                         - usersubtype
-                                         - grade
-                                         - usersignintype
-                                         - usertype
-                                         - userlogintype
-                                         - state
-                                     devicedata:
-                                       type: object
-                                       properties:
-                                         statecustomcode:
-                                           type: string
-                                         country:
-                                           type: string
-                                         iso3166statecode:
-                                           type: string
-                                         city:
-                                           type: string
-                                         countrycode:
-                                           type: string
-                                         state:
-                                           type: string
-                                         devicespec:
-                                           type: object
-                                           properties:
-                                             idisk:
-                                               type: string
-                                             webview:
-                                               type: string
-                                             os:
-                                               type: string
-                                             scrn:
-                                               type: string
-                                             sims:
-                                               type: string
-                                             cpu:
-                                               type: string
-                                             id:
-                                               type: string
-                                             camera:
-                                               type: string
-                                             edisk:
-                                               type: string
-                                             make:
-                                               type: string
-                                           required:
-                                             - idisk
-                                             - webview
-                                             - os
-                                             - scrn
-                                             - sims
-                                             - cpu
-                                             - id
-                                             - camera
-                                             - edisk
-                                             - make
-                                         statecode:
-                                           type: string
-                                         firstaccess:
-                                           type: integer
-                                         districtcustom:
-                                           type: string
-                                         statecustomname:
-                                           type: string
-                                         userdeclared:
-                                           type: object
-                                           properties:
-                                             district:
-                                               type: string
-                                             state:
-                                               type: string
-                                           required:
-                                             - district
-                                             - state
-                                       required:
-                                         - statecustomcode
-                                         - country
-                                         - iso3166statecode
-                                         - city
-                                         - countrycode
-                                         - state
-                                         - devicespec
-                                         - statecode
-                                         - firstaccess
-                                         - districtcustom
-                                         - statecustomname
-                                         - userdeclared
-                                     context:
-                                       type: object
-                                       properties:
-                                         cdata:
-                                           type: array
-                                           items:
-                                             type: object
-                                             properties:
-                                               id:
-                                                 type: string
-                                                 format: uuid
-                                               type:
-                                                 type: string
-                                             required:
-                                               - id
-                                               - type
-                                         env:
-                                           type: string
-                                         channel:
-                                           type: string
-                                         pdata:
-                                           type: object
-                                           properties:
-                                             id:
-                                               type: string
-                                             pid:
-                                               type: string
-                                             ver:
-                                               type: string
-                                           required:
-                                             - id
-                                             - pid
-                                             - ver
-                                         sid:
-                                           type: string
-                                           format: uuid
-                                           suggestions:
-                                             - message: The Property 'context.sid' appears to be 'uuid' format type.
-                                               advice: Suggest to not to index the high cardinal columns
-                                               resolutionType: DEDUP
-                                               severity: LOW
-                                         did:
-                                           type: string
-                                         rollup:
-                                           type: object
-                                           properties:
-                                             l1:
-                                               type: string
-                                           required:
-                                             - l1
-                                         items:
-                                           cdata:
-                                             properties:
-                                               id:
-                                                 suggestions:
-                                                   - message: The Property 'context.cdata[*].id' appears to be 'uuid' format type.
-                                                     advice: Suggest to not to index the high cardinal columns
-                                                     resolutionType: DEDUP
-                                                     severity: LOW
-                                       required:
-                                         - cdata
-                                         - env
-                                         - channel
-                                         - pdata
-                                         - sid
-                                         - did
-                                         - rollup
-                                     object:
-                                       type: object
-                                       properties:
-                                         id:
-                                           type: string
-                                         type:
-                                           type: string
-                                         version:
-                                           type: string
-                                         rollup:
-                                           type: object
-                                       required:
-                                         - id
-                                         - type
-                                         - version
-                                         - rollup
-                                   required:
-                                     - eid
-                                     - ver
-                                     - syncts
-                                     - ets
-                                     - flags
-                                     - derivedlocationdata
-                                     - mid
-                                     - type
-                                     - actor
-                                     - edata
-                                     - userdata
-                                     - devicedata
-                                     - context
-                                     - object
+                                    type: object
+                                    properties:
+                                      eid:
+                                        type: integer
+                                      ver:
+                                        type: string
+                                      syncts:
+                                        type: integer
+                                      ets:
+                                        type: integer
+                                      flags:
+                                        type: object
+                                        properties:
+                                          ex_processed:
+                                            type: boolean
+                                          pp_validation_processed:
+                                            type: boolean
+                                          pp_duplicate_skipped:
+                                            type: boolean
+                                          device_denorm:
+                                            type: boolean
+                                          user_denorm:
+                                            type: boolean
+                                          loc_denorm:
+                                            type: boolean
+                                        required:
+                                          - ex_processed
+                                          - pp_validation_processed
+                                          - pp_duplicate_skipped
+                                          - device_denorm
+                                          - user_denorm
+                                          - loc_denorm
+                                      derivedlocationdata:
+                                        type: object
+                                        properties:
+                                          district:
+                                            type: string
+                                          from:
+                                            type: string
+                                          state:
+                                            type: string
+                                        required:
+                                          - district
+                                          - from
+                                          - state
+                                      mid:
+                                        type: string
+                                        format: uuid
+                                        suggestions:
+                                          - message: The Property 'mid' appears to be 'uuid' format type.
+                                            advice: Suggest to not to index the high cardinal columns
+                                            resolutionType: DEDUP
+                                            severity: LOW
+                                      type:
+                                        type: string
+                                      actor:
+                                        type: object
+                                        properties:
+                                          type:
+                                            type: string
+                                          id:
+                                            type: string
+                                            format: uuid
+                                            suggestions:
+                                              - message: The Property 'actor.id' appears to be 'uuid' format type.
+                                                advice: Suggest to not to index the high cardinal columns
+                                                resolutionType: DEDUP
+                                                severity: LOW
+                                        required:
+                                          - type
+                                          - id
+                                      edata:
+                                        type: object
+                                        properties:
+                                          type:
+                                            type: string
+                                        required:
+                                          - type
+                                      userdata:
+                                        type: object
+                                        properties:
+                                          district:
+                                            type: string
+                                          usersubtype:
+                                            type: string
+                                          usersignintype:
+                                            type: string
+                                          usertype:
+                                            type: string
+                                          userlogintype:
+                                            type: string
+                                          state:
+                                            type: string
+                                        required:
+                                          - subject
+                                          - district
+                                          - usersubtype
+                                          - grade
+                                          - usersignintype
+                                          - usertype
+                                          - userlogintype
+                                          - state
+                                      devicedata:
+                                        type: object
+                                        properties:
+                                          statecustomcode:
+                                            type: string
+                                          country:
+                                            type: string
+                                          iso3166statecode:
+                                            type: string
+                                          city:
+                                            type: string
+                                          countrycode:
+                                            type: string
+                                          state:
+                                            type: string
+                                          devicespec:
+                                            type: object
+                                            properties:
+                                              idisk:
+                                                type: string
+                                              webview:
+                                                type: string
+                                              os:
+                                                type: string
+                                              scrn:
+                                                type: string
+                                              sims:
+                                                type: string
+                                              cpu:
+                                                type: string
+                                              id:
+                                                type: string
+                                              camera:
+                                                type: string
+                                              edisk:
+                                                type: string
+                                              make:
+                                                type: string
+                                            required:
+                                              - idisk
+                                              - webview
+                                              - os
+                                              - scrn
+                                              - sims
+                                              - cpu
+                                              - id
+                                              - camera
+                                              - edisk
+                                              - make
+                                          statecode:
+                                            type: string
+                                          firstaccess:
+                                            type: integer
+                                          districtcustom:
+                                            type: string
+                                          statecustomname:
+                                            type: string
+                                          userdeclared:
+                                            type: object
+                                            properties:
+                                              district:
+                                                type: string
+                                              state:
+                                                type: string
+                                            required:
+                                              - district
+                                              - state
+                                        required:
+                                          - statecustomcode
+                                          - country
+                                          - iso3166statecode
+                                          - city
+                                          - countrycode
+                                          - state
+                                          - devicespec
+                                          - statecode
+                                          - firstaccess
+                                          - districtcustom
+                                          - statecustomname
+                                          - userdeclared
+                                      context:
+                                        type: object
+                                        properties:
+                                          cdata:
+                                            type: array
+                                            items:
+                                              type: object
+                                              properties:
+                                                id:
+                                                  type: string
+                                                  format: uuid
+                                                type:
+                                                  type: string
+                                              required:
+                                                - id
+                                                - type
+                                          env:
+                                            type: string
+                                          channel:
+                                            type: string
+                                          pdata:
+                                            type: object
+                                            properties:
+                                              id:
+                                                type: string
+                                              pid:
+                                                type: string
+                                              ver:
+                                                type: string
+                                            required:
+                                              - id
+                                              - pid
+                                              - ver
+                                          sid:
+                                            type: string
+                                            format: uuid
+                                            suggestions:
+                                              - message: The Property 'context.sid' appears to be 'uuid' format type.
+                                                advice: Suggest to not to index the high cardinal columns
+                                                resolutionType: DEDUP
+                                                severity: LOW
+                                          did:
+                                            type: string
+                                          rollup:
+                                            type: object
+                                            properties:
+                                              l1:
+                                                type: string
+                                            required:
+                                              - l1
+                                          items:
+                                            cdata:
+                                              properties:
+                                                id:
+                                                  suggestions:
+                                                    - message: The Property 'context.cdata[*].id' appears to be 'uuid' format type.
+                                                      advice: Suggest to not to index the high cardinal columns
+                                                      resolutionType: DEDUP
+                                                      severity: LOW
+                                        required:
+                                          - cdata
+                                          - env
+                                          - channel
+                                          - pdata
+                                          - sid
+                                          - did
+                                          - rollup
+                                      object:
+                                        type: object
+                                        properties:
+                                          id:
+                                            type: string
+                                          type:
+                                            type: string
+                                          version:
+                                            type: string
+                                          rollup:
+                                            type: object
+                                        required:
+                                          - id
+                                          - type
+                                          - version
+                                          - rollup
+                                    required:
+                                      - eid
+                                      - ver
+                                      - syncts
+                                      - ets
+                                      - flags
+                                      - derivedlocationdata
+                                      - mid
+                                      - type
+                                      - actor
+                                      - edata
+                                      - userdata
+                                      - devicedata
+                                      - context
+                                      - object
                                   denorm_config:
-                                   redis_db_host: redis_host
-                                   redis_db_port: redis_port
-                                   denorm_fields:
-                                     denorm_key: ''
-                                     redis_db: 1
-                                     denorm_out_field: metadata
+                                    redis_db_host: localhost
+                                    redis_db_port: 6379
                                   router_config:
-                                   topic: ''
+                                    topic: telemtry-raw
+                                  dataset_config:  
+                                    data_key: null
+                                    timestamp_key: ets
+                                    redis_db_host: localhost
+                                    redis_db_port: 6379
+                                    redis_db: 0
                                   status: ACTIVE
-                                  version: v1
                                   created_by: SYSTEM
                                   updated_by: SYSTEM
-                                  created_date: '2023-03-27T11:40:43.269Z'
-                                  updated_date: '2023-03-27T11:40:43.265Z'
-                                  published_date: '2023-03-24T06:49:32.091Z'
+                                  created_date: '2023-05-12T05:57:43.459Z'
+                                  updated_date: '2023-05-12T05:57:43.457Z'
+                                  published_date: '2023-03-23T18:30:00.000Z'
+                                  
+                                  
         DatasetReadNotFound:
             description: Not Found
             content:
@@ -3527,102 +3707,261 @@ components:
                                     example: NOT_FOUND
                                 result:
                                     type: object
-        DatasetPresetResponse:
-          description: OK
-          content:
-                    application/json:
-                        schema:
-                            type: object
-                            properties:
-                                id:
-                                    type: string
-                                    example: obsrv.config.dataset.preset
-                                ver:
-                                    type: string
-                                    example: v1
-                                ts:
-                                    type: string
-                                    example: 1672679516875
-                                params:
-                                    type: object
-                                    properties:
-                                        status:
-                                            type: string
-                                            example: SUCCESS
-                                        errmsg:
-                                            type: string
-                                            example: ""
-                                responseCode:
-                                    type: string
-                                    example: OK
-                                result:
-                                    type: object
-                                    example:
-                                      validation_config:
-                                        validate: true
-                                        mode: Strict
-                                      extraction_config:
-                                        is_batch_event: false
-                                        extraction_key: ''
-                                        dedup_config:
-                                          drop_duplicates: true
-                                          dedup_key: id
-                                          dedup_period: 3
-                                      dedup_config:
-                                        drop_duplicates: true
-                                        dedup_key: id
-                                        dedup_period: 3
-                                      denorm_config:
-                                        redis_db_host: redis_host
-                                        redis_db_port: redis_port
-                                        denorm_fields:
-                                          denorm_key: ''
-                                          redis_db: 1
-                                          denorm_out_field: metadata
-                                      router_config:
-                                        topic: ''
-                                      status: ACTIVE
-                                      version: v1
-                                      created_by: SYSTEM
-                                      updated_by: SYSTEM
-        DataInResponse:
+        DatasetSourceConfigCreateResponseSchema:
+              description: OK
+              content:
+                application/json:
+                  schema:
+                     type: object
+                     properties:
+                      id:
+                        type: string
+                        example: "obsrv.config.dataset.source.config.create"
+                      ver:
+                        type: string
+                        example: "v1"
+                      ts:
+                        type: integer
+                        example: 1679916559382
+                      params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: SUCCESS
+                                    errmsg:
+                                        type: string
+                                        example: ""
+                      responseCode:
+                        type: string
+                        example: "OK"
+                      result:
+                        type: object
+                        properties:
+                          message:
+                            type: string
+                            example: "The dataset configuration has been saved successfully"
+                          id:
+                            type: string
+                            example: "telemetry-raw_kafka"
+        DatasetSourceConfigUpdateResponseSchema:
+              description: OK
+              content:
+                application/json:
+                  schema:
+                     type: object
+                     properties:
+                      id:
+                        type: string
+                        example: obsrv.config.dataset.source.config.update
+                      ver:
+                        type: string
+                        example: "v1"
+                      ts:
+                        type: integer
+                        example: 1679916559382
+                      params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: SUCCESS
+                                    errmsg:
+                                        type: string
+                                        example: ""
+                      responseCode:
+                        type: string
+                        example: "OK"
+                      result:
+                        type: object
+                        properties:
+                          message:
+                            type: string
+                            example: "The dataset configuration has been updated successfully"
+                          id:
+                            type: string
+                            example: "telemetry-raw_kafka"
+        DatasetSourceConfigCreateBadRequest:
+            description: Bad Request
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            id:
+                                type: string
+                                example: obsrv.config.dataset.source.config.create
+                            ver:
+                                type: string
+                                example: v1
+                            ts:
+                                type: string
+                                example: 1672679516875
+                            params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: FAILED
+                                    errmsg:
+                                        type: string
+                                        example: must have required property 'dataset_id'
+                            responseCode:
+                                type: string
+                                example: BAD_REQUEST
+                            result:
+                                type: object
+        DatasetSourceConfigUpdateBadRequest:
+            description: Bad Request
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            id:
+                                type: string
+                                example: obsrv.config.dataset.source.config.update
+                            ver:
+                                type: string
+                                example: v1
+                            ts:
+                                type: string
+                                example: 1672679516875
+                            params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: FAILED
+                                    errmsg:
+                                        type: string
+                                        example: Failed to update Record
+                            responseCode:
+                                type: string
+                                example: BAD_REQUEST
+                            result:
+                                type: object
+        DatasetSourceConfigCreateDuplicate:
+            description: Conflict
+            content:
+              application/json:
+                  schema:
+                      type: object
+                      properties:
+                          id: 
+                              type: string
+                              example: obsrv.config.dataset.source.config.create
+                          ver:
+                              type: string
+                              example: v1
+                          ts:
+                              type: string
+                              example: 1672679516875
+                          params:
+                              type: object
+                              properties:
+                                  status:
+                                      type: string
+                                      example: FAILED
+                                  errmsg:
+                                      type: string
+                                      example: Record already exists
+                          responseCode:
+                              type: string
+                              example: CONFLICT
+                          result:
+                              type: object
+        DatasetSoureConfigListResponse:
+            description: OK
+            content:
+              application/json:
+                  schema:
+                      type: object
+                      properties:
+                          id: 
+                              type: string
+                              example: obsrv.config.dataset.source.config.list
+                          ver:
+                              type: string
+                              example: v1
+                          ts:
+                              type: string
+                              example: 1672679516875
+                          params:
+                              type: object
+                              properties:
+                                  status:
+                                      type: string
+                                      example: SUCCESS
+                                  errmsg:
+                                      type: string
+                                      example: ""
+                          responseCode:
+                              type: string
+                              example: OK
+                          result:
+                              type: array
+                              items: 
+                                type: object
+                                example: 
+                                  id: telemetry-raw_kafka
+                                  connector_type: kafka
+                                  connector_config: {}
+                                  status: ACTIVE
+                                  connector_stats: {}
+                                  created_by: SYSTEM
+                                  updated_by: SYSTEM
+                                  created_date: '2023-05-11T18:30:00.000Z'
+                                  updated_date: '2023-05-11T18:30:00.000Z'
+                                  published_date: '2023-05-11T18:30:00.000Z'
+                                  dataset_id: telemetry-raw
+                                  
+                                             
+        DatasetSourceConfigReadResponse:
             description: OK
             content:
                     application/json:
                         schema:
                             type: object
                             properties:
-                                id:
-                                    type: string
-                                    example: obsrv.config.data.in
-                                ver:
-                                    type: string
-                                    example: v1
-                                ts:
-                                    type: string
-                                    example: 1672679516875
-                                params:
-                                    type: object
-                                    properties:
-                                        status:
-                                            type: string
-                                            example: SUCCESS
-                                        errmsg:
-                                            type: string
-                                            example: ""
-                                responseCode:
-                                    type: string
-                                    example: OK
-                                result:
-                                    type: object
-                                    properties:
-                                      message:
-                                          type: string
-                                          example: "The data has been successfully ingested"
-                                       
-                            
-        DataInBadRequest:
-            description: Bad Request
+                                  id:
+                                      type: string
+                                      example: obsrv.config.dataset.source.config.read
+                                  ver:
+                                      type: string
+                                      example: v1
+                                  ts:
+                                      type: string
+                                      example: 1672679516875
+                                  params:
+                                      type: object
+                                      properties:
+                                          status:
+                                              type: string
+                                              example: SUCCESS
+                                          errmsg:
+                                              type: string
+                                              example: ""
+                                  responseCode:
+                                      type: string
+                                      example: OK
+                                  result:
+                                      type: object
+                                      example:
+                                        id: telemetry-raw_kafka
+                                        connector_type: kafka
+                                        connector_config: {}
+                                        status: ACTIVE
+                                        connector_stats: {}
+                                        created_by: SYSTEM
+                                        updated_by: SYSTEM
+                                        created_date: '2023-05-11T18:30:00.000Z'
+                                        updated_date: '2023-05-11T18:30:00.000Z'
+                                        published_date: '2023-05-11T18:30:00.000Z'
+                                        dataset_id: telemetry-raw
+                                      
+        DatasetSoureConfigReadNotFound:
+            description: Not Found
             content:
                     application/json:
                         schema:
@@ -3630,7 +3969,7 @@ components:
                             properties:
                                 id:
                                     type: string
-                                    example: obsrv.config.data.in
+                                    example: obsrv.config.dataset.source.config.read
                                 ver:
                                     type: string
                                     example: v1
@@ -3645,13 +3984,356 @@ components:
                                             example: FAILED
                                         errmsg:
                                             type: string
-                                            example:  datasetId parameter in url cannot be empty
+                                            example:  Record not found
+                                responseCode:
+                                    type: string
+                                    example: NOT_FOUND
+                                result:
+                                    type: object
+        DatasetSourceConfigListBadRequest:
+            description: Bad Request
+            content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                id:
+                                    type: string
+                                    example: obsrv.config.dataset.source.config.list
+                                ver:
+                                    type: string
+                                    example: v1
+                                ts:
+                                    type: string
+                                    example: 1672679516875
+                                params:
+                                    type: object
+                                    properties:
+                                        status:
+                                            type: string
+                                            example: FAILED
+                                        errmsg:
+                                            type: string
+                                            example: must have required property 'filters'
                                 responseCode:
                                     type: string
                                     example: BAD_REQUEST
                                 result:
                                     type: object
-                            
+        DatasetTransformationCreateResponseSchema:
+              description: OK
+              content:
+                application/json:
+                  schema:
+                     type: object
+                     properties:
+                      id:
+                        type: string
+                        example: "obsrv.config.dataset.transformation.create"
+                      ver:
+                        type: string
+                        example: "v1"
+                      ts:
+                        type: integer
+                        example: 1679916559382
+                      params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: SUCCESS
+                                    errmsg:
+                                        type: string
+                                        example: ""
+                      responseCode:
+                        type: string
+                        example: "OK"
+                      result:
+                        type: object
+                        properties:
+                          message:
+                            type: string
+                            example: "The dataset configuration has been saved successfully"
+                          id:
+                            type: string
+                            example: "telemetry-raw_actor"
+        DatasetTransformationUpdateResponseSchema:
+              description: OK
+              content:
+                application/json:
+                  schema:
+                     type: object
+                     properties:
+                      id:
+                        type: string
+                        example: obsrv.config.dataset.transformation.update
+                      ver:
+                        type: string
+                        example: "v1"
+                      ts:
+                        type: integer
+                        example: 1679916559382
+                      params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: SUCCESS
+                                    errmsg:
+                                        type: string
+                                        example: ""
+                      responseCode:
+                        type: string
+                        example: "OK"
+                      result:
+                        type: object
+                        properties:
+                          message:
+                            type: string
+                            example: "The dataset configuration has been updated successfully"
+                          id:
+                            type: string
+                            example: "telemetry-raw_actor"
+        DatasetTransformationCreateBadRequest:
+            description: Bad Request
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            id:
+                                type: string
+                                example: obsrv.config.dataset.transformation.create
+                            ver:
+                                type: string
+                                example: v1
+                            ts:
+                                type: string
+                                example: 1672679516875
+                            params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: FAILED
+                                    errmsg:
+                                        type: string
+                                        example: must have required property 'dataset_id'
+                            responseCode:
+                                type: string
+                                example: BAD_REQUEST
+                            result:
+                                type: object
+        DatasetTransformationUpdateBadRequest:
+            description: Bad Request
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            id:
+                                type: string
+                                example: obsrv.config.dataset.transformation.update
+                            ver:
+                                type: string
+                                example: v1
+                            ts:
+                                type: string
+                                example: 1672679516875
+                            params:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: FAILED
+                                    errmsg:
+                                        type: string
+                                        example: Failed to update Record
+                            responseCode:
+                                type: string
+                                example: BAD_REQUEST
+                            result:
+                                type: object
+        DatasetTransformationCreateDuplicate:
+            description: Conflict
+            content:
+              application/json:
+                  schema:
+                      type: object
+                      properties:
+                          id: 
+                              type: string
+                              example: obsrv.config.dataset.transformation.create
+                          ver:
+                              type: string
+                              example: v1
+                          ts:
+                              type: string
+                              example: 1672679516875
+                          params:
+                              type: object
+                              properties:
+                                  status:
+                                      type: string
+                                      example: FAILED
+                                  errmsg:
+                                      type: string
+                                      example: Record already exists
+                          responseCode:
+                              type: string
+                              example: CONFLICT
+                          result:
+                              type: object
+        DatasetTransformationListResponse:
+            description: OK
+            content:
+              application/json:
+                  schema:
+                      type: object
+                      properties:
+                          id: 
+                              type: string
+                              example: obsrv.config.dataset.transformation.list
+                          ver:
+                              type: string
+                              example: v1
+                          ts:
+                              type: string
+                              example: 1672679516875
+                          params:
+                              type: object
+                              properties:
+                                  status:
+                                      type: string
+                                      example: SUCCESS
+                                  errmsg:
+                                      type: string
+                                      example: ""
+                          responseCode:
+                              type: string
+                              example: OK
+                          result:
+                              type: array
+                              items: 
+                                type: object
+                                example: 
+                                  id: telemetry-raw_actor
+                                  field_key: actor
+                                  transformation_function: '{"type":"mask","condition":null,"expr":"actor"}'
+                                  status: ACTIVE
+                                  created_by: SYSTEM
+                                  updated_by: SYSTEM
+                                  created_date: '2023-05-11T18:30:00.000Z'
+                                  updated_date: '2023-05-11T18:30:00.000Z'
+                                  published_date: '2023-05-01T18:30:00.000Z'
+                                  dataset_id: telemetry-raw
+                                  
+                                  
+                                             
+        DatasetTransformationReadResponse:
+            description: OK
+            content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                  id:
+                                      type: string
+                                      example: obsrv.config.transformation.read
+                                  ver:
+                                      type: string
+                                      example: v1
+                                  ts:
+                                      type: string
+                                      example: 1672679516875
+                                  params:
+                                      type: object
+                                      properties:
+                                          status:
+                                              type: string
+                                              example: SUCCESS
+                                          errmsg:
+                                              type: string
+                                              example: ""
+                                  responseCode:
+                                      type: string
+                                      example: OK
+                                  result:
+                                      type: object
+                                      example:
+                                        id: telemetry-raw_actor
+                                        field_key: actor
+                                        transformation_function: '{"type":"mask","condition":null,"expr":"actor"}'
+                                        status: ACTIVE
+                                        created_by: SYSTEM
+                                        updated_by: SYSTEM
+                                        created_date: '2023-05-11T18:30:00.000Z'
+                                        updated_date: '2023-05-11T18:30:00.000Z'
+                                        published_date: '2023-05-01T18:30:00.000Z'
+                                        dataset_id: telemetry-raw
+                                        
+                                      
+        DatasetTransformationReadNotFound:
+            description: Not Found
+            content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                id:
+                                    type: string
+                                    example: obsrv.config.dataset.transformation.read
+                                ver:
+                                    type: string
+                                    example: v1
+                                ts:
+                                    type: string
+                                    example: 1672679516875
+                                params:
+                                    type: object
+                                    properties:
+                                        status:
+                                            type: string
+                                            example: FAILED
+                                        errmsg:
+                                            type: string
+                                            example:  Record not found
+                                responseCode:
+                                    type: string
+                                    example: NOT_FOUND
+                                result:
+                                    type: object
+        DatasetTransformationListBadRequest:
+            description: Bad Request
+            content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                id:
+                                    type: string
+                                    example: obsrv.config.dataset.transformation.list
+                                ver:
+                                    type: string
+                                    example: v1
+                                ts:
+                                    type: string
+                                    example: 1672679516875
+                                params:
+                                    type: object
+                                    properties:
+                                        status:
+                                            type: string
+                                            example: FAILED
+                                        errmsg:
+                                            type: string
+                                            example: must have required property 'filters'
+                                responseCode:
+                                    type: string
+                                    example: BAD_REQUEST
+                                result:
+                                    type: object
+         
 paths:
       
       /obsrv/v1/query:
@@ -3703,7 +4385,7 @@ paths:
       
       /obsrv/v1/data/{datasetId}:
         post:
-            summary: to ingest data into kafka
+            summary: The API designed for ingesting data into Kafka follows a specific convention. When processing batch events, the API expects the key to be labeled as "events." However, when dealing with individual events, the key should be identified as "event."
             description: ""
             tags: [Obsrv Data IN API]
             parameters:
@@ -3720,12 +4402,17 @@ paths:
                             $ref: "#/components/schemas/DataIngest"
                         examples:
                             Example-1:
-                                $ref: "#/components/examples/DataIngest"
+                                $ref: "#/components/examples/DataIngestBatch"
+                            Example-2:
+                                $ref: "#/components/examples/DataIngestIndividualEvents"
             responses: 
                 200:
-                    $ref: "#/components/responses/DataInResponse"
+                    $ref: "#/components/responses/DataIngestResponseSchema"
                 400:
-                    $ref: "#/components/responses/DataInBadRequest"
+                    $ref: "#/components/responses/DataIngestBadRequest"
+                404:
+                    $ref: "#/components/responses/DataIngestNotFound"
+
       /obsrv/v1/datasets:
         post:
             summary: creating datasets into postgres tables
@@ -3802,14 +4489,7 @@ paths:
                     $ref: "#/components/responses/DatasetListResponse"
                 400:
                     $ref: "#/components/responses/DatasetListBadRequest"
-      /obsrv/v1/datasets/preset:
-        get: 
-            summary: API to return default values for config
-            description: ""
-            tags: [Obsrv Dataset APIs]
-            responses:
-                200:
-                    $ref: "#/components/responses/DatasetPresetResponse"
+       
       /obsrv/v1/datasources:
         post:
             summary: creating datasources into postgres tables
@@ -3885,11 +4565,156 @@ paths:
                     $ref: "#/components/responses/DatasourceListResponse"
                 400:
                     $ref: "#/components/responses/DatasourceListBadRequest"
-      /obsrv/v1/datasources/preset:
-        get: 
-            summary: API to return default values for config
-            description: ""
-            tags: [Obsrv Datasource APIs]
+      /obsrv/v1/datasets/source/config:
+        post:
+            summary: creating datasets into postgres tables
+            description: This API allows you to create new datasets in the PostgreSQL database used by the analytical data source.  
+            tags: [Obsrv Dataset Source Config APIs]
+            requestBody:  
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DatasetSourceConfigCreate"
+                        examples:
+                            Example-1:
+                                $ref: "#/components/examples/DatasetSourceConfigCreate"
+            responses:
+                200: 
+                    $ref: "#/components/responses/DatasetSourceConfigCreateResponseSchema"
+                400:
+                    $ref: "#/components/responses/DatasetSourceConfigCreateBadRequest"
+                409:
+                    $ref: "#/components/responses/DatasetSourceConfigCreateDuplicate"
+        patch:
+            summary: API to update existing records in database
+            description:  This API allows you to update existing datasets in the PostgreSQL database used by the analytical data source.  
+            tags: [Obsrv Dataset Source Config APIs]
+            requestBody: 
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DatasetSourceConfigUpdate"
+                        examples:
+                            Example-1:
+                                $ref: "#/components/examples/DatasetSourceConfigUpdate"
+            responses:
+                200: 
+                    $ref: "#/components/responses/DatasetSourceConfigUpdateResponseSchema"
+                400:
+                    $ref: "#/components/responses/DatasetSourceConfigUpdateBadRequest"
+      /obsrv/v1/datasets/source/config/{datasetId}:
+         get:
+          summary: API to read records from database
+          description: This API allows you to retrieve records from a dataset in the PostgreSQL. A successful response will return a status code of 200. If the dataset does not exist, a status code of 404 will be returned.
+          tags:
+              - Obsrv Dataset Source Config APIs
+          parameters:
+              - name: datasetId
+                in: path
+                required: true
+                schema:
+                    type: string
+                    format: uuid
+          responses:
+                  200: 
+                      $ref: "#/components/responses/DatasetSourceConfigReadResponse"
+                  404:
+                      $ref: "#/components/responses/DatasetSoureConfigReadNotFound"
+      /obsrv/v1/datasets/source/config/list:
+        post:
+            summary: API to list records from database
+            description: This API allows you to retrieve a list of records from a dataset in the PostgreSQL database used by the analytical data source. You can specify filters to narrow down the results.
+            tags: [Obsrv Dataset Source Config APIs]
+            requestBody:
+              required: true
+              content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DatasetSourceConfigList"
+                        examples:
+                            Example-1:
+                                $ref: "#/components/examples/DatasetSourceConfigList"
             responses:
                 200:
-                    $ref: "#/components/responses/DatasourcePresetResponse"
+                    $ref: "#/components/responses/DatasetSoureConfigListResponse"
+                400:
+                    $ref: "#/components/responses/DatasetSourceConfigListBadRequest"
+      /obsrv/v1/datasets/transformation:
+        post:
+            summary: creating datasets into postgres tables
+            description: This API allows you to create new datasets in the PostgreSQL database used by the analytical data source.  
+            tags: [Obsrv Dataset Transformation APIs]
+            requestBody:  
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DatasetTransformationCreate"
+                        examples:
+                            Example-1:
+                                $ref: "#/components/examples/DatasetTransformationCreate"
+            responses:
+                200: 
+                    $ref: "#/components/responses/DatasetTransformationCreateResponseSchema"
+                400:
+                    $ref: "#/components/responses/DatasetTransformationCreateBadRequest"
+                409:
+                    $ref: "#/components/responses/DatasetTransformationCreateDuplicate"
+        patch:
+            summary: API to update existing records in database
+            description:  This API allows you to update existing datasets in the PostgreSQL database used by the analytical data source.  
+            tags: [Obsrv Dataset Transformation APIs]
+            requestBody: 
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DatasetTransformationUpdate"
+                        examples:
+                            Example-1:
+                                $ref: "#/components/examples/DatasetTransformationUpdate"
+            responses:
+                200: 
+                    $ref: "#/components/responses/DatasetTransformationUpdateResponseSchema"
+                400:
+                    $ref: "#/components/responses/DatasetTransformationUpdateBadRequest"
+      /obsrv/v1/datasets/transformation/{datasetId}:
+         get:
+          summary: API to read records from database
+          description: This API allows you to retrieve records from a dataset in the PostgreSQL. A successful response will return a status code of 200. If the dataset does not exist, a status code of 404 will be returned.
+          tags:
+              - Obsrv Dataset Transformation APIs
+          parameters:
+              - name: datasetId
+                in: path
+                required: true
+                schema:
+                    type: string
+                    format: uuid
+          responses:
+                  200: 
+                      $ref: "#/components/responses/DatasetTransformationReadResponse"
+                  404:
+                      $ref: "#/components/responses/DatasetTransformationReadNotFound"
+      /obsrv/v1/datasets/transformation/list:
+        post:
+            summary: API to list records from database
+            description: This API allows you to retrieve a list of records from a dataset in the PostgreSQL database used by the analytical data source. You can specify filters to narrow down the results.
+            tags: [Obsrv Dataset Transformation APIs]
+            requestBody:
+              required: true
+              content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DatasetTransformationList"
+                        examples:
+                            Example-1:
+                                $ref: "#/components/examples/DatasetTransformationList"
+            responses:
+                200:
+                    $ref: "#/components/responses/DatasetTransformationListResponse"
+                400:
+                    $ref: "#/components/responses/DatasetTransformationListBadRequest"
+       

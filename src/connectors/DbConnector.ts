@@ -11,7 +11,7 @@ export class DbConnector implements IConnector {
     public typeToMethod = {
         insert: this.insertRecord,
         update: this.updateRecord,
-        read: this.readRecord
+        read: this.readRecords,
     }
     public method: any
     constructor(config: DbConnectorConfig) {
@@ -38,8 +38,7 @@ export class DbConnector implements IConnector {
     }
 
     public async insertRecord(table: string, fields: any) {
-        let fetchedRecords = await this.pool(table).select().where('id', '=', fields.id)
-        return fetchedRecords.length > 0 ? (() => { throw constants.DUPLICATE_RECORD })() : await this.pool(table).insert(fields)
+        await this.pool(table).insert(fields)
     }
 
     public async updateRecord(table: string, fields: any) {
@@ -52,7 +51,7 @@ export class DbConnector implements IConnector {
         })
     }
 
-    public async readRecord(table: string, fields: any) {
+    public async readRecords(table: string, fields: any) {
         const query = this.pool.from(table).select().where((builder) => {
             const filters = fields.filters || {};
             if (filters.status) {
@@ -64,11 +63,11 @@ export class DbConnector implements IConnector {
             }
             delete filters.status;
             builder.where(filters);
-        });
-        const { offset, limit } = fields
-        if (offset && limit) {
-            return query.offset(offset).limit(limit)
-        }
+        })
         return await query
+    }
+
+    public async listRecords(table: string) {
+        return await this.pool.select('*').from(table)
     }
 }

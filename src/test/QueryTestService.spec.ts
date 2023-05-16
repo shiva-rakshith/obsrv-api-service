@@ -7,12 +7,20 @@ import { TestDruidQuery } from "./Fixtures";
 import { config } from "./Config";
 import constants from "../resources/Constants.json";
 import { routesConfig } from "../configs/RoutesConfig";
+import { dbConnector } from "../routes/Router";
+import { QueryValidator } from "../validators/QueryValidator";
+import chaiSpies from 'chai-spies'
+import { result } from "lodash";
+chai.use(chaiSpies)
 chai.should();
 chai.use(chaiHttp);
 
 describe("QUERY API", () => {
     describe("If service is down", () => {
         it("it should raise error when native query endpoint is called", (done) => {
+            chai.spy.on(dbConnector, "readRecords", () => {
+                return [{ "datasource_ref": "sample_ref" }]
+            })
             nock(config.druidHost + ":" + config.druidPort)
                 .post(config.druidEndPoint)
                 .reply(500)
@@ -24,10 +32,14 @@ describe("QUERY API", () => {
                     res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
                     res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
                     nock.cleanAll();
+                    chai.spy.restore(dbConnector, "readRecords")
                     done();
                 });
         });
         it("should raise error when sql query endpoint is called", (done) => {
+            chai.spy.on(dbConnector, "readRecords", () => {
+                return [{ "datasource_ref": "sample_ref" }]
+            })
             nock(config.druidHost + ":" + config.druidPort)
                 .post(config.druidSqlEndPoint)
                 .reply(500)
@@ -39,18 +51,24 @@ describe("QUERY API", () => {
                     res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
                     res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
                     nock.cleanAll();
+                    chai.spy.restore(dbConnector, "readRecords")
                     done();
                 });
         });
     });
     describe("POST /query/v2/native-query", () => {
         beforeEach(() => {
+            chai.spy.on(dbConnector, "readRecords", () => {
+                return [{ "datasource_ref": "sample_ref" }]
+            })
             nock(config.druidHost + ":" + config.druidPort)
                 .post(config.druidEndPoint)
                 .reply(200, [{ events: [] }]);
         });
         afterEach(() => {
-            nock.cleanAll();
+            nock.cleanAll()
+            chai.spy.restore(dbConnector, "readRecords")
+
         });
         it("it should fetch information from druid data source", (done) => {
             chai
@@ -156,10 +174,25 @@ describe("QUERY API", () => {
         });
         // // todo
         it("it should skip validation and allow druid for query if rules does not exist for datasource", (done) => {
+
             chai
                 .request(app)
                 .post(config.apiDruidEndPoint)
                 .send(JSON.parse(TestDruidQuery.UNSUPPORTED_DATA_SOURCE))
+                .end((err, res) => {
+                    res.should.have.status(httpStatus.OK);
+                    res.body.should.be.a("object");
+                    res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
+                    res.body.params.status.should.be.eq(constants.STATUS.SUCCESS);
+                    res.body.id.should.be.eq(routesConfig.query.native_query.api_id);
+                    done();
+                });
+        });
+        it("it should skip validation", (done) => {
+            chai
+                .request(app)
+                .post(config.apiDruidEndPoint)
+                .send(JSON.parse(TestDruidQuery.SKIP_VALIDATION_NATIVE))
                 .end((err, res) => {
                     res.should.have.status(httpStatus.OK);
                     res.body.should.be.a("object");
@@ -216,9 +249,16 @@ describe("QUERY API", () => {
     });
     describe("POST /druid/v2/sql", () => {
         beforeEach(() => {
+            chai.spy.on(dbConnector, "readRecords", () => {
+                return [{ "datasource_ref": "sample_ref" }]
+            })
             nock(config.druidHost + ":" + config.druidPort)
                 .post(config.druidSqlEndPoint)
-                .reply(200);
+                .reply(200, [{ events: [] }]);
+        });
+        afterEach(() => {
+            chai.spy.restore(dbConnector, "readRecords")
+            nock.cleanAll()
         });
         it("it should allow druid to query when a valid sql query is given", (done) => {
             chai
@@ -304,7 +344,54 @@ describe("QUERY API", () => {
                     res.body.params.status.should.be.eq(constants.STATUS.SUCCESS);
                     res.body.id.should.be.eq(routesConfig.query.sql_query.api_id);
                     done();
-                });
-        });
-    });
-});
+                })
+        })
+        it("it should skip validation", (done) => {
+            chai
+                .request(app)
+                .post(config.apiDruidSqlEndPoint)
+                .send(JSON.parse(TestDruidQuery.SKIP_VALIDATION_SQL))
+                .end((err, res) => {
+                    res.should.have.status(httpStatus.OK);
+                    res.body.should.be.a("object");
+                    res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
+                    res.body.params.status.should.be.eq(constants.STATUS.SUCCESS);
+                    res.body.id.should.be.eq(routesConfig.query.sql_query.api_id);
+                    done();
+                })
+        })
+    })
+    describe("error scenarios", () => {
+        it("should handle the error", (done) => {
+            chai.spy.on(dbConnector, "readRecords", () => {
+                throw new Error("error occured while fetching records")
+            })
+            nock(config.druidHost + ":" + config.druidPort)
+                .post(config.druidSqlEndPoint)
+                .reply(200, [{ events: [] }]);
+
+            chai
+                .request(app)
+                .post(config.apiDruidEndPoint)
+                .send(JSON.parse(TestDruidQuery.VALID_QUERY))
+                .end((err, res) => {
+                    res.should.have.status(httpStatus.BAD_REQUEST);
+                    res.body.should.be.a("object");
+                    res.body.id.should.be.eq(routesConfig.query.native_query.api_id);
+                    res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
+                    res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
+                    res.body.result.should.be.empty;
+                    nock.cleanAll()
+                    chai.spy.restore(dbConnector, "readRecords")
+                    done();
+                })
+        })
+    })
+    it("should not validate if called with invalid url", async () => {
+        const queryValidator = new QueryValidator()
+        await queryValidator.validate({}, "obsrv.api")
+            .then((result) => {
+                result.isValid.should.be.equal(false)
+            })
+    })
+})

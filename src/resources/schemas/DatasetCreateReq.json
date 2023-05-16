@@ -92,6 +92,9 @@
         }
     },
     "required": [
-        "dataset_id"
+        "dataset_id",
+        "router_config",
+        "type",
+        "published_date"
     ]
 }

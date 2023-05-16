@@ -11,11 +11,11 @@ export class KafkaConnector implements IConnector {
 
     }
 
-    async execute(req: any, res: any) {
-        await this.telemetryService.dispatch(req, res)
+    async execute(req: any, res: any, topic: any) {
+        await this.telemetryService.dispatch(req, res, topic)
     }
 
     close() {
-        //TODO
+        throw new Error("Method not implemented")
     }
 }

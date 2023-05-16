@@ -1,7 +1,7 @@
 {
     "type": "object",
     "properties": {
-        "id": {
+        "datasource": {
             "type": "string"
         },
         "dataset_id": {
@@ -10,7 +10,7 @@
         "ingestion_spec": {
             "type": "object"
         },
-        "datasource": {
+        "datasource_ref": {
             "type": "string"
         },
         "retention_period": {
@@ -27,8 +27,10 @@
         },
         "status": {
             "type": "string",
-            "enum":["ACTIVE", "DISABLED" ]
-
+            "enum": [
+                "ACTIVE",
+                "DISABLED"
+            ]
         },
         "created_by": {
             "type": "string"
@@ -43,6 +45,5 @@
     "required": [
         "dataset_id",
         "datasource"
-    ],
-    "additionalProperties": false
+    ]
 }

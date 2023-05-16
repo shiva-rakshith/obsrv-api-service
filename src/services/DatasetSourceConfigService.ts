@@ -3,26 +3,24 @@ import { ResponseHandler } from "../helpers/ResponseHandler";
 import constants from "../resources/Constants.json"
 import httpStatus from "http-status";
 import _ from 'lodash'
-import { Datasets } from "../helpers/Datasets";
+import { DatasetSourceConfigs } from "../helpers/DatasetSourceConfigs";
 import { IConnector } from "../models/IngestionModels";
-import { refreshDatasetConfigs } from "../helpers/DatasetConfigs";
 
-export class DatasetService {
+export class DatasetSourceConfigService {
     private table: string
     private dbConnector: IConnector;
     constructor(dbConnector: IConnector) {
         this.dbConnector = dbConnector
-        this.table = "datasets"
+        this.table = "dataset_source_config"
     }
     public save = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const fetchedRecord = await this.dbConnector.execute("read", { table: this.table, fields: { "filters": { "dataset_id": req.body.dataset_id } } })
+            const fetchedRecord = await this.dbConnector.execute("read", { table: this.table, fields: { filters: { "dataset_id": req.body.dataset_id, "connector_type": req.body.connector_type } } })
             if (!_.isEmpty(fetchedRecord)) { throw constants.DUPLICATE_RECORD }
-            const dataset = new Datasets(req.body)
-            const datasetRecord: any = dataset.setValues()
+            const datasetSourceConfig = new DatasetSourceConfigs(req.body)
+            const datasetRecord: any = datasetSourceConfig.setValues()
             this.dbConnector.execute("insert", { "table": this.table, "fields": datasetRecord })
-                .then(async () => {
-                    await refreshDatasetConfigs()
+                .then(() => {
                     ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_SAVED, "dataset_id": datasetRecord.id } })
                 }).catch((error: any) => {
                     console.error(error.message)
@@ -36,23 +34,15 @@ export class DatasetService {
         }
     }
     public update = (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const dataset = new Datasets(req.body)
-            const datasetRecord = dataset.getValues()
-            this.dbConnector.execute("update", { "table": this.table, "fields": { "filters": { "id": datasetRecord.id }, "values": datasetRecord } })
-                .then(async () => {
-                    await refreshDatasetConfigs()
-                    ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_UPDATED, "dataset_id": datasetRecord.id } })
-                }).catch((error: any) => {
-                    console.error(error.message)
-                    next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
-                });
-        }
-        catch (error: any) {
-            console.log(error.message)
-            next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] });
-
-        }
+        const datasetSourceConfig = new DatasetSourceConfigs(req.body)
+        const datasetRecord = datasetSourceConfig.getValues()
+        this.dbConnector.execute("update", { "table": this.table, "fields": { "filters": { "id": datasetRecord.id }, "values": datasetRecord } })
+            .then(() => {
+                ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_UPDATED, "dataset_id": datasetRecord.id } })
+            }).catch((error: any) => {
+                console.error(error.message)
+                next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
+            });
     }
     public read = (req: Request, res: Response, next: NextFunction) => {
         let status: any = req.query.status || "ACTIVE"

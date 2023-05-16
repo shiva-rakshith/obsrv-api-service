@@ -24,6 +24,7 @@ export class QueryService {
       }
       ResponseHandler.successResponse(req, res, { status: result.status, data: _.flatten(mergedResult) });
     } catch (error: any) {
+      console.error(error.message)
       next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
   };
@@ -33,6 +34,7 @@ export class QueryService {
       const result = await this.connector.post(config.query_api.druid.sql_query_path, req.body.querySql);
       ResponseHandler.successResponse(req, res, { status: result.status, data: result.data });
     } catch (error: any) {
+      console.error(error.message)
       next(errorResponse(httpStatus.INTERNAL_SERVER_ERROR, error.message));
     }
   };

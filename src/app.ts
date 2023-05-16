@@ -3,14 +3,12 @@ import { config } from "./configs/Config";
 import { ResponseHandler } from "./helpers/ResponseHandler";
 import { loadExtensions } from "./managers/Extensions";
 import { router } from "./routes/Router";
-import { scrapMetrics } from './helpers/prometheus'
-import bodyParser from "body-parser";
+ import bodyParser from "body-parser";
 const app: Application = express();
  
-app.use(bodyParser.json({ limit: '5mb'}));
+app.use(bodyParser.json({ limit: config.body_parser_limit}));
 app.use(express.json());
-app.use(scrapMetrics());
-
+ 
 loadExtensions(app)
   .finally(() => {
     app.use("/", router);

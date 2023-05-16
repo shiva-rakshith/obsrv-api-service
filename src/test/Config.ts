@@ -9,16 +9,19 @@ const config = {
   apiDatasetUpdateEndPoint: `${routesConfig.config.dataset.update.path}`,
   apiDatasetReadEndPoint: `${routesConfig.config.dataset.read.path}`,
   apiDatasetListEndPoint: `${routesConfig.config.dataset.list.path}`,
-  apiDatasetPresetEndPoint: `${routesConfig.config.dataset.preset.path}`,
   apiDatasourceSaveEndPoint: `${routesConfig.config.datasource.save.path}`,
   apiDatasourceUpdateEndPoint: `${routesConfig.config.datasource.update.path}`,
   apiDatasourceReadEndPoint: `${routesConfig.config.datasource.read.path}`,
   apiDatasourceListEndPoint: `${routesConfig.config.datasource.list.path}`,
-  apiDatasourcePresetEndPoint: `${routesConfig.config.datasource.preset.path}`,
-
-
-
-
+  apiDatasetSourceConfigSaveEndPoint: `${routesConfig.config.dataset_source_config.save.path}`,
+  apiDatasetSourceConfigUpdateEndPoint: `${routesConfig.config.dataset_source_config.update.path}`,
+  apiDatasetSourceConfigReadEndPoint: `${routesConfig.config.dataset_source_config.read.path}`,
+  apiDatasetSourceConfigListEndPoint: `${routesConfig.config.dataset_source_config.list.path}`,
+  apiDatasetTransformationSaveEndPoint: `${routesConfig.config.dataset_transformation.save.path}`,
+  apiDatasetTransformationUpdateEndPoint: `${routesConfig.config.dataset_transformation.update.path}`,
+  apiDatasetTransformationReadEndPoint: `${routesConfig.config.dataset_transformation.read.path}`,
+  apiDatasetTransformationListEndPoint: `${routesConfig.config.dataset_transformation.list.path}`,
+ 
   druidHost: "http://localhost",
   druidPort: 8888,
   druidEndPoint: "/druid/v2",

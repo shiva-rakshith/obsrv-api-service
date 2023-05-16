@@ -3,6 +3,5 @@ RUN mkdir -p /opt/obsrv-api-service
 WORKDIR /opt/obsrv-api-service/
 COPY package*.json ./
 COPY . .
-RUN npm install
 EXPOSE 3000
 CMD ["npm", "run", "start"]

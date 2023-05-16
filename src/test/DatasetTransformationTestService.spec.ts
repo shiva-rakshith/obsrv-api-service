@@ -4,53 +4,33 @@ import chaiHttp from "chai-http";
 import spies from "chai-spies";
 import httpStatus from "http-status";
 import constants from '../resources/Constants.json'
-import { TestDataSource } from "./Fixtures";
+import { TestDatasetTransformation } from "./Fixtures";
 import { config } from "./Config";
 import { routesConfig } from "../configs/RoutesConfig";
 import { dbConnector } from "../routes/Router";
-import { Datasources } from "../helpers/Datasources";
+import { DatasetTransformations } from "../helpers/DatasetTransformations";
 import { ResponseHandler } from "../helpers/ResponseHandler";
 
 chai.use(spies);
 chai.should();
 chai.use(chaiHttp);
 
-describe("Datasource create API", () => {
+describe("Dataset Transformation create API", () => {
     it("should insert a record in the database", (done) => {
         chai.spy.on(dbConnector, "execute", () => {
             return Promise.resolve([])
         })
         chai
             .request(app)
-            .post(config.apiDatasourceSaveEndPoint)
-            .send(TestDataSource.VALID_SCHEMA)
+            .post(config.apiDatasetTransformationSaveEndPoint)
+            .send(TestDatasetTransformation.VALID_SCHEMA)
             .end((err, res) => {
                 res.should.have.status(httpStatus.OK);
-                res.body.should.be.a("object");
+                res.body.should.be.a("object")
                 res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
                 res.body.should.have.property("result");
-                res.body.id.should.be.eq(routesConfig.config.datasource.save.api_id);
+                res.body.id.should.be.eq(routesConfig.config.dataset_transformation.save.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
-                res.body.result.message.should.be.eq(constants.CONFIG.DATASOURCE_SAVED)
-                chai.spy.restore(dbConnector, "execute");
-                done();
-            });
-    });
-    it("should not insert a record when it already exists in database", (done) => {
-        chai.spy.on(dbConnector, "execute", () => {
-            return Promise.resolve([{}])
-        })
-        chai
-            .request(app)
-            .post(config.apiDatasourceSaveEndPoint)
-            .send(TestDataSource.VALID_SCHEMA)
-            .end((err, res) => {
-                res.should.have.status(httpStatus.CONFLICT);
-                res.body.should.be.a("object");
-                res.body.responseCode.should.be.eq(httpStatus["409_NAME"]);
-                res.body.should.have.property("result");
-                res.body.id.should.be.eq(routesConfig.config.datasource.save.api_id);
-                res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
                 chai.spy.restore(dbConnector, "execute");
                 done();
             });
@@ -63,35 +43,54 @@ describe("Datasource create API", () => {
             throw new Error("Error occured while sending response")
         })
         chai
-        .request(app)
-        .post(config.apiDatasourceSaveEndPoint)
-        .send(TestDataSource.VALID_SCHEMA)
-        .end((err, res) => {
-            res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
-            res.body.should.be.a("object");
-            res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
-            res.body.should.have.property("result");
-            res.body.id.should.be.eq(routesConfig.config.datasource.save.api_id);
-            res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
-                chai.spy.restore(dbConnector, "execute");
-                chai.spy.restore(ResponseHandler, "successResponse")
+            .request(app)
+            .post(config.apiDatasetTransformationSaveEndPoint)
+            .send(TestDatasetTransformation.VALID_SCHEMA)
+            .end((err, res) => {
+                res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
+                res.body.should.be.a("object")
+                res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
+                res.body.should.have.property("result")
+                res.body.id.should.be.eq(routesConfig.config.dataset_transformation.save.api_id);
+                res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+                chai.spy.restore(dbConnector, "execute")
+                chai.spy.restore(ResponseHandler, "successResponse");
                 done();
             });
     });
     it("should not insert record in the database", (done) => {
         chai.spy.on(dbConnector, "execute", () => {
-            return Promise.reject(new Error("error occured while connecting to postgres"))
+            return Promise.reject(new Error("error occurred while connecting to postgres"))
         })
         chai
             .request(app)
-            .post(config.apiDatasourceSaveEndPoint)
-            .send(TestDataSource.VALID_SCHEMA)
+            .post(config.apiDatasetTransformationSaveEndPoint)
+            .send(TestDatasetTransformation.VALID_SCHEMA)
             .end((err, res) => {
                 res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
-                res.body.should.be.a("object");
+                res.body.should.be.a("object")
                 res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
-                res.body.should.have.property("result");
-                res.body.id.should.be.eq(routesConfig.config.datasource.save.api_id);
+                res.body.should.have.property("result")
+                res.body.id.should.be.eq(routesConfig.config.dataset_transformation.save.api_id);
+                res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+                chai.spy.restore(dbConnector, "execute");
+                done();
+            });
+    });
+    it("should not insert record if already exists in the database", (done) => {
+        chai.spy.on(dbConnector, "execute", () => {
+            return Promise.resolve([{}])
+        })
+        chai
+            .request(app)
+            .post(config.apiDatasetTransformationSaveEndPoint)
+            .send(TestDatasetTransformation.VALID_SCHEMA)
+            .end((err, res) => {
+                res.should.have.status(httpStatus.CONFLICT);
+                res.body.should.be.a("object")
+                res.body.responseCode.should.be.eq(httpStatus["409_NAME"]);
+                res.body.should.have.property("result")
+                res.body.id.should.be.eq(routesConfig.config.dataset_transformation.save.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
                 chai.spy.restore(dbConnector, "execute");
                 done();
@@ -100,14 +99,14 @@ describe("Datasource create API", () => {
     it("should not insert record when request object contains missing fields", (done) => {
         chai
             .request(app)
-            .post(config.apiDatasourceSaveEndPoint)
-            .send(TestDataSource.MISSING_REQUIRED_FIELDS_CREATE)
+            .post(config.apiDatasetTransformationSaveEndPoint)
+            .send(TestDatasetTransformation.MISSING_REQUIRED_FIELDS_CREATE)
             .end((err, res) => {
                 res.should.have.status(httpStatus.BAD_REQUEST);
-                res.body.should.be.a("object");
+                res.body.should.be.a("object")
                 res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
-                res.body.should.have.property("result");
-                res.body.id.should.be.eq(routesConfig.config.datasource.save.api_id);
+                res.body.should.have.property("result")
+                res.body.id.should.be.eq(routesConfig.config.dataset_transformation.save.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
                 done();
             });
@@ -115,54 +114,53 @@ describe("Datasource create API", () => {
     it("should not insert record when given invalid schema", (done) => {
         chai
             .request(app)
-            .post(config.apiDatasourceSaveEndPoint)
-            .send(TestDataSource.INVALID_SCHEMA)
+            .post(config.apiDatasetTransformationSaveEndPoint)
+            .send(TestDatasetTransformation.INVALID_SCHEMA)
             .end((err, res) => {
                 res.should.have.status(httpStatus.BAD_REQUEST);
-                res.body.should.be.a("object");
+                res.body.should.be.a("object")
                 res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
                 res.body.should.have.property("result");
-                res.body.id.should.be.eq(routesConfig.config.datasource.save.api_id);
+                res.body.id.should.be.eq(routesConfig.config.dataset_transformation.save.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
                 done();
             });
     })
 })
-describe("Datasource update API", () => {
+describe("Dataset Transformation update API", () => {
     it("should successfully update records in database", (done) => {
         chai.spy.on(dbConnector, "execute", () => {
             return Promise.resolve()
         })
         chai
             .request(app)
-            .patch(config.apiDatasourceUpdateEndPoint)
-            .send(TestDataSource.VALID_SCHEMA)
+            .patch(config.apiDatasetTransformationUpdateEndPoint)
+            .send(TestDatasetTransformation.VALID_SCHEMA)
             .end((err, res) => {
                 res.should.have.status(httpStatus.OK);
-                res.body.should.be.a("object");
+                res.body.should.be.a("object")
                 res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
                 res.body.should.have.property("result");
-                res.body.id.should.be.eq(routesConfig.config.datasource.update.api_id);
+                res.body.id.should.be.eq(routesConfig.config.dataset_transformation.update.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
-                res.body.result.message.should.be.eq(constants.CONFIG.DATASOURCE_UPDATED)
                 chai.spy.restore(dbConnector, "execute")
                 done();
             });
     });
     it("should not update records in database", (done) => {
         chai.spy.on(dbConnector, "execute", () => {
-            return Promise.reject(new Error("error occured while connecting to postgres"))
+            return Promise.reject(new Error("error while connecting to postgres"))
         })
         chai
             .request(app)
-            .patch(config.apiDatasourceUpdateEndPoint)
-            .send(TestDataSource.VALID_UPDATE_SCHEMA)
+            .patch(config.apiDatasetTransformationUpdateEndPoint)
+            .send(TestDatasetTransformation.VALID_UPDATE_SCHEMA)
             .end((err, res) => {
                 res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
-                res.body.should.be.a("object");
+                res.body.should.be.a("object")
                 res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
                 res.body.should.have.property("result");
-                res.body.id.should.be.eq(routesConfig.config.datasource.update.api_id);
+                res.body.id.should.be.eq(routesConfig.config.dataset_transformation.update.api_id)
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
                 chai.spy.restore(dbConnector, "execute")
                 done();
@@ -171,90 +169,70 @@ describe("Datasource update API", () => {
     it("should not update records when request object does not contain required fields", (done) => {
         chai
             .request(app)
-            .patch(config.apiDatasourceUpdateEndPoint)
-            .send(TestDataSource.MISSING_REQUIRED_FIELDS_UPDATE)
+            .patch(config.apiDatasetTransformationUpdateEndPoint)
+            .send(TestDatasetTransformation.MISSING_REQUIRED_FIELDS_UPDATE)
             .end((err, res) => {
                 res.should.have.status(httpStatus.BAD_REQUEST);
-                res.body.should.be.a("object");
+                res.body.should.be.a("object")
                 res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
                 res.body.should.have.property("result");
-                res.body.id.should.be.eq(routesConfig.config.datasource.update.api_id);
+                res.body.id.should.be.eq(routesConfig.config.dataset_transformation.update.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
                 done();
             });
     });
-
 })
-describe("Datasource read API", () => {
+describe("Dataset Transformation read API", () => {
     it("should successfully retrieve records from database", (done) => {
         chai.spy.on(dbConnector, "execute", () => {
-            return Promise.resolve([TestDataSource.VALID_RECORD])
+            return Promise.resolve([TestDatasetTransformation.VALID_RECORD])
         })
         chai
             .request(app)
-            .get(config.apiDatasourceReadEndPoint.replace(":datasourceId", TestDataSource.SAMPLE_ID).concat('?status=ACTIVE'))
+            .get(config.apiDatasetTransformationReadEndPoint.replace(":datasetId", TestDatasetTransformation.SAMPLE_ID).concat('?status = ACTIVE'))
             .end((err, res) => {
                 res.should.have.status(httpStatus.OK);
-                res.body.should.be.a("object");
+                res.body.should.be.a("object")
                 res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
                 res.body.should.have.property("result");
-                res.body.id.should.be.eq(routesConfig.config.datasource.read.api_id);
+                res.body.id.should.be.eq(routesConfig.config.dataset_transformation.read.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
                 res.body.result.should.be.a("object")
                 chai.spy.restore(dbConnector, "execute")
                 done();
             })
     }),
-    it("should successfully retrieve records from database", (done) => {
-        chai.spy.on(dbConnector, "execute", () => {
-            return Promise.resolve([TestDataSource.VALID_RECORD])
-        })
-        chai
-            .request(app)
-            .get(config.apiDatasourceReadEndPoint.replace(":datasourceId", TestDataSource.SAMPLE_ID))
-            .end((err, res) => {
-                res.should.have.status(httpStatus.OK);
-                res.body.should.be.a("object");
-                res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
-                res.body.should.have.property("result");
-                res.body.id.should.be.eq(routesConfig.config.datasource.read.api_id);
-                res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
-                res.body.result.should.be.a("object")
-                chai.spy.restore(dbConnector, "execute")
-                done();
-            })
-    }),
-        it("should throw error if records are empty", (done) => {
+        it("should throw error if retrieved record is empty", (done) => {
             chai.spy.on(dbConnector, "execute", () => {
                 return Promise.resolve([])
             })
             chai
                 .request(app)
-                .get(config.apiDatasourceReadEndPoint.replace(":datasourceId", TestDataSource.SAMPLE_ID).concat('?status=ACTIVE'))
+                .get(config.apiDatasetTransformationReadEndPoint.replace(":datasetId", TestDatasetTransformation.SAMPLE_ID).concat('?status=DISABLED'))
                 .end((err, res) => {
                     res.should.have.status(httpStatus.NOT_FOUND);
-                    res.body.should.be.a("object");
+                    res.body.should.be.a("object")
                     res.body.responseCode.should.be.eq(httpStatus["404_NAME"]);
                     res.body.should.have.property("result");
-                    res.body.id.should.be.eq(routesConfig.config.datasource.read.api_id);
+                    res.body.id.should.be.eq(routesConfig.config.dataset_transformation.read.api_id);
                     res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
                     chai.spy.restore(dbConnector, "execute")
                     done();
                 })
         }),
-        it("should not retrieve records", (done) => {
+        it("should not retrieve records from database", (done) => {
             chai.spy.on(dbConnector, "execute", () => {
                 return Promise.reject(new Error("error while connecting to postgres"))
             })
             chai
                 .request(app)
-                .get(config.apiDatasourceReadEndPoint.replace(":datasourceId", TestDataSource.SAMPLE_ID).concat('?status=ACTIVE'))
+                .get(config.apiDatasetTransformationReadEndPoint.replace(":datasetId", TestDatasetTransformation.SAMPLE_ID).concat('?status=DISABLED'))
                 .end((err, res) => {
                     res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
-                    res.body.should.be.a("object");
+                    res.body.should.be.a("object")
                     res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
                     res.body.should.have.property("result");
-                    res.body.id.should.be.eq(routesConfig.config.datasource.read.api_id);
+                    res.body.id.should.be.eq(routesConfig.config.dataset_transformation.read.api_id);
                     res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
                     chai.spy.restore(dbConnector, "execute")
                     done();
@@ -262,21 +240,21 @@ describe("Datasource read API", () => {
         })
 
 })
-describe("Datasource list API", () => {
+describe("Dataset Transformation list API", () => {
     it("should successfully list records in the table", (done) => {
         chai.spy.on(dbConnector, "execute", () => {
-            return Promise.resolve([{}])
+            return Promise.resolve([{}, {}, {}])
         })
         chai
             .request(app)
-            .post(config.apiDatasourceListEndPoint)
-            .send(TestDataSource.VALID_LIST_REQUEST_DISABLED_STATUS)
+            .post(config.apiDatasetTransformationListEndPoint)
+            .send(TestDatasetTransformation.VALID_LIST_REQUEST_ACTIVE_STATUS)
             .end((err, res) => {
                 res.should.have.status(httpStatus.OK);
-                res.body.should.be.a("object");
+                res.body.should.be.a("object")
                 res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
                 res.body.should.have.property("result");
-                res.body.id.should.be.eq(routesConfig.config.datasource.list.api_id);
+                res.body.id.should.be.eq(routesConfig.config.dataset_transformation.list.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
                 res.body.result.should.be.a("array")
                 chai.spy.restore(dbConnector, "execute")
@@ -286,14 +264,16 @@ describe("Datasource list API", () => {
     it("should not list records if request object is invalid", (done) => {
         chai
             .request(app)
-            .post(config.apiDatasourceListEndPoint)
-            .send({ "filters": true })
+            .post(config.apiDatasetTransformationListEndPoint)
+            .send({
+                "filters": true
+            })
             .end((err, res) => {
                 res.should.have.status(httpStatus.BAD_REQUEST);
-                res.body.should.be.a("object");
+                res.body.should.be.a("object")
                 res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
                 res.body.should.have.property("result");
-                res.body.id.should.be.eq(routesConfig.config.datasource.list.api_id);
+                res.body.id.should.be.eq(routesConfig.config.dataset_transformation.list.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
                 done();
             });
@@ -304,17 +284,19 @@ describe("Datasource list API", () => {
         })
         chai
             .request(app)
-            .post(config.apiDatasourceListEndPoint)
-            .send(TestDataSource.VALID_LIST_REQUEST_ACTIVE_STATUS)
+            .post(config.apiDatasetTransformationListEndPoint)
+            .send(TestDatasetTransformation.VALID_LIST_REQUEST_DISABLED_STATUS)
             .end((err, res) => {
                 res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
-                res.body.should.be.a("object");
+                res.body.should.be.a("object")
                 res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
                 res.body.should.have.property("result");
-                res.body.id.should.be.eq(routesConfig.config.datasource.list.api_id);
+                res.body.id.should.be.eq(routesConfig.config.dataset_transformation.list.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
                 chai.spy.restore(dbConnector, "execute")
                 done();
             })
     })
+
+
 })
