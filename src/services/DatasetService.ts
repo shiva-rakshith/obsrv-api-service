@@ -6,6 +6,7 @@ import _ from 'lodash'
 import { Datasets } from "../helpers/Datasets";
 import { IConnector } from "../models/IngestionModels";
 import { refreshDatasetConfigs } from "../helpers/DatasetConfigs";
+import { findAndSetExistingRecord, setAuditState } from "./telemetry";
 
 export class DatasetService {
     private table: string
@@ -26,30 +27,34 @@ export class DatasetService {
                     ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_SAVED, "dataset_id": datasetRecord.id } })
                 }).catch((error: any) => {
                     console.error(error.message)
+                    setAuditState("failed", req);
                     next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
                 })
         }
         catch (error: any) {
             console.error(error.message)
+            setAuditState("failed", req);
             next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] });
-
         }
     }
-    public update = (req: Request, res: Response, next: NextFunction) => {
+    public update = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const dataset = new Datasets(req.body)
             const datasetRecord = dataset.getValues()
+            await findAndSetExistingRecord({ dbConnector: this.dbConnector, table: this.table, request: req, filters: { "id": datasetRecord.id }, object: { id: datasetRecord.id, type: "dataset" } });
             this.dbConnector.execute("update", { "table": this.table, "fields": { "filters": { "id": datasetRecord.id }, "values": datasetRecord } })
                 .then(async () => {
                     await refreshDatasetConfigs()
                     ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_UPDATED, "dataset_id": datasetRecord.id } })
                 }).catch((error: any) => {
                     console.error(error.message)
+                    setAuditState("failed", req);
                     next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
                 });
         }
         catch (error: any) {
             console.log(error.message)
+            setAuditState("failed", req);
             next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] });
 
         }

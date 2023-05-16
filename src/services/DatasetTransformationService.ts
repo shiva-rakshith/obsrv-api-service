@@ -5,6 +5,7 @@ import httpStatus from "http-status";
 import _ from 'lodash'
 import { DatasetTransformations } from "../helpers/DatasetTransformations";
 import { IConnector } from "../models/IngestionModels";
+import { findAndSetExistingRecord, setAuditState } from "./telemetry";
 
 export class DatasetTransformationService {
     private table: string
@@ -25,23 +26,27 @@ export class DatasetTransformationService {
                     ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_SAVED, "dataset_id": datasetRecord.id } })
                 }).catch((error: any) => {
                     console.error(error.message)
+                    setAuditState("failed", req);
                     next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
                 })
         }
         catch (error: any) {
             console.error(error.message)
+            setAuditState("failed", req);
             next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] });
 
         }
     }
-    public update = (req: Request, res: Response, next: NextFunction) => {
+    public update = async (req: Request, res: Response, next: NextFunction) => {
         const datasetTransformation = new DatasetTransformations(req.body)
         const datasetRecord = datasetTransformation.getValues()
+        await findAndSetExistingRecord({ dbConnector: this.dbConnector, table: this.table, request: req, filters: { "id": datasetRecord.id }, object: { id: datasetRecord.id, type: "transformation" } });
         this.dbConnector.execute("update", { "table": this.table, "fields": { "filters": { "id": datasetRecord.id }, "values": datasetRecord } })
             .then(() => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_UPDATED, "dataset_id": datasetRecord.id } })
             }).catch((error: any) => {
                 console.error(error.message)
+                setAuditState("failed", req);
                 next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
             });
     }
