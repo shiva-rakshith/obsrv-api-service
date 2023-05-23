@@ -31,7 +31,7 @@ describe("Datasource create API", () => {
                 res.body.should.have.property("result");
                 res.body.id.should.be.eq(routesConfig.config.datasource.save.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
-                res.body.result.message.should.be.eq(constants.CONFIG.DATASOURCE_SAVED)
+                res.body.result.message.should.be.eq(constants.RECORD_SAVED)
                 chai.spy.restore(dbConnector, "execute");
                 done();
             });
@@ -144,7 +144,7 @@ describe("Datasource update API", () => {
                 res.body.should.have.property("result");
                 res.body.id.should.be.eq(routesConfig.config.datasource.update.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
-                res.body.result.message.should.be.eq(constants.CONFIG.DATASOURCE_UPDATED)
+                res.body.result.message.should.be.eq(constants.RECORD_UPDATED)
                 chai.spy.restore(dbConnector, "execute")
                 done();
             });

@@ -70,6 +70,30 @@ describe("DATA INGEST API", () => {
             })
     });
     it("it should not ingest data successfully", (done) => {
+        chai.spy.on(dbConnector, "listRecords", () => {
+            return Promise.reject(new Error("error occurred while connecting to postgres"))
+        })
+        chai.spy.on(globalCache, 'get', () => {
+            return [{ "id": ":datasetId", "dataset_config": { "entry_topic": "topic" } }]
+        })
+         
+        chai
+            .request(app)
+            .post(config.apiDatasetIngestEndPoint)
+            .send(TestDataIngestion.SAMPLE_INPUT)
+            .end((err, res) => {
+                res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
+                res.body.should.be.a("object");
+                res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
+                res.body.should.have.property("result");
+                res.body.id.should.be.eq(routesConfig.data_ingest.api_id);
+                res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+                chai.spy.restore(dbConnector, "listRecords")
+                chai.spy.restore(globalCache, 'get')
+                 done()
+            })
+    });
+    it("it should not ingest data successfully", (done) => {
         chai.spy.on(globalCache, 'get', () => {
             return [{}]
         })
