@@ -23,10 +23,10 @@ export const kafkaConnector = new KafkaConnector()
 
 export const dbConnector = new DbConnector(config.db_connector_config);
 
-export const datasourceService = new DataSourceService(dbConnector);
-export const datasetService = new DatasetService(dbConnector);
-export const datasetSourceConfigService = new DatasetSourceConfigService(dbConnector);
-export const datasetTransformationService = new DatasetTransformationService(dbConnector);
+export const datasourceService = new DataSourceService(dbConnector, config.table_names.datasources);
+export const datasetService = new DatasetService(dbConnector, config.table_names.datasets);
+export const datasetSourceConfigService = new DatasetSourceConfigService(dbConnector, config.table_names.datasetSourceConfig);
+export const datasetTransformationService = new DatasetTransformationService(dbConnector, config.table_names.datasetTransformations);
 export const ingestorService = new IngestorService(kafkaConnector);
 export const globalCache: any = new Map()
 const router = express.Router()

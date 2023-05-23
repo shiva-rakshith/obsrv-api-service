@@ -1,35 +1,25 @@
 import { Request, Response, NextFunction } from "express";
 import { ResponseHandler } from "../helpers/ResponseHandler";
-import constants from "../resources/Constants.json"
 import httpStatus from "http-status";
 import _ from 'lodash'
 import { Datasets } from "../helpers/Datasets";
 import { IConnector } from "../models/IngestionModels";
-import { refreshDatasetConfigs } from "../helpers/DatasetConfigs";
 import { findAndSetExistingRecord, setAuditState } from "./telemetry";
-
+import { DbUtil } from "../helpers/DbUtil";
 export class DatasetService {
     private table: string
     private dbConnector: IConnector;
-    constructor(dbConnector: IConnector) {
+    private dbUtil: DbUtil
+    constructor(dbConnector: IConnector, table: string) {
         this.dbConnector = dbConnector
-        this.table = "datasets"
+        this.table = table
+        this.dbUtil = new DbUtil(dbConnector, table)
     }
     public save = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const fetchedRecord = await this.dbConnector.execute("read", { table: this.table, fields: { "filters": { "dataset_id": req.body.dataset_id } } })
-            if (!_.isEmpty(fetchedRecord)) { throw constants.DUPLICATE_RECORD }
             const dataset = new Datasets(req.body)
-            const datasetRecord: any = dataset.setValues()
-            this.dbConnector.execute("insert", { "table": this.table, "fields": datasetRecord })
-                .then(async () => {
-                    await refreshDatasetConfigs()
-                    ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_SAVED, "dataset_id": datasetRecord.id } })
-                }).catch((error: any) => {
-                    console.error(error.message)
-                    setAuditState("failed", req);
-                    next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
-                })
+            const payload: any = dataset.setValues()
+            await this.dbUtil.save(req, res, next, payload)
         }
         catch (error: any) {
             console.error(error.message)
@@ -40,46 +30,36 @@ export class DatasetService {
     public update = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const dataset = new Datasets(req.body)
-            const datasetRecord = dataset.getValues()
-            await findAndSetExistingRecord({ dbConnector: this.dbConnector, table: this.table, request: req, filters: { "id": datasetRecord.id }, object: { id: datasetRecord.id, type: "dataset" } });
-            this.dbConnector.execute("update", { "table": this.table, "fields": { "filters": { "id": datasetRecord.id }, "values": datasetRecord } })
-                .then(async () => {
-                    await refreshDatasetConfigs()
-                    ResponseHandler.successResponse(req, res, { status: 200, data: { "message": constants.CONFIG.DATASET_UPDATED, "dataset_id": datasetRecord.id } })
-                }).catch((error: any) => {
-                    console.error(error.message)
-                    setAuditState("failed", req);
-                    next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
-                });
-        }
+            const payload = dataset.getValues()
+            await findAndSetExistingRecord({ dbConnector: this.dbConnector, table: this.table, request: req, filters: { "id": payload.id }, object: { id: payload.id, type: "dataset" } });
+            await this.dbUtil.update(req, res, next, payload)
+         }
         catch (error: any) {
             console.log(error.message)
             setAuditState("failed", req);
             next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] });
-
         }
     }
-    public read = (req: Request, res: Response, next: NextFunction) => {
-        let status: any = req.query.status || "ACTIVE"
-        const id = req.params.datasetId
-        this.dbConnector.execute("read", { "table": this.table, "fields": { "filters": { "id": id, "status": status } } })
-            .then((data: any[]) => {
-                !_.isEmpty(data) ? ResponseHandler.successResponse(req, res, { status: 200, data: _.first(data) }) : (() => {
-                    throw constants.RECORD_NOT_FOUND
-                })()
-            }).catch((error: any) => {
-                console.error(error.message)
-                next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
-            });
+    public read = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            let status: any = req.query.status || "ACTIVE"
+            const id = req.params.datasetId 
+            await this.dbUtil.read(req, res, next, { id, status })
+        }
+        catch (error: any) {
+            console.log(error.message)
+            next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] });
+        }
     }
-    public list = (req: Request, res: Response, next: NextFunction) => {
-        const fields = req.body
-        this.dbConnector.execute("read", { "table": this.table, "fields": fields })
-            .then((data: any) => {
-                ResponseHandler.successResponse(req, res, { status: 200, data: data })
-            }).catch((error: any) => {
-                console.error(error.message)
-                next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] })
-            });
+    public list = async (req: Request, res: Response, next: NextFunction) => {
+        try{
+        const payload = req.body
+        await this.dbUtil.list(req, res, next, payload)
+         
+     }
+    catch (error: any) {
+        console.log(error.message)
+        next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message, errCode: error.code || httpStatus["500_NAME"] });
     }
+}
 }

@@ -57,5 +57,29 @@ export const config = {
     "redis_port": process.env.redis_port || 6379
   },
   "exclude_datasource_validation": ["system-stats", "failed-events-summary"],
-  "telemetry_dataset": process.env.telemetry_dataset || "telemetry"
+  "telemetry_dataset": process.env.telemetry_dataset || "telemetry",
+  "table_names": {
+    "datasets": "datasets",
+    "datasources": "datasources",
+    "datasetSourceConfig": "dataset_source_config",
+    "datasetTransformations": "dataset_transformations"
+  },
+  "table_config": {
+    "datasets": {
+      "pk": "id",
+      "references": []
+    },
+    "datasources": {
+      "pk": "id",
+      "references": []
+    },
+    "dataset_source_config": {
+      "pk": "id",
+      "references": []
+    },
+    "dataset_transformations": {
+      "pk": "id",
+      "references": []
+    }
+  }
 }
