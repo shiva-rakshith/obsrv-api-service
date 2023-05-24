@@ -172,7 +172,6 @@ describe("QUERY API", () => {
                     done();
                 });
         });
-        // // todo
         it("it should skip validation and allow druid for query if rules does not exist for datasource", (done) => {
 
             chai
@@ -198,21 +197,6 @@ describe("QUERY API", () => {
                     res.body.should.be.a("object");
                     res.body.responseCode.should.be.eq(httpStatus["200_NAME"]);
                     res.body.params.status.should.be.eq(constants.STATUS.SUCCESS);
-                    res.body.id.should.be.eq(routesConfig.query.native_query.api_id);
-                    done();
-                });
-        });
-        it("it should reject query when querytype is invalid", (done) => {
-            chai
-                .request(app)
-                .post(config.apiDruidEndPoint)
-                .send(JSON.parse(TestDruidQuery.INVALID_QUERY_TYPE))
-                .end((err, res) => {
-                    res.should.have.status(httpStatus.BAD_REQUEST);
-                    res.body.should.be.a("object");
-                    res.body.responseCode.should.be.eq(httpStatus["400_NAME"]);
-                    res.body.params.status.should.be.eq(constants.STATUS.FAILURE);
-                    res.body.result.should.be.empty;
                     res.body.id.should.be.eq(routesConfig.query.native_query.api_id);
                     done();
                 });

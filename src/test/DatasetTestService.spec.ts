@@ -17,14 +17,6 @@ chai.should();
 chai.use(chaiHttp);
 
 describe("Dataset create API", () => {
-    beforeEach(() => {
-        chai.spy.on(dbConnector, "listRecords", () => {
-            Promise.resolve()
-        })
-    })
-    afterEach(() => {
-        chai.spy.restore(dbConnector, "listRecords")
-    })
     it("should insert a record in the database", (done) => {
         chai.spy.on(dbConnector, "execute", () => {
             return Promise.resolve([])

@@ -1,6 +1,6 @@
 import httpStatus from "http-status";
-import _, { pullAll } from "lodash";
-import moment, { Moment, relativeTimeRounding } from "moment";
+import _  from "lodash";
+import moment, { Moment} from "moment";
 import { queryRules } from "../configs/QueryRules";
 import { IValidator } from "../models/DatasetModels";
 import { ICommonRules, ILimits, IQuery, IQueryTypeRules, IRules } from "../models/QueryModels";
@@ -51,7 +51,7 @@ export class QueryValidator implements IValidator {
         let fromDate: Moment | undefined, toDate: Moment | undefined;
         let allowedRange = limits.maxDateRange;
         if (queryPayload.query) {
-            const dateRange = queryPayload.query.intervals;
+            const dateRange = this.getIntervals(queryPayload.query);
             const extractedDateRange = Array.isArray(dateRange) ? dateRange[0].split("/") : dateRange.toString().split("/");
             fromDate = moment(extractedDateRange[0], "YYYY-MM-DD HH:MI:SS");
             toDate = moment(extractedDateRange[1], "YYYY-MM-DD HH:MI:SS");
@@ -74,7 +74,9 @@ export class QueryValidator implements IValidator {
             let dataSource = query.substring(query.indexOf("FROM")).split(" ")[1];
             return dataSource.replace(/"/g, "");
         } else {
-            return queryPayload.query.dataSource;
+            const dataSourceField: any = queryPayload.query.dataSource
+            if (typeof dataSourceField == 'object') { return dataSourceField.name }
+            return dataSourceField
         }
     };
 
@@ -146,5 +148,9 @@ export class QueryValidator implements IValidator {
     public async getDataSourceRef(datasource: string): Promise<string> {
         const record: any = await dbConnector.readRecords("datasources", { "filters": { "datasource": datasource } })
         return record[0].datasource_ref
+    }
+
+    private getIntervals(payload: any) {
+        return (typeof payload.intervals == 'object' && !Array.isArray(payload.intervals)) ? payload.intervals.intervals : payload.intervals
     }
 }
