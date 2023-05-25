@@ -10,7 +10,7 @@ import { routesConfig } from "../configs/RoutesConfig";
 import { dbConnector } from "../routes/Router";
 import { QueryValidator } from "../validators/QueryValidator";
 import chaiSpies from 'chai-spies'
-import { result } from "lodash";
+import { describe, it } from 'mocha';
 chai.use(chaiSpies)
 chai.should();
 chai.use(chaiHttp);

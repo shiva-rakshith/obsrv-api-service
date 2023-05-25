@@ -8,7 +8,7 @@ import { config } from "./Config";
 import { routesConfig } from "../configs/RoutesConfig";
 import constants from "../resources/Constants.json"
 import { dbConnector, globalCache, ingestorService, kafkaConnector } from "../routes/Router";
-import { linearBuckets } from "prom-client";
+import { describe, it } from 'mocha';
 
 chai.use(spies);
 chai.should();
