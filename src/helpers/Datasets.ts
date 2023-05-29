@@ -16,6 +16,7 @@ export class Datasets {
     private router_config: object
     private denorm_config: object
     private dataset_config: object
+    private tags: any
     private status: string
     private created_by: string
     private updated_by: string
@@ -37,6 +38,7 @@ export class Datasets {
         this.router_config = payload.router_config
         this.denorm_config = payload.denorm_config
         this.dataset_config = payload.dataset_config
+        this.tags = payload.tags
         this.status = payload.status
         this.created_by = payload.created_by
         this.updated_by = payload.updated_by
@@ -44,7 +46,7 @@ export class Datasets {
     }
 
     public getValues() {
-        return Object.assign(this.removeNullValues({ id: this.id, dataset_id: this.dataset_id, type: this.type, name: this.name, validation_config: this.validation_config, extraction_config: this.extraction_config, dedup_config: this.dedup_config, data_schema: this.data_schema, router_config: this.router_config, denorm_config: this.denorm_config, dataset_config: this.dataset_config, status: this.status, created_by: this.created_by, updated_by: this.updated_by, published_date: this.published_date }), { "updated_date": new Date })
+        return Object.assign(this.removeNullValues({ id: this.id, dataset_id: this.dataset_id, type: this.type, name: this.name, validation_config: this.validation_config, extraction_config: this.extraction_config, dedup_config: this.dedup_config, data_schema: this.data_schema, router_config: this.router_config, denorm_config: this.denorm_config, dataset_config: this.dataset_config, tags: this.tags, status: this.status, created_by: this.created_by, updated_by: this.updated_by, published_date: this.published_date }), { "updated_date": new Date })
     }
 
     public setValues() {
