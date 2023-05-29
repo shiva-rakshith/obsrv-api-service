@@ -4,8 +4,7 @@ import constants from "../resources/Constants.json";
 import { config } from "../configs/Config";
 import _ from "lodash";
 import { IConnector } from "../models/DatasetModels";
-import { refreshDatasetConfigs } from "./DatasetConfigs";
-
+ 
 export class DbUtil {
     private dbConnector: IConnector
     private table: string
@@ -17,7 +16,6 @@ export class DbUtil {
         const filters = this.getFilters(this.table, fields)
         const fetchedRecord = await this.dbConnector.execute("read", { table: this.table, fields: { "filters": filters } })
         if (!_.isEmpty(fetchedRecord)) { throw constants.DUPLICATE_RECORD }
-        console.log(`Saving record in table ${this.table} with entry ${JSON.stringify(filters)}`)
         await this.dbConnector.execute("insert", { "table": this.table, "fields": fields })
              .then(() => {
                 console.log(constants.RECORD_SAVED)
@@ -26,7 +24,6 @@ export class DbUtil {
     }
     public update = async (req: Request, res: Response, next: NextFunction, fields: any) => {
         const filters = this.getFilters(this.table, fields)
-        console.log(`Updating record in table ${this.table} with entry ${JSON.stringify(filters)}`)
         await this.dbConnector.execute("update", { "table": this.table, "fields": { "filters": filters, "values": fields } })
              .then(() => {
                 console.log(constants.RECORD_UPDATED)
@@ -35,7 +32,6 @@ export class DbUtil {
     }
     public upsert = async (req: Request, res: Response, next: NextFunction, fields: any) => {
         const filters = this.getFilters(this.table, fields)
-        console.log(`Updating record in table ${this.table} with entry ${JSON.stringify(filters)}`)
         await this.dbConnector.execute("upsert", { "table": this.table, "fields": { "filters": filters, "values": fields } })
             .then(() => {
                 console.log(constants.RECORD_UPDATED)
@@ -44,14 +40,12 @@ export class DbUtil {
     }
     public read = async (req: Request, res: Response, next: NextFunction, fields: any) => {
         const filters = this.getFilters(this.table, fields)
-        console.log(`Fetching record from ${this.table} with entry ${JSON.stringify(filters)}`)
         await this.dbConnector.execute("read", { "table": this.table, "fields": { "filters": filters } })
             .then((data: any[]) => {
                 !_.isEmpty(data) ? ResponseHandler.successResponse(req, res, { status: 200, data: _.first(data) }) : (() => { throw constants.RECORD_NOT_FOUND; })()
             })
     }
     public list = async (req: Request, res: Response, next: NextFunction, fields: any) => {
-        console.log(`Fetching records from ${this.table} with entry ${JSON.stringify(fields.filters)}`)
         await this.dbConnector.execute("read", { "table": this.table, "fields": fields })
             .then((data: any) => {
                 ResponseHandler.successResponse(req, res, { status: 200, data: data });
@@ -60,7 +54,7 @@ export class DbUtil {
     private getFilters = (table: string, fields: any) => {
         let filters: any = {}
         const table_config: any = config["table_config"][table as keyof typeof config.table_config]
-        filters[table_config["pk"]] = fields[table_config["pk"]]
+        filters[table_config["primary_key"]] = fields[table_config["primary_key"]]
         return filters
     }
 }
