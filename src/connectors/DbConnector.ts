@@ -46,6 +46,7 @@ export class DbConnector implements IConnector {
         await this.pool.transaction(async (dbTransaction) => {
             const currentRecord = await dbTransaction(table).select(Object.keys(values)).where(filters).first()
             if (_.isUndefined(currentRecord)) { throw constants.FAILED_RECORD_UPDATE }
+            if (!_.isUndefined(currentRecord.tags)) { delete currentRecord.tags }
             await dbTransaction(table).where(filters).update(schemaMerger.mergeSchema(currentRecord, values)
             )
         })
