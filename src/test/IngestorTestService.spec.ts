@@ -8,7 +8,7 @@ import { config } from "./Config";
 import { routesConfig } from "../configs/RoutesConfig";
 import constants from "../resources/Constants.json"
 import { dbConnector, globalCache, ingestorService, kafkaConnector } from "../routes/Router";
-import { linearBuckets } from "prom-client";
+import { describe, it } from 'mocha';
 
 chai.use(spies);
 chai.should();
@@ -67,6 +67,30 @@ describe("DATA INGEST API", () => {
                 chai.spy.restore(globalCache, 'get')
                 chai.spy.restore(kafkaConnector.telemetryService, "dispatch")
                 done()
+            })
+    });
+    it("it should not ingest data successfully", (done) => {
+        chai.spy.on(dbConnector, "listRecords", () => {
+            return Promise.reject(new Error("error occurred while connecting to postgres"))
+        })
+        chai.spy.on(globalCache, 'get', () => {
+            return [{ "id": ":datasetId", "dataset_config": { "entry_topic": "topic" } }]
+        })
+         
+        chai
+            .request(app)
+            .post(config.apiDatasetIngestEndPoint)
+            .send(TestDataIngestion.SAMPLE_INPUT)
+            .end((err, res) => {
+                res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
+                res.body.should.be.a("object");
+                res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
+                res.body.should.have.property("result");
+                res.body.id.should.be.eq(routesConfig.data_ingest.api_id);
+                res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+                chai.spy.restore(dbConnector, "listRecords")
+                chai.spy.restore(globalCache, 'get')
+                 done()
             })
     });
     it("it should not ingest data successfully", (done) => {

@@ -8,7 +8,7 @@ export interface ISchemaGenerator {
 }
 export interface IConnector {
     connect(): any;
-    execute(sample: any, type?: string): any;
+    execute(sample: any, type?: any): any;
     close(): any
 }
 
@@ -33,3 +33,4 @@ export interface Result {
     data: object;
     status: number;
 }
+

@@ -9,22 +9,14 @@ import { config } from "./Config";
 import { routesConfig } from "../configs/RoutesConfig";
 import { dbConnector } from "../routes/Router";
 import { Datasets } from "../helpers/Datasets";
-import { ResponseHandler } from "../helpers/ResponseHandler";
-import { refreshDatasetConfigs } from "../helpers/DatasetConfigs";
+import { describe, it } from 'mocha';
+
 
 chai.use(spies);
 chai.should();
 chai.use(chaiHttp);
 
 describe("Dataset create API", () => {
-    beforeEach(() => {
-        chai.spy.on(dbConnector, "listRecords", () => {
-            Promise.resolve()
-        })
-    })
-    afterEach(() => {
-        chai.spy.restore(dbConnector, "listRecords")
-    })
     it("should insert a record in the database", (done) => {
         chai.spy.on(dbConnector, "execute", () => {
             return Promise.resolve([])
@@ -313,29 +305,6 @@ describe("Dataset list API", () => {
 })
 
 describe("Error scenarios in Dataset API", () => {
-    it("should not insert a record in the database if it failes to update cache", (done) => {
-        chai.spy.on(dbConnector, "listRecords", () => {
-            return Promise.reject(new Error("error while connecting to postgres"))
-        })
-        chai.spy.on(dbConnector, "execute", () => {
-            return Promise.resolve([])
-        })
-        chai
-            .request(app)
-            .post(config.apiDatasetSaveEndPoint)
-            .send(TestDataset.VALID_SCHEMA)
-            .end((err, res) => {
-                res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
-                res.body.should.be.a("object")
-                res.body.responseCode.should.be.eq(httpStatus["500_NAME"]);
-                res.body.should.have.property("result");
-                res.body.id.should.be.eq(routesConfig.config.dataset.save.api_id);
-                res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
-                chai.spy.restore(dbConnector, "listRecords")
-                chai.spy.restore(dbConnector, "execute");
-                done()
-            })
-    })
     it("should not update records in database", (done) => {
         chai.spy.on(Datasets.prototype, "getValues", () => {
             throw new Error("error occured while parsing data")

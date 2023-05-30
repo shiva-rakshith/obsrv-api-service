@@ -20,9 +20,10 @@ export const defaultConfig = {
             "dedup_key": "id",
             "dedup_period": 3
         },
-         "router_config": {
+        "router_config": {
             "topic": ""
         },
+        "tags": [],
         "status": "ACTIVE",
         "created_by": "SYSTEM",
         "updated_by": "SYSTEM"
@@ -49,6 +50,7 @@ export const defaultConfig = {
         "router_config": {
             "topic": ""
         },
+        "tags": [],
         "status": "ACTIVE",
         "created_by": "SYSTEM",
         "updated_by": "SYSTEM"

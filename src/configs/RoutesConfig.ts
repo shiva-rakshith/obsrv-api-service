@@ -8,10 +8,20 @@ export const routesConfig = {
       method: "post",
       path: "/obsrv/v1/query"
     },
+    native_query_with_params: {
+      api_id: "obsrv.native.query",
+      method: "post",
+      path: "/obsrv/v1/query/:datasourceId"
+    },
     sql_query: {
       api_id: "obsrv.sql.query",
       method: "post",
       path: "/obsrv/v1/sql-query"
+    },
+    sql_query_with_params: {
+      api_id: "obsrv.sql.query",
+      method: "post",
+      path: "/obsrv/v1/sql-query/:datasourceId"
     }
   },
   config: {
