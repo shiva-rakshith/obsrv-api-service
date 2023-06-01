@@ -61,8 +61,7 @@ export const config = {
   "table_names": {     // Names of all tables available for CRUD operations
     "datasets": "datasets",
     "datasources": "datasources",
-    "datasetSourceConfig": "dataset_source_config",
-    "datasetTransformations": "dataset_transformations"
+    "datasetSourceConfig": "dataset_source_config"
   },
   "table_config": {   // This object defines the configuration for each table.
     "datasets": {
@@ -74,10 +73,6 @@ export const config = {
       "references": []
     },
     "dataset_source_config": {
-      "primary_key": "id",
-      "references": []
-    },
-    "dataset_transformations": {
       "primary_key": "id",
       "references": []
     }

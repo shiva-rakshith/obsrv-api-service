@@ -90,28 +90,6 @@ export const routesConfig = {
         method: "post",
         path: "/obsrv/v1/datasets/source/config/list"
       }
-    },
-    dataset_transformation: {
-      save: {
-        api_id: "obsrv.config.dataset.transformation.create",
-        method: "post",
-        path: "/obsrv/v1/datasets/transformation"
-      },
-      read: {
-        api_id: "obsrv.config.dataset.transformation.read",
-        method: "get",
-        path: "/obsrv/v1/datasets/transformation/:datasetId"
-      },
-      update: {
-        api_id: "obsrv.config.dataset.transformation.update",
-        method: "patch",
-        path: "/obsrv/v1/datasets/transformation"
-      },
-      list: {
-        api_id: "obsrv.config.dataset.transformation.list",
-        method: "post",
-        path: "/obsrv/v1/datasets/transformation/list"
-      }
     }
 
   },
