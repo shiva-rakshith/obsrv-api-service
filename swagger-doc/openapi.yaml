@@ -34,8 +34,6 @@ tags:
     description: The Datsources APIs provide a way to interact with a database and allow you to create, read, update records in the database, as well as list multiple records based on certain criteria.
   - name: Obsrv Dataset Source Config APIs
     description: The Dataset Source Config APIs provide a way to interact with a database and allow you to create, read, update records in the database, as well as list multiple records based on certain criteria.
-  - name: Obsrv Dataset Transformation APIs
-    description: The Dataset Transformation APIs provide a way to interact with a database and allow you to create, read, update records in the database, as well as list multiple records based on certain criteria.
 
 components:
   schemas:
@@ -77,47 +75,6 @@ components:
           type: string
         connector_stats:
           type: object
-        created_by:
-          type: string
-        updated_by:
-          type: string
-        published_date:
-          type: string
-    DatasetTransformationCreate:
-      description: dataset_id, field_key are required
-      type: object
-      properties:
-        id:
-          type: string
-        dataset_id:
-          type: string
-        field_key:
-          type: string
-        transformation_function:
-          type: object
-        status:
-          type: string
-        created_by:
-          type: string
-        updated_by:
-          type: string
-        published_date:
-          type: string
-
-    DatasetTransformationUpdate:
-      description: dataset_id, field_key are required
-      type: object
-      properties:
-        id:
-          type: string
-        dataset_id:
-          type: string
-        field_key:
-          type: string
-        transformation_function:
-          type: object
-        status:
-          type: string
         created_by:
           type: string
         updated_by:
@@ -325,22 +282,6 @@ components:
                   enum:
                     - ACTIVE
                     - DISABLED
-    DatasetTransformationList:
-      description: filters are required
-      type: object
-      properties:
-        filters:
-          type: object
-          properties:
-            status:
-              oneOf:
-                - type: string
-                - type: array
-                  items:
-                    type: string
-                  enum:
-                    - ACTIVE
-                    - DISABLED
 
     DruidNativeQuery:
       description: context parameter is required
@@ -515,24 +456,7 @@ components:
         dataset_id: observations
         connector_type: kafka
         status: DISABLED
-    DatasetTransformationCreate:
-      value:
-        dataset_id: telemetry-raw
-        field_key: actor
-        transformation_function:
-          type: mask
-          condition: null
-          expr: actor
-        status: ACTIVE
-        created_by: SYSTEM
-        updated_by: SYSTEM
-        published_date: "2023-05-02T18:30:00.000Z"
 
-    DatasetTransformationUpdate:
-      value:
-        dataset_id: telemetry-raw
-        field_key: actor
-        status: DISABLED
     DruidNativeQuery:
       value:
         context:
@@ -1305,9 +1229,6 @@ components:
       value:
         filters: ["ACTIVE", "DISABLED"]
     DatasetSourceConfigList:
-      value:
-        filters: ["ACTIVE", "DISABLED"]
-    DatasetTransformationList:
       value:
         filters: ["ACTIVE", "DISABLED"]
 
@@ -2993,6 +2914,7 @@ components:
                       drop_duplicates: true
                       dedup_key: id
                       dedup_period: 3
+                    tags: []
                     data_schema:
                       type: object
                       properties:
@@ -3374,6 +3296,7 @@ components:
                     drop_duplicates: true
                     dedup_key: id
                     dedup_period: 3
+
                   data_schema:
                     type: object
                     properties:
@@ -4015,316 +3938,6 @@ components:
                 example: BAD_REQUEST
               result:
                 type: object
-    DatasetTransformationCreateResponseSchema:
-      description: OK
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-                example: "obsrv.config.dataset.transformation.create"
-              ver:
-                type: string
-                example: "v1"
-              ts:
-                type: integer
-                example: 1679916559382
-              params:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: SUCCESS
-                  errmsg:
-                    type: string
-                    example: ""
-              responseCode:
-                type: string
-                example: "OK"
-              result:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "The dataset configuration has been saved successfully"
-                  id:
-                    type: string
-                    example: "telemetry-raw_actor"
-    DatasetTransformationUpdateResponseSchema:
-      description: OK
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-                example: obsrv.config.dataset.transformation.update
-              ver:
-                type: string
-                example: "v1"
-              ts:
-                type: integer
-                example: 1679916559382
-              params:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: SUCCESS
-                  errmsg:
-                    type: string
-                    example: ""
-              responseCode:
-                type: string
-                example: "OK"
-              result:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "The dataset configuration has been updated successfully"
-                  id:
-                    type: string
-                    example: "telemetry-raw_actor"
-    DatasetTransformationCreateBadRequest:
-      description: Bad Request
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-                example: obsrv.config.dataset.transformation.create
-              ver:
-                type: string
-                example: v1
-              ts:
-                type: string
-                example: 1672679516875
-              params:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: FAILED
-                  errmsg:
-                    type: string
-                    example: must have required property 'dataset_id'
-              responseCode:
-                type: string
-                example: BAD_REQUEST
-              result:
-                type: object
-    DatasetTransformationUpdateBadRequest:
-      description: Bad Request
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-                example: obsrv.config.dataset.transformation.update
-              ver:
-                type: string
-                example: v1
-              ts:
-                type: string
-                example: 1672679516875
-              params:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: FAILED
-                  errmsg:
-                    type: string
-                    example: Failed to update Record
-              responseCode:
-                type: string
-                example: BAD_REQUEST
-              result:
-                type: object
-    DatasetTransformationCreateDuplicate:
-      description: Conflict
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-                example: obsrv.config.dataset.transformation.create
-              ver:
-                type: string
-                example: v1
-              ts:
-                type: string
-                example: 1672679516875
-              params:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: FAILED
-                  errmsg:
-                    type: string
-                    example: Record already exists
-              responseCode:
-                type: string
-                example: CONFLICT
-              result:
-                type: object
-    DatasetTransformationListResponse:
-      description: OK
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-                example: obsrv.config.dataset.transformation.list
-              ver:
-                type: string
-                example: v1
-              ts:
-                type: string
-                example: 1672679516875
-              params:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: SUCCESS
-                  errmsg:
-                    type: string
-                    example: ""
-              responseCode:
-                type: string
-                example: OK
-              result:
-                type: array
-                items:
-                  type: object
-                  example:
-                    id: telemetry-raw_actor
-                    field_key: actor
-                    transformation_function: '{"type":"mask","condition":null,"expr":"actor"}'
-                    status: ACTIVE
-                    created_by: SYSTEM
-                    updated_by: SYSTEM
-                    created_date: "2023-05-11T18:30:00.000Z"
-                    updated_date: "2023-05-11T18:30:00.000Z"
-                    published_date: "2023-05-01T18:30:00.000Z"
-                    dataset_id: telemetry-raw
-
-    DatasetTransformationReadResponse:
-      description: OK
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-                example: obsrv.config.transformation.read
-              ver:
-                type: string
-                example: v1
-              ts:
-                type: string
-                example: 1672679516875
-              params:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: SUCCESS
-                  errmsg:
-                    type: string
-                    example: ""
-              responseCode:
-                type: string
-                example: OK
-              result:
-                type: object
-                example:
-                  id: telemetry-raw_actor
-                  field_key: actor
-                  transformation_function: '{"type":"mask","condition":null,"expr":"actor"}'
-                  status: ACTIVE
-                  created_by: SYSTEM
-                  updated_by: SYSTEM
-                  created_date: "2023-05-11T18:30:00.000Z"
-                  updated_date: "2023-05-11T18:30:00.000Z"
-                  published_date: "2023-05-01T18:30:00.000Z"
-                  dataset_id: telemetry-raw
-
-    DatasetTransformationReadNotFound:
-      description: Not Found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-                example: obsrv.config.dataset.transformation.read
-              ver:
-                type: string
-                example: v1
-              ts:
-                type: string
-                example: 1672679516875
-              params:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: FAILED
-                  errmsg:
-                    type: string
-                    example: Record not found
-              responseCode:
-                type: string
-                example: NOT_FOUND
-              result:
-                type: object
-    DatasetTransformationListBadRequest:
-      description: Bad Request
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-                example: obsrv.config.dataset.transformation.list
-              ver:
-                type: string
-                example: v1
-              ts:
-                type: string
-                example: 1672679516875
-              params:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: FAILED
-                  errmsg:
-                    type: string
-                    example: must have required property 'filters'
-              responseCode:
-                type: string
-                example: BAD_REQUEST
-              result:
-                type: object
 
 paths:
   /obsrv/v1/query:
@@ -4631,79 +4244,3 @@ paths:
           $ref: "#/components/responses/DatasetSoureConfigListResponse"
         400:
           $ref: "#/components/responses/DatasetSourceConfigListBadRequest"
-  /obsrv/v1/datasets/transformation:
-    post:
-      summary: creating datasets into postgres tables
-      description: This API allows you to create new datasets in the PostgreSQL database used by the analytical data source.
-      tags: [Obsrv Dataset Transformation APIs]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/DatasetTransformationCreate"
-            examples:
-              Example-1:
-                $ref: "#/components/examples/DatasetTransformationCreate"
-      responses:
-        200:
-          $ref: "#/components/responses/DatasetTransformationCreateResponseSchema"
-        400:
-          $ref: "#/components/responses/DatasetTransformationCreateBadRequest"
-        409:
-          $ref: "#/components/responses/DatasetTransformationCreateDuplicate"
-    patch:
-      summary: API to update existing records in database
-      description: This API allows you to update existing datasets in the PostgreSQL database used by the analytical data source.
-      tags: [Obsrv Dataset Transformation APIs]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/DatasetTransformationUpdate"
-            examples:
-              Example-1:
-                $ref: "#/components/examples/DatasetTransformationUpdate"
-      responses:
-        200:
-          $ref: "#/components/responses/DatasetTransformationUpdateResponseSchema"
-        400:
-          $ref: "#/components/responses/DatasetTransformationUpdateBadRequest"
-  /obsrv/v1/datasets/transformation/{datasetId}:
-    get:
-      summary: API to read records from database
-      description: This API allows you to retrieve records from a dataset in the PostgreSQL. A successful response will return a status code of 200. If the dataset does not exist, a status code of 404 will be returned.
-      tags:
-        - Obsrv Dataset Transformation APIs
-      parameters:
-        - name: datasetId
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        200:
-          $ref: "#/components/responses/DatasetTransformationReadResponse"
-        404:
-          $ref: "#/components/responses/DatasetTransformationReadNotFound"
-  /obsrv/v1/datasets/transformation/list:
-    post:
-      summary: API to list records from database
-      description: This API allows you to retrieve a list of records from a dataset in the PostgreSQL database used by the analytical data source. You can specify filters to narrow down the results.
-      tags: [Obsrv Dataset Transformation APIs]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/DatasetTransformationList"
-            examples:
-              Example-1:
-                $ref: "#/components/examples/DatasetTransformationList"
-      responses:
-        200:
-          $ref: "#/components/responses/DatasetTransformationListResponse"
-        400:
-          $ref: "#/components/responses/DatasetTransformationListBadRequest"

@@ -75,15 +75,6 @@ class TestDatasetSourceConfig {
   public static MISSING_REQUIRED_FIELDS_UPDATE = { "connector_type": "kafka", "status": "ACTIVE" }
   public static VALID_RECORD = { "connector_type": "kafka", "dataset_id": "observations", "connector_config": {}, "status": "ACTIVE", "connector_stats": {}, "created_by": "SYSTEM", "updated_by": "SYSTEM", "created_date": "2023-04-07T18:30:00.000Z", "updated_date": "2023-04-07T18:30:00.000Z" }
 }
-class TestDatasetTransformation {
-  public static VALID_SCHEMA = { "field_key": "obsCodeMeta", "dataset_id": "observations", "status": "ACTIVE" }
-  public static VALID_UPDATE_SCHEMA = { "id": "observations_obsCodeMeta", "field_key": "obsCodeMeta", "dataset_id": "observations", "status": "DISABLED" }
-  public static INVALID_SCHEMA = { "field_key": "obsCodeMeta", "dataset_id": "observations", "status": {} }
-  public static MISSING_REQUIRED_FIELDS_CREATE = { "field_key": "obsCodeMeta", "status": "ACTIVE" }
-  public static SAMPLE_ID = "observations_obsCodeMeta";
-  public static VALID_LIST_REQUEST_ACTIVE_STATUS = { "filters": { "status": ["ACTIVE"] } };
-  public static VALID_LIST_REQUEST_DISABLED_STATUS = { "filters": { "status": ["DISABLED"] } };
-  public static MISSING_REQUIRED_FIELDS_UPDATE = { "field_key": "obsCodeMeta", "status": "DISABLED" }
-  public static VALID_RECORD = { "field_key": "obsCodeMeta", "dataset_id": "observations", "transformation_function": { "type": "", "condition": { "type": "", "expr": "" }, "expr": "" }, "status": "ACTIVE", "created_by": "SYSTEM", "updated_by": "SYSTEM", "created_date": "2023-04-07T18:30:00.000Z", "updated_date": "2023-04-07T18:30:00.000Z" }
-}
-export { TestDruidQuery, TestDataIngestion, TestDataset, TestDataSource, TestDatasetSourceConfig, TestDatasetTransformation };
+
+
+export { TestDruidQuery, TestDataIngestion, TestDataset, TestDataSource, TestDatasetSourceConfig };

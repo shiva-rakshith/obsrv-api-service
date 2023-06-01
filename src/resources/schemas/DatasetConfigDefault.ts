@@ -62,12 +62,5 @@ export const defaultConfig = {
         "connector_stats": {},
         "created_by": 'SYSTEM',
         "updated_by": 'SYSTEM'
-    },
-    "transformations": {
-        "field_key": "",
-        "transformation_function": { "type": "", "condition": { "type": "", "expr": "" }, "expr": "" },
-        "status": 'ACTIVE',
-        "created_by": 'SYSTEM',
-        "updated_by": 'SYSTEM'
     }
 }

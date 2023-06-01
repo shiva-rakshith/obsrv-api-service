@@ -18,10 +18,7 @@ export class RequestsValidator implements IValidator {
         [routesConfig.config.datasource.update.api_id, "DatasourceUpdateReq.json"],
         [routesConfig.config.dataset_source_config.save.api_id, "DatasetSourceConfigSaveReq.json"],
         [routesConfig.config.dataset_source_config.update.api_id, "DatasetSourceConfigUpdateReq.json"],
-        [routesConfig.config.dataset_transformation.save.api_id, "DatasetTransformationSaveReq.json"],
-        [routesConfig.config.dataset_transformation.update.api_id, "DatasetTransformationUpdateReq.json"],
         [routesConfig.config.dataset_source_config.list.api_id, "DatasetListReq.json"],
-        [routesConfig.config.dataset_transformation.list.api_id, "DatasetListReq.json"]
     ]);
     private validator: Ajv;
 

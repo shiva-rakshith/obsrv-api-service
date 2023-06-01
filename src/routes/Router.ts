@@ -8,7 +8,6 @@ import { DatasetService } from "../services/DatasetService";
 import { KafkaConnector } from "../connectors/KafkaConnector";
 import { DataSourceService } from "../services/DataSourceService";
 import { DatasetSourceConfigService } from "../services/DatasetSourceConfigService";
-import { DatasetTransformationService } from "../services/DatasetTransformationService";
 import { DbConnector } from "../connectors/DbConnector";
 import { routesConfig } from "../configs/RoutesConfig";
 import { IngestorService } from "../services/IngestorService";
@@ -26,7 +25,6 @@ export const dbConnector = new DbConnector(config.db_connector_config);
 export const datasourceService = new DataSourceService(dbConnector, config.table_names.datasources);
 export const datasetService = new DatasetService(dbConnector, config.table_names.datasets);
 export const datasetSourceConfigService = new DatasetSourceConfigService(dbConnector, config.table_names.datasetSourceConfig);
-export const datasetTransformationService = new DatasetTransformationService(dbConnector, config.table_names.datasetTransformations);
 export const ingestorService = new IngestorService(kafkaConnector);
 export const globalCache: any = new Map()
 const router = express.Router()
@@ -49,12 +47,6 @@ router.post(`${routesConfig.config.dataset_source_config.save.path}`, ResponseHa
 router.patch(`${routesConfig.config.dataset_source_config.update.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_source_config.update.api_id), validationService.validateRequestBody, telemetryAuditStart({ action: telemetryActions.updateDatasetSourceConfig, operationType: OperationType.UPDATE }), datasetSourceConfigService.update);
 router.get(`${routesConfig.config.dataset_source_config.read.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_source_config.read.api_id), datasetSourceConfigService.read);
 router.post(`${routesConfig.config.dataset_source_config.list.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_source_config.list.api_id), validationService.validateRequestBody, datasetSourceConfigService.list);
-
-/**Dataset Transformation APIs*/
-router.post(`${routesConfig.config.dataset_transformation.save.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_transformation.save.api_id), validationService.validateRequestBody, telemetryAuditStart({ action: telemetryActions.createTransformation, operationType: OperationType.CREATE }), datasetTransformationService.save);
-router.patch(`${routesConfig.config.dataset_transformation.update.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_transformation.update.api_id), validationService.validateRequestBody, telemetryAuditStart({ action: telemetryActions.updateTransformation, operationType: OperationType.UPDATE }), datasetTransformationService.update);
-router.get(`${routesConfig.config.dataset_transformation.read.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_transformation.read.api_id), datasetTransformationService.read);
-router.post(`${routesConfig.config.dataset_transformation.list.path}`, ResponseHandler.setApiId(routesConfig.config.dataset_transformation.list.api_id), validationService.validateRequestBody, datasetTransformationService.list);
 
 /** DataSource API(s) */
 router.post(`${routesConfig.config.datasource.save.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.save.api_id), validationService.validateRequestBody, telemetryAuditStart({ action: telemetryActions.createDatasource, operationType: OperationType.CREATE }), datasourceService.save);
