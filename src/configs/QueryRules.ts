@@ -1,7 +1,7 @@
 export const queryRules = {
   "common": {
-    "maxResultThreshold": 100,
-    "maxResultRowLimit": 100
+    "maxResultThreshold": process.env.MAX_QUERY_THRESHOLD ? parseInt(process.env.MAX_QUERY_THRESHOLD) : 5000,
+    "maxResultRowLimit":  process.env.MAX_QUERY_LIMIT  ? parseInt(process.env.MAX_QUERY_LIMIT) : 5000
   },
   "rules": [
     {
