@@ -1,25 +1,56 @@
-# obsrv API Service
+# Obsrv API Service
 
-   *	Dataset APIs
-   *	Datasource APIs
-   *	Dataset source config APIs
-   *	Data IN API  
-   *	Query APIs
+## Overview
 
-Dependencies:
-   *    Node.js: v18
-   *    TypeScript: v4.8.4
-   *    Express.js: v4.18.2
-   *    npm: v9.6.4
+Obsrv is a set of APIs that provide access to a variety of data sources and datasets. These APIs can be used to query and analyze different types of events, as well as to manage data sources and datasets.
 
-To start API service:
-   * npm install
-   * npm run start
+The following APIs are available in the Obsrv API service:
 
-To run unittest:
-   * npm run test
+- Dataset APIs: These APIs allow you to interact with datasets, such as retrieving dataset metadata, creating new datasets, updating list existing datasets.
 
-(All the coverage files will be generated in coverage/ folder)
+- Datasource APIs: These APIs enable you to manage datasources. You can add new datasources, retrieve information about existing datasources, update list all existing data sources.
+
+- Dataset Source Config APIs: These APIs allow you to configure the sources for a dataset. You can add or remove sources, update retrieve the source configuration for a dataset.
+
+- Data IN API: This API provides an interface to ingest data into the Obsrv system. You can use this API to send events to be stored and processed by Obsrv.
+
+- Query APIs: These APIs allow you to query on different datasources. You can perform various types of queries, filter the results based on specific criteria, and retrieve the desired information.
+
+## Dependencies
+
+To use the Obsrv API service, make sure you have the following dependencies installed:
+
+- Node.js: version 18
+- TypeScript: version 4.8.4
+- Express.js: version 4.18.2
+- npm: version 9.6.4
+
+## Getting Started
+
+To start the Obsrv API service, follow these steps:
+
+1. Install the required dependencies by running the following command:
+
+```
+npm install
+```
+
+2. Start the API service by running the following command:
+
+```
+npm run start
+```
+
+## Running Unit Tests
+
+To run the unit tests for the Obsrv API service, execute the following command:
+
+```
+npm run test
+```
+
+After running the tests, the coverage files will be generated in the `coverage/` folder.
+
 
 Default Configurations in API Settings:
 
