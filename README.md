@@ -1,12 +1,12 @@
 Obsrv APIs
-    *	Dataset APIs
-    *	Datasource APIs
-    *	Dataset source config APIs
-    *	Data IN APIs
-    *	Query APIs
+*	Dataset APIs
+*	Datasource APIs
+*	Dataset source config APIs
+*	Data IN APIs
+*	Query APIs
 To start API service:
-    * npm install
-    * npm run start
+* npm install
+* npm run start
 Default Configurations in API Settings:
 These configurations can be modified as needed to customize the behavior of the system.
 
