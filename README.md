@@ -10,6 +10,7 @@ To start API service:
    * npm run start
 
 Default Configurations in API Settings:
+
 These configurations can be modified as needed to customize the behavior of the system.
 
 | Configuration            | Description                                                    | Default Value        |
