@@ -8,7 +8,7 @@ info:
     This OpenAPI document provides a detailed specification for the Obsrv APIs,including information about the endpoints, parameters, responses, and authentication requirements.
 
   contact:
-    name: Sanketika Obsrv
+    name: Sunbird Obsrv
     email: "example@gmail.com"
     url: "#"
   license:
