@@ -28,3 +28,5 @@ These configurations can be modified as needed to customize the behavior of the 
 | exclude_datasource_validation | List of datasource names that should be excluded from validation. | ["system-stats", "masterdata-system-stats"] |
 | MAX_QUERY_THRESHOLD      | Maximum threshold value for queries.                            | 5000                 |
 | MAX_QUERY_LIMIT          | Maximum limit value for queries.                                | 5000                 |
+| MAX_DATE_RANGE     |     | Maximum date range value for queries                            |              
+30                   |
