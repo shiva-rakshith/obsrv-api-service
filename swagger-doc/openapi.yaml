@@ -8,7 +8,7 @@ info:
     This OpenAPI document provides a detailed specification for the Obsrv APIs,including information about the endpoints, parameters, responses, and authentication requirements.
 
   contact:
-    name: Sunbird Obsrv
+    name: Sanketika Obsrv
     email: "example@gmail.com"
     url: "#"
   license:
@@ -3997,9 +3997,10 @@ paths:
           $ref: "#/components/responses/BadRequestResponseSchemaSql"
 
   /obsrv/v1/data/{datasetId}:
-    post:
-      summary: The API designed for ingesting data into Kafka follows a specific convention. When processing batch events, the API expects the key to be labeled as "events." However, when dealing with individual events, the key should be identified as "event."
-      description: ""
+    post: 
+      summary: The API designed for ingesting data into Kafka. 
+      description: |
+        "When processing batch events, the API expects the key to be labeled as 'events.' However, when dealing with individual events, the key should be identified as 'event.'"
       tags: [Obsrv Data IN API]
       parameters:
         - name: datasetId

@@ -1,8 +1,8 @@
-const maxDateRange = process.env.MAX_DATE_RANGE ? parseInt(process.env.MAX_DATE_RANGE) : 30 // in days
+const maxDateRange = process.env.max_date_range ? parseInt(process.env.max_date_range) : 30 // in days
 export const queryRules = {
   "common": {
-    "maxResultThreshold": process.env.MAX_QUERY_THRESHOLD ? parseInt(process.env.MAX_QUERY_THRESHOLD) : 5000,
-    "maxResultRowLimit":  process.env.MAX_QUERY_LIMIT  ? parseInt(process.env.MAX_QUERY_LIMIT) : 5000
+    "maxResultThreshold": process.env.max_query_threshold ? parseInt(process.env.max_query_threshold) : 5000,
+    "maxResultRowLimit":  process.env.max_query_limit  ? parseInt(process.env.max_query_limit) : 5000
   },
   "rules": [
     {
