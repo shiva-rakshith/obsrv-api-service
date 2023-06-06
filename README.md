@@ -1,4 +1,4 @@
-# Obsrv API Service
+# obsrv API Service
 
    *	Dataset APIs
    *	Datasource APIs
@@ -18,7 +18,7 @@ To start API service:
 
 To run unittest:
    * npm run test
-   
+
 (All the coverage files will be generated in coverage/ folder)
 
 Default Configurations in API Settings:
