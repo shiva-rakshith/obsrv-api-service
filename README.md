@@ -6,11 +6,11 @@ Obsrv is a set of APIs that provide access to a variety of data sources and data
 
 The following APIs are available in the Obsrv API service:
 
-- Dataset APIs: These APIs allow you to interact with datasets, such as retrieving dataset metadata, creating new datasets, updating list existing datasets.
+- Dataset APIs: These APIs allow you to interact with datasets, such as retrieving dataset metadata, creating new datasets, updating and list existing datasets.
 
-- Datasource APIs: These APIs enable you to manage datasources. You can add new datasources, retrieve information about existing datasources, update list all existing data sources.
+- Datasource APIs: These APIs enable you to manage datasources. You can add new datasources, retrieve information about existing datasources, update and list all existing data sources.
 
-- Dataset Source Config APIs: These APIs allow you to configure the sources for a dataset. You can add or remove sources, update retrieve the source configuration for a dataset.
+- Dataset Source Config APIs: These APIs allow you to configure the sources for a dataset. You can add sources, update and retrieve the existing source configuration for a dataset.
 
 - Data IN API: This API provides an interface to ingest data into the Obsrv system. You can use this API to send events to be stored and processed by Obsrv.
 
