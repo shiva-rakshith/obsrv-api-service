@@ -16,6 +16,10 @@ export interface IValidator {
     validate(data: any, id?: string): ValidationStatus | Promise<ValidationStatus>;
 }
 
+export interface QValidator extends IValidator {
+    validateQuery(data: any, id?: string): ValidationStatus | Promise<ValidationStatus>;
+}
+
 export interface Params {
     status: string,
     errmsg: string

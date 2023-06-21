@@ -1,4 +1,5 @@
 import Ajv from "ajv";
+import addFormats from "ajv-formats";
 import fs from "fs";
 import httpStatus from "http-status";
 import { IValidator } from "../models/DatasetModels";
@@ -12,11 +13,16 @@ export class RequestsValidator implements IValidator {
 
     constructor() {
         this.validator = new Ajv();
+        addFormats(this.validator);
         this.loadSchemas();
     }
 
     validate(data: any, id: string): ValidationStatus {
         return this.validateRequest(data, id);
+    }
+
+    validateQuery(data: any, id: string): ValidationStatus {
+        return this.validateRequestQuery(data, id);
     }
 
     private validateRequest(data: any, id: string): ValidationStatus {
@@ -25,6 +31,17 @@ export class RequestsValidator implements IValidator {
             let error = this.validator.errors;
             let errorMessage = error![0].instancePath.replace("/", "") + " " + error![0].message;
             return { error: httpStatus["400_NAME"], isValid: false, message: errorMessage, code: httpStatus["400_NAME"] };
+        } else {
+            return { isValid: true, message: "Validation Success", code: httpStatus[200] };
+        }
+    };
+
+    private validateRequestQuery(data: any, id: string): ValidationStatus {
+        let validRequestObj = this.validator.validate(this.getReqSchema(id), data);
+        if (!validRequestObj) {
+            let error = this.validator.errors;
+            let errorMessage = error?.map((err) => err.instancePath.replace("/", "") + " " + err.message);
+            return { error: httpStatus["400_NAME"], isValid: false, message: errorMessage?.join("\n"), code: httpStatus["400_NAME"] };
         } else {
             return { isValid: true, message: "Validation Success", code: httpStatus[200] };
         }
@@ -44,6 +61,7 @@ export class RequestsValidator implements IValidator {
             routesConfig.config.dataset_source_config.save,
             routesConfig.config.dataset_source_config.update,
             routesConfig.config.dataset_source_config.list,
+            routesConfig.exhaust,
         ]
     }
 
