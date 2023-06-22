@@ -32,7 +32,6 @@ class AWSStorageService extends BaseStorageService {
       process.env.AWS_SECRET_ACCESS_KEY = _.get(config, "credential");
       const region = _.get(config, "region").toString();
       this.client = new S3Client({ region });
-      console.log("env client");
     } else {
       const region = process.env.AWS_REGION || "us-east-2";
       const s3Client = new S3Client({
@@ -40,7 +39,6 @@ class AWSStorageService extends BaseStorageService {
         credentials: fromInstanceMetadata(),
       });
       this.client = s3Client;
-      console.log("norm client");
     }
   }
 
@@ -77,7 +75,6 @@ class AWSStorageService extends BaseStorageService {
     await this.client
       .send(command)
       .then((resp) => {
-        console.log(resp);
         cb(null, resp);
       })
       .catch((err) => {

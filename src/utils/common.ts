@@ -17,8 +17,7 @@ export const getDateRange = (request: Request, response: Response) => {
     if (!_.isUndefined(since)) {
         period = getPeriodInterval(since.toString());
     } else if (from != undefined && to != undefined) {
-        const { from, to } = request.query;
-        period = { from: from?.toString(), to: to?.toString() };
+        period = { from: from.toString(), to: to.toString() };
     } else {
         period = getPeriodInterval("LAST_0_DAYS");
     }

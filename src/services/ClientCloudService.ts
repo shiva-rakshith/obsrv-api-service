@@ -8,6 +8,7 @@ import { config as globalConfig } from '../configs/Config';
 import CloudService from '../lib/client-cloud-services';
 import { exhaustRules } from "../configs/QueryRules";
 import moment from "moment";
+import { DateRange } from '../models/ExhaustModels';
 
 export class ClientCloudService {
     private cloudProvider: string
@@ -27,6 +28,14 @@ export class ClientCloudService {
         const datasetRecord = await ingestorService.getDatasetConfig(datasetId);
         return datasetRecord;
     }
+
+    getFromStorage = async (type: string | undefined, dateRange: DateRange, datasetId: string) => {
+        let resData: any = {};
+        resData = await this.storage.getFiles(
+            globalConfig.label_container, globalConfig.label_container_prefix, type, dateRange, datasetId,
+        )
+        return resData;
+    }
     
     getData = async (req: Request, res: Response, next: NextFunction) => {
         const { params } = req;
@@ -45,17 +54,14 @@ export class ClientCloudService {
             exhaustRules.common.maxDateRange,
         );
         if(!isValidDates) {
-            next({statusCode: 404, message: constants.ERROR_MESSAGE.INVALID_DATE_RANGE.replace("${allowedRange}", exhaustRules.common.maxDateRange.toString()), errCode: httpStatus["404_NAME"],})
+            next({statusCode: 400, message: constants.ERROR_MESSAGE.INVALID_DATE_RANGE.replace("${allowedRange}", exhaustRules.common.maxDateRange.toString()), errCode: httpStatus["400_NAME"],})
             return;
         }
 
         // Fetch Data
-        let resData: any[] = [];
-        resData = await this.storage.getFiles(
-            globalConfig.label_container, globalConfig.label_container_prefix, type, dateRange, datasetId,
-        )
-        if(resData.length === 0) {
-            next({statusCode: 404, message: constants.EXHAUST.NO_BACKUP_FILES, errCode: httpStatus["400_NAME"],})
+        const resData: any = await this.getFromStorage(type?.toString(), dateRange, datasetId);
+        if(resData.files.length === 0) {
+            next({statusCode: 404, message: constants.EXHAUST.NO_BACKUP_FILES, errCode: httpStatus["404_NAME"],})
         } else {
             ResponseHandler.successResponse(req, res, { status: 200, data: resData, })
         }
