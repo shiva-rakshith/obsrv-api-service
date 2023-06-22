@@ -110,7 +110,6 @@ describe("AWS Cloud Storage", () => {
             .get(config.apiExhaustEndPoint)
             .query(TestExhaust.VALID_REQUEST)
             .end((err, res) => {
-                console.log(res.body);
                 res.should.have.status(httpStatus.OK)
                 res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
                 res.body.result.should.be.a("object")
