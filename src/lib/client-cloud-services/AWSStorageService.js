@@ -33,7 +33,8 @@ class AWSStorageService extends BaseStorageService {
       const region = _.get(config, "region").toString();
       this.client = new S3Client({ region });
     } else {
-      const region = process.env.AWS_REGION || "us-east-2";
+      const region = globalConfig.exhaust_region || "us-east-2";
+      process.env.AWS_REGION = region;
       const s3Client = new S3Client({
         region,
         credentials: fromInstanceMetadata(),

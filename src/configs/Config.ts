@@ -78,6 +78,7 @@ export const config = {
     }
   },
   "exhaust_provider": process.env.exhaust_provider || "aws", // Supported providers - AWS, GCP, Azure
+  "exhaust_region": process.env.exhaust_region || "", // Region for the cloud provider storage
   "exhaust_config": process.env.exhaust_config ? JSON.parse(process.env.exhaust_config) : {}, // Respective credentials object for cloud provider
   "label_container": process.env.label_container || "", // Storage container/bucket name
   "label_container_prefix": process.env.label_container_prefix || "", // Path to the folder inside container/bucket. Empty if data at root level
