@@ -37,7 +37,6 @@ class AWSStorageService extends BaseStorageService {
       process.env.AWS_REGION = region;
       const s3Client = new S3Client({
         region,
-        credentials: fromInstanceMetadata(),
       });
       this.client = s3Client;
     }
