@@ -82,5 +82,5 @@ export const config = {
   "exhaust_config": process.env.exhaust_config ? JSON.parse(process.env.exhaust_config) : {}, // Respective credentials object for cloud provider
   "label_container": process.env.label_container || "", // Storage container/bucket name
   "label_container_prefix": process.env.label_container_prefix || "", // Path to the folder inside container/bucket. Empty if data at root level
-  "storage_url_expiry": process.env.storage_url_expiry || "3600", // in seconds, Default 1hr of expiry for Signed URLs.
+  "storage_url_expiry": process.env.storage_url_expiry ? parseInt(process.env.storage_url_expiry) : 3600, // in seconds, Default 1hr of expiry for Signed URLs.
 }
