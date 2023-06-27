@@ -84,6 +84,6 @@ export const config = {
     "container": process.env.container || "", // Storage container/bucket name
     "container_prefix": process.env.container_prefix || "", // Path to the folder inside container/bucket. Empty if data at root level
     "storage_url_expiry": process.env.storage_url_expiry ? parseInt(process.env.storage_url_expiry) : 3600, // in seconds, Default 1hr of expiry for Signed URLs.
-    "maxQueryDateRange": process.env.exhaust_max_range ? parseInt(process.env.exhaust_max_range) : 31, // in days. Defines the maximum no. of days the files can be fetched
+    "maxQueryDateRange": process.env.exhaust_query_range ? parseInt(process.env.exhaust_query_range) : 31, // in days. Defines the maximum no. of days the files can be fetched
   },
 }
