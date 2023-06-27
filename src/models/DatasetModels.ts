@@ -12,12 +12,16 @@ export interface IConnector {
     close(): any
 }
 
+// Interface with method for request body validation
 export interface IValidator {
+    // Method to perform validation on the request body of a request
     validate(data: any, id?: string): ValidationStatus | Promise<ValidationStatus>;
 }
 
+// Interface with method for request params validation
 export interface QValidator extends IValidator {
-    validateQuery(data: any, id?: string): ValidationStatus | Promise<ValidationStatus>;
+    // Method to perform validation on the query params of a request
+    validateQueryParams(data: any, id?: string): ValidationStatus | Promise<ValidationStatus>;
 }
 
 export interface Params {

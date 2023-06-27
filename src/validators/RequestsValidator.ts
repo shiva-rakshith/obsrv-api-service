@@ -21,8 +21,8 @@ export class RequestsValidator implements IValidator {
         return this.validateRequest(data, id);
     }
 
-    validateQuery(data: any, id: string): ValidationStatus {
-        return this.validateRequestQuery(data, id);
+    validateQueryParams(data: any, id: string): ValidationStatus {
+        return this.validateRequestParams(data, id);
     }
 
     private validateRequest(data: any, id: string): ValidationStatus {
@@ -36,7 +36,7 @@ export class RequestsValidator implements IValidator {
         }
     };
 
-    private validateRequestQuery(data: any, id: string): ValidationStatus {
+    private validateRequestParams(data: any, id: string): ValidationStatus {
         let validRequestObj = this.validator.validate(this.getReqSchema(id), data);
         if (!validRequestObj) {
             let error = this.validator.errors;

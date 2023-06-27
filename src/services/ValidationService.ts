@@ -21,8 +21,8 @@ export class ValidationService {
             : next({ statusCode: httpStatus.BAD_REQUEST, message: status.message || "", errCode: status.code })
     };
 
-    public validateRequestQuery = async (req: Request, res: Response, next: NextFunction) => {
-        const status: ValidationStatus = await this.request.validateQuery(req.query, (req as any).id)
+    public validateRequestParams = async (req: Request, res: Response, next: NextFunction) => {
+        const status: ValidationStatus = await this.request.validateQueryParams(req.query, (req as any).id)
         status.isValid ?
             next()
             : next({ statusCode: httpStatus.BAD_REQUEST, message: status.message || "", errCode: status.code })

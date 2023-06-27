@@ -27,7 +27,7 @@ export const datasourceService = new DataSourceService(dbConnector, config.table
 export const datasetService = new DatasetService(dbConnector, config.table_names.datasets);
 export const datasetSourceConfigService = new DatasetSourceConfigService(dbConnector, config.table_names.datasetSourceConfig);
 export const ingestorService = new IngestorService(kafkaConnector);
-export const exhaustService = new ClientCloudService(config.exhaust_provider, config.exhaust_config);
+export const exhaustService = new ClientCloudService(config.exhaust_config.cloud_storage_provider, config.exhaust_config.cloud_storage_config);
 export const globalCache: any = new Map()
 export const router = express.Router()
 dbConnector.init()
@@ -57,4 +57,4 @@ router.get(`${routesConfig.config.datasource.read.path}`, ResponseHandler.setApi
 router.post(`${routesConfig.config.datasource.list.path}`, ResponseHandler.setApiId(routesConfig.config.datasource.list.api_id), validationService.validateRequestBody, datasourceService.list);
 
 /** Exhaust API(s) */
-router.get(`${routesConfig.exhaust.path}`, ResponseHandler.setApiId(routesConfig.exhaust.api_id), validationService.validateRequestQuery, exhaustService.getData);
+router.get(`${routesConfig.exhaust.path}`, ResponseHandler.setApiId(routesConfig.exhaust.api_id), validationService.validateRequestParams, exhaustService.getData);
