@@ -33,7 +33,7 @@ class AWSStorageService extends BaseStorageService {
       const region = _.get(config, "region").toString();
       this.client = new S3Client({ region });
     } else {
-      const region = globalConfig.exhaust_region || "us-east-2";
+      const region = globalConfig.exhaust_config.exhaust_region || "us-east-2";
       process.env.AWS_REGION = region;
       const s3Client = new S3Client({
         region,
@@ -430,7 +430,7 @@ class AWSStorageService extends BaseStorageService {
       return new Promise(async (resolve, reject) => {
       const command = this.getAWSCommand(container, fileNameWithPrefix);
       const fileName = fileNameWithPrefix.split("/").pop();
-      const presignedURL = await getSignedUrl(this.client, command, { expiresIn: globalConfig.storage_url_expiry, });
+      const presignedURL = await getSignedUrl(this.client, command, { expiresIn: globalConfig.exhaust_config.storage_url_expiry, });
       resolve({ [fileName]: presignedURL });
       });
     });
@@ -451,7 +451,7 @@ class AWSStorageService extends BaseStorageService {
         files.push(fileUrl);
     });
     return { 
-        expiresAt: moment().add(globalConfig.storage_url_expiry, 'seconds').toISOString(), 
+        expiresAt: moment().add(globalConfig.exhaust_config.storage_url_expiry, 'seconds').toISOString(), 
         files, 
         periodWiseFiles,
     };

@@ -6,7 +6,6 @@ import { ingestorService } from '../routes/Router';
 import { getDateRange, isValidDateRange } from '../utils/common';
 import { config as globalConfig } from '../configs/Config';
 import CloudService from '../lib/client-cloud-services';
-import { exhaustRules } from "../configs/QueryRules";
 import moment from "moment";
 import { DateRange } from '../models/ExhaustModels';
 
@@ -21,7 +20,7 @@ export class ClientCloudService {
         this.client = CloudService.init(this.cloudProvider)
         this.config = config
         this.storage = new this.client(this.config)
-        this.momentFormat = "YYYY-MM-DD HH:MI:SS";
+        this.momentFormat = "YYYY-MM-DD";
     }
 
     verifyDatasetExists = async (datasetId: string) => {
@@ -32,7 +31,7 @@ export class ClientCloudService {
     getFromStorage = async (type: string | undefined, dateRange: DateRange, datasetId: string) => {
         let resData: any = {};
         resData = await this.storage.getFiles(
-            globalConfig.label_container, globalConfig.label_container_prefix, type, dateRange, datasetId,
+            globalConfig.exhaust_config.container, globalConfig.exhaust_config.container_prefix, type, dateRange, datasetId,
         )
         return resData;
     }
@@ -51,10 +50,10 @@ export class ClientCloudService {
         const isValidDates = isValidDateRange(
             moment(dateRange.from, this.momentFormat), 
             moment(dateRange.to, this.momentFormat), 
-            exhaustRules.common.maxDateRange,
+            globalConfig.exhaust_config.maxQueryDateRange,
         );
         if(!isValidDates) {
-            next({statusCode: 400, message: constants.ERROR_MESSAGE.INVALID_DATE_RANGE.replace("${allowedRange}", exhaustRules.common.maxDateRange.toString()), errCode: httpStatus["400_NAME"],})
+            next({statusCode: 400, message: constants.ERROR_MESSAGE.INVALID_DATE_RANGE.replace("${allowedRange}", globalConfig.exhaust_config.maxQueryDateRange.toString()), errCode: httpStatus["400_NAME"],})
             return;
         }
 

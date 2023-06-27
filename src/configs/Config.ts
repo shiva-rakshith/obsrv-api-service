@@ -77,10 +77,13 @@ export const config = {
       "references": []
     }
   },
-  "exhaust_provider": process.env.exhaust_provider || "aws", // Supported providers - AWS, GCP, Azure
-  "exhaust_region": process.env.exhaust_region || "", // Region for the cloud provider storage
-  "exhaust_config": process.env.exhaust_config ? JSON.parse(process.env.exhaust_config) : {}, // Respective credentials object for cloud provider
-  "label_container": process.env.label_container || "", // Storage container/bucket name
-  "label_container_prefix": process.env.label_container_prefix || "", // Path to the folder inside container/bucket. Empty if data at root level
-  "storage_url_expiry": process.env.storage_url_expiry ? parseInt(process.env.storage_url_expiry) : 3600, // in seconds, Default 1hr of expiry for Signed URLs.
+  "exhaust_config": {
+    "cloud_storage_provider": process.env.cloud_storage_provider || "aws", // Supported providers - AWS, GCP, Azure
+    "cloud_storage_region": process.env.cloud_storage_region || "", // Region for the cloud provider storage
+    "cloud_storage_config": process.env.cloud_storage_config ? JSON.parse(process.env.cloud_storage_config) : {}, // Respective credentials object for cloud provider. Optional if service account provided
+    "container": process.env.container || "", // Storage container/bucket name
+    "container_prefix": process.env.container_prefix || "", // Path to the folder inside container/bucket. Empty if data at root level
+    "storage_url_expiry": process.env.storage_url_expiry ? parseInt(process.env.storage_url_expiry) : 3600, // in seconds, Default 1hr of expiry for Signed URLs.
+    "maxQueryDateRange": process.env.exhaust_max_range ? parseInt(process.env.exhaust_max_range) : 31, // in days. Defines the maximum no. of days the files can be fetched
+  },
 }
