@@ -41,6 +41,10 @@ export class ClientCloudService {
         const { datasetId } = params;
         const { type } = req.query;
         // Validations
+        if(type && globalConfig.exhaust_config.exclude_exhaust_types.includes(type.toString())) {
+            next({statusCode: 404, message: constants.RECORD_NOT_FOUND, errCode: httpStatus["404_NAME"],})
+            return;
+        }
         const datasetRecord = await this.verifyDatasetExists(datasetId);
         if(!datasetRecord) {
             next({statusCode: 404, message: constants.RECORD_NOT_FOUND, errCode: httpStatus["404_NAME"],})
@@ -61,8 +65,8 @@ export class ClientCloudService {
         const resData: any = await this.getFromStorage(type?.toString(), dateRange, datasetId);
         if(resData.files.length === 0) {
             next({statusCode: 404, message: constants.EXHAUST.NO_BACKUP_FILES, errCode: httpStatus["404_NAME"],})
-        } else {
-            ResponseHandler.successResponse(req, res, { status: 200, data: resData, })
+            return;
         }
+        ResponseHandler.successResponse(req, res, { status: 200, data: resData, })
     }
 }
