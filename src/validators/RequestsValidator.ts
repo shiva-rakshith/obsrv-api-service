@@ -1,4 +1,5 @@
 import Ajv from "ajv";
+import addFormats from "ajv-formats";
 import fs from "fs";
 import httpStatus from "http-status";
 import { IValidator } from "../models/DatasetModels";
@@ -12,6 +13,7 @@ export class RequestsValidator implements IValidator {
 
     constructor() {
         this.validator = new Ajv();
+        addFormats(this.validator);
         this.loadSchemas();
     }
 
@@ -19,11 +21,27 @@ export class RequestsValidator implements IValidator {
         return this.validateRequest(data, id);
     }
 
+    validateQueryParams(data: any, id: string): ValidationStatus {
+        return this.validateRequestParams(data, id);
+    }
+
     private validateRequest(data: any, id: string): ValidationStatus {
         let validRequestObj = this.validator.validate(this.getReqSchema(id), data);
         if (!validRequestObj) {
             let error = this.validator.errors;
             let errorMessage = error![0].instancePath.replace("/", "") + " " + error![0].message;
+            return { error: httpStatus["400_NAME"], isValid: false, message: errorMessage, code: httpStatus["400_NAME"] };
+        } else {
+            return { isValid: true, message: "Validation Success", code: httpStatus[200] };
+        }
+    };
+
+    private validateRequestParams(data: any, id: string): ValidationStatus {
+        let validRequestObj = this.validator.validate(this.getReqSchema(id), data);
+        if (!validRequestObj) {
+            let error = this.validator.errors;
+            const property = error![0].instancePath.replace("/", "");
+            let errorMessage = `property \"${property}\"` + " " + error![0].message;
             return { error: httpStatus["400_NAME"], isValid: false, message: errorMessage, code: httpStatus["400_NAME"] };
         } else {
             return { isValid: true, message: "Validation Success", code: httpStatus[200] };
@@ -44,6 +62,7 @@ export class RequestsValidator implements IValidator {
             routesConfig.config.dataset_source_config.save,
             routesConfig.config.dataset_source_config.update,
             routesConfig.config.dataset_source_config.list,
+            routesConfig.exhaust,
         ]
     }
 

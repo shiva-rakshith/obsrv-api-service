@@ -116,6 +116,12 @@ export const routesConfig = {
     path: "/obsrv/v1/data/:datasetId",
     validation_schema: "DataIngestionReq.json",
   },
+  exhaust: {
+    api_id: "obsrv.dataset.data.exhaust",
+    method: "get",
+    path: "/obsrv/v1/exhaust/:datasetId",
+    validation_schema: "DataExhaustReq.json"
+  },
   prometheus: {
     method: "get",
     path: "/metrics",
