@@ -12,7 +12,7 @@ export class IngestorService {
     private httpConnector: IConnector
     constructor(kafkaConnector: IConnector, httpConnector: IConnector) {
         this.kafkaConnector = kafkaConnector
-        this.httpConnector = httpConnector
+        this.httpConnector = httpConnector.connect()
         this.init()
     }
     public init() {
@@ -23,7 +23,6 @@ export class IngestorService {
             .catch((error: any) => {
                 console.log("error while connecting to kafka", error.message)
             })
-        this.httpConnector.connect()
     }
     public create = async (req: Request, res: Response, next: NextFunction) => {
         try {

@@ -24,5 +24,6 @@ const config = {
   druidSqlEndPoint: "/druid/v2/sql/",
   storage_url_expiry: 3600,
   exhaustMaxDateRange: 31,
+  druidDatasourcesEndPoint: "/druid/v2/datasources"
 };
 export { config };

@@ -69,5 +69,10 @@
     "message": "Dataset id does not exist in database",
     "status": 404,
     "code": "NOT_FOUND"
+  },
+  "INVALID_DATASOURCE": {
+    "message": "Datasource ${datasource} not available for querying",
+    "status": 404,
+    "code": "NOT_FOUND"
   }
 }
