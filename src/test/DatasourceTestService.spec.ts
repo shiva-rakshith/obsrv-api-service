@@ -10,6 +10,7 @@ import { routesConfig } from "../configs/RoutesConfig";
 import { dbConnector } from "../routes/Router";
 import { describe, it } from 'mocha';
 import { ResponseHandler } from "../helpers/ResponseHandler";
+import { ingestorService } from "../routes/Router";
 
 chai.use(spies);
 chai.should();
@@ -17,9 +18,12 @@ chai.use(chaiHttp);
 
 describe("Datasource create API", () => {
     it("should insert a record in the database", (done) => {
+        chai.spy.on(ingestorService, "getDatasetConfig", () => {
+            return { "id": ":telemetry", "dataset_config": { "entry_topic": "telemetry" }, "router_config": { "topic": "telemetry" } }
+        })
         chai.spy.on(dbConnector, "execute", () => {
             return Promise.resolve([])
-        })
+        }) 
         chai
             .request(app)
             .post(config.apiDatasourceSaveEndPoint)
@@ -32,11 +36,84 @@ describe("Datasource create API", () => {
                 res.body.id.should.be.eq(routesConfig.config.datasource.save.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
                 res.body.result.message.should.be.eq(constants.RECORD_SAVED)
+                chai.spy.restore(ingestorService, "getDatasetConfig")
+                chai.spy.restore(dbConnector, "execute");
+                done();
+            });
+    });
+    it("should throw error when datasource ref is invalid", (done) => {
+        chai.spy.on(ingestorService, "getDatasetConfig", () => {
+            return { "id": ":telemetry", "dataset_config": { "entry_topic": "telemetry" }, "router_config": { "topic": "telemetry" } }
+        })
+        chai.spy.on(dbConnector, "execute", () => {
+            return Promise.resolve([])
+        })
+        chai
+            .request(app)
+            .post(config.apiDatasourceSaveEndPoint)
+            .send(TestDataSource.INVALID_DATASOURCE_REF)
+            .end((err, res) => {
+                res.should.have.status(httpStatus.BAD_REQUEST);
+                res.body.should.be.a("object");
+                res.body.responseCode.should.be.eq(httpStatus[ "400_NAME" ]);
+                res.body.should.have.property("result");
+                res.body.id.should.be.eq(routesConfig.config.datasource.save.api_id);
+                res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+                chai.spy.restore(ingestorService, "getDatasetConfig")
+                chai.spy.restore(dbConnector, "execute");
+                done();
+            });
+    });
+    it("should throw error when topic is invalid", (done) => {
+        chai.spy.on(ingestorService, "getDatasetConfig", () => {
+            return { "id": ":telemetry", "dataset_config": { "entry_topic": "telemetry" }, "router_config": { "topic": "telemetry" } }
+        })
+        chai.spy.on(dbConnector, "execute", () => {
+            return Promise.resolve([])
+        })
+        chai
+            .request(app)
+            .post(config.apiDatasourceSaveEndPoint)
+            .send(TestDataSource.INVALID_INPUT_TOPIC)
+            .end((err, res) => {
+                res.should.have.status(httpStatus.BAD_REQUEST);
+                res.body.should.be.a("object");
+                res.body.responseCode.should.be.eq(httpStatus[ "400_NAME" ]);
+                res.body.should.have.property("result");
+                res.body.id.should.be.eq(routesConfig.config.datasource.save.api_id);
+                res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+                chai.spy.restore(ingestorService, "getDatasetConfig")
+                chai.spy.restore(dbConnector, "execute");
+                done();
+            });
+    });
+    it("should throw error when dataset id does not exists", (done) => {
+        chai.spy.on(ingestorService, "getDatasetConfig", () => {
+            return {}
+        })
+        chai.spy.on(dbConnector, "execute", () => {
+            return Promise.resolve([])
+        })
+        chai
+            .request(app)
+            .post(config.apiDatasourceSaveEndPoint)
+            .send(TestDataSource.VALID_SCHEMA)
+            .end((err, res) => {
+                res.should.have.status(httpStatus.NOT_FOUND);
+                res.body.should.be.a("object");
+                res.body.responseCode.should.be.eq(httpStatus[ "404_NAME" ]);
+                res.body.should.have.property("result");
+                res.body.id.should.be.eq(routesConfig.config.datasource.save.api_id);
+                res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+                chai.spy.restore(ingestorService, "getDatasetConfig")
                 chai.spy.restore(dbConnector, "execute");
                 done();
             });
     });
     it("should not insert a record when it already exists in database", (done) => {
+        chai.spy.on(ingestorService, "getDatasetConfig", () => {
+            return { "id": ":telemetry", "dataset_config": { "entry_topic": "telemetry" }, "router_config": { "topic": "telemetry" } }
+        })
         chai.spy.on(dbConnector, "execute", () => {
             return Promise.resolve([{}])
         })
@@ -45,17 +122,22 @@ describe("Datasource create API", () => {
             .post(config.apiDatasourceSaveEndPoint)
             .send(TestDataSource.VALID_SCHEMA)
             .end((err, res) => {
+
                 res.should.have.status(httpStatus.CONFLICT);
                 res.body.should.be.a("object");
                 res.body.responseCode.should.be.eq(httpStatus["409_NAME"]);
                 res.body.should.have.property("result");
                 res.body.id.should.be.eq(routesConfig.config.datasource.save.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+                chai.spy.restore(ingestorService, "getDatasetConfig")
                 chai.spy.restore(dbConnector, "execute");
                 done();
             });
     });
     it("should throw error", (done) => {
+        chai.spy.on(ingestorService, "getDatasetConfig", () => {
+            return { "id": ":telemetry", "dataset_config": { "entry_topic": "telemetry" }, "router_config": { "topic": "telemetry" } }
+        })
         chai.spy.on(dbConnector, "execute", () => {
             return Promise.resolve([])
         })
@@ -73,12 +155,16 @@ describe("Datasource create API", () => {
             res.body.should.have.property("result");
             res.body.id.should.be.eq(routesConfig.config.datasource.save.api_id);
             res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+            chai.spy.restore(ingestorService, "getDatasetConfig")
                 chai.spy.restore(dbConnector, "execute");
                 chai.spy.restore(ResponseHandler, "successResponse")
                 done();
             });
     });
     it("should not insert record in the database", (done) => {
+        chai.spy.on(ingestorService, "getDatasetConfig", () => {
+            return { "id": ":telemetry", "dataset_config": { "entry_topic": "telemetry" }, "router_config": { "topic": "telemetry" } }
+        })
         chai.spy.on(dbConnector, "execute", () => {
             return Promise.reject(new Error("error occured while connecting to postgres"))
         })
@@ -93,11 +179,15 @@ describe("Datasource create API", () => {
                 res.body.should.have.property("result");
                 res.body.id.should.be.eq(routesConfig.config.datasource.save.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+                chai.spy.restore(ingestorService, "getDatasetConfig")
                 chai.spy.restore(dbConnector, "execute");
                 done();
             });
     });
     it("should not insert record when request object contains missing fields", (done) => {
+        chai.spy.on(ingestorService, "getDatasetConfig", () => {
+            return { "id": ":telemetry", "dataset_config": { "entry_topic": "telemetry" }, "router_config": { "topic": "telemetry" } }
+        })
         chai
             .request(app)
             .post(config.apiDatasourceSaveEndPoint)
@@ -109,10 +199,14 @@ describe("Datasource create API", () => {
                 res.body.should.have.property("result");
                 res.body.id.should.be.eq(routesConfig.config.datasource.save.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+                chai.spy.restore(ingestorService, "getDatasetConfig")
                 done();
             });
     })
     it("should not insert record when given invalid schema", (done) => {
+        chai.spy.on(ingestorService, "getDatasetConfig", () => {
+            return { "id": ":telemetry", "dataset_config": { "entry_topic": "telemetry" }, "router_config": { "topic": "telemetry" } }
+        })
         chai
             .request(app)
             .post(config.apiDatasourceSaveEndPoint)
@@ -124,12 +218,16 @@ describe("Datasource create API", () => {
                 res.body.should.have.property("result");
                 res.body.id.should.be.eq(routesConfig.config.datasource.save.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+                chai.spy.restore(ingestorService, "getDatasetConfig")
                 done();
             });
     })
 })
 describe("Datasource update API", () => {
     it("should successfully update records in database", (done) => {
+        chai.spy.on(ingestorService, "getDatasetConfig", () => {
+            return { "id": ":telemetry", "dataset_config": { "entry_topic": "telemetry" }, "router_config": { "topic": "telemetry" } }
+        })
         chai.spy.on(dbConnector, "execute", () => {
             return Promise.resolve()
         })
@@ -145,11 +243,15 @@ describe("Datasource update API", () => {
                 res.body.id.should.be.eq(routesConfig.config.datasource.update.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.SUCCESS)
                 res.body.result.message.should.be.eq(constants.RECORD_UPDATED)
+                chai.spy.restore(ingestorService, "getDatasetConfig")
                 chai.spy.restore(dbConnector, "execute")
                 done();
             });
     });
     it("should not update records in database", (done) => {
+        chai.spy.on(ingestorService, "getDatasetConfig", () => {
+            return { "id": ":telemetry", "dataset_config": { "entry_topic": "telemetry" }, "router_config": { "topic": "telemetry" } }
+        })
         chai.spy.on(dbConnector, "execute", () => {
             return Promise.reject(new Error("error occured while connecting to postgres"))
         })
@@ -164,11 +266,15 @@ describe("Datasource update API", () => {
                 res.body.should.have.property("result");
                 res.body.id.should.be.eq(routesConfig.config.datasource.update.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+                chai.spy.restore(ingestorService, "getDatasetConfig")
                 chai.spy.restore(dbConnector, "execute")
                 done();
             });
     });
     it("should not update records when request object does not contain required fields", (done) => {
+        chai.spy.on(ingestorService, "getDatasetConfig", () => {
+            return { "id": ":telemetry", "dataset_config": { "entry_topic": "telemetry" }, "router_config": { "topic": "telemetry" } }
+        })
         chai
             .request(app)
             .patch(config.apiDatasourceUpdateEndPoint)
@@ -180,6 +286,7 @@ describe("Datasource update API", () => {
                 res.body.should.have.property("result");
                 res.body.id.should.be.eq(routesConfig.config.datasource.update.api_id);
                 res.body.params.status.should.be.eq(constants.STATUS.FAILURE)
+                chai.spy.restore(ingestorService, "getDatasetConfig")
                 done();
             });
     });

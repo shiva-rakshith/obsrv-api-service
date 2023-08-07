@@ -3,13 +3,16 @@ import constants from "../resources/Constants.json"
 import { ResponseHandler } from "../helpers/ResponseHandler";
 import _ from 'lodash'
 import httpStatus from "http-status";
-import { dbConnector } from "../routes/Router";
 import { globalCache } from "../routes/Router";
 import { refreshDatasetConfigs } from "../helpers/DatasetConfigs";
+import { IConnector } from "../models/DatasetModels";
+
 export class IngestorService {
-    private kafkaConnector: any;
-    constructor(kafkaConnector: any) {
+    private kafkaConnector: IConnector;
+    private httpConnector: IConnector
+    constructor(kafkaConnector: IConnector, httpConnector: IConnector) {
         this.kafkaConnector = kafkaConnector
+        this.httpConnector = httpConnector
         this.init()
     }
     public init() {
@@ -20,6 +23,7 @@ export class IngestorService {
             .catch((error: any) => {
                 console.log("error while connecting to kafka", error.message)
             })
+        this.httpConnector.connect()
     }
     public create = async (req: Request, res: Response, next: NextFunction) => {
         try {
@@ -32,6 +36,9 @@ export class IngestorService {
             console.error(error.message)
             next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message || "", errCode: error.code || httpStatus["500_NAME"] });
         }
+
+    }
+    public submitIngestion = async (req: Request, res: Response, next: NextFunction) => {
 
     }
     private getDatasetId(req: Request) {
