@@ -32,7 +32,11 @@ const ResponseHandler = {
   setApiId: (id: string) => (req: Request, res: Response, next: NextFunction) => {
     (req as any).id = id;
     next();
-  }
+  },
+
+  flatResponse: (req: Request, res: Response, result: Result) => {
+    res.status(result.status).send(result.data);
+  },
 }
 
 export { ResponseHandler };

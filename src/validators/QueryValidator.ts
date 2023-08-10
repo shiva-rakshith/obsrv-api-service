@@ -74,7 +74,7 @@ export class QueryValidator implements IValidator {
         if (queryPayload.querySql) {
             let query = queryPayload.querySql.query;
             query = query.replace(/\s+/g, " ").trim();
-            let dataSource = query.substring(query.indexOf("FROM")).split(" ")[1];
+            let dataSource = query.substring(query.indexOf("FROM")).split(" ")[1].replace(/\\/g, "");
             return dataSource.replace(/"/g, "");
         } else {
             const dataSourceField: any = queryPayload.query.dataSource

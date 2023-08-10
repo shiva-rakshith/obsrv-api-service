@@ -127,5 +127,27 @@ export const routesConfig = {
     path: "/metrics",
     validation_schema: null,
   },
+  query_wrapper: {
+    sql_wrapper: {
+      api_id: "obsrv.sql.query",
+      method: "post",
+      path: "/obsrv/v1/sql",
+    },
+    native_post: {
+      api_id: "obsrv.native.query",
+      method: "post",
+      path: /\/druid\/v2.*/,
+    },
+    native_get: {
+      api_id: "obsrv.native.query",
+      method: "get",
+      path: "/\/druid\/v2.*/"
+    },
+    native_delete: {
+      api_id: "obsrv.native.query",
+      method: "delete",
+      path: "/druid/v2/:queryId"
+    }
+  }
 }
 

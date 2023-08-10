@@ -58,3 +58,10 @@ router.post(`${routesConfig.config.datasource.list.path}`, ResponseHandler.setAp
 
 /** Exhaust API(s) */
 router.get(`${routesConfig.exhaust.path}`, ResponseHandler.setApiId(routesConfig.exhaust.api_id), validationService.validateRequestParams, exhaustService.getData);
+
+/** Query Wrapper API(s) */
+router.post(routesConfig.query_wrapper.sql_wrapper.path, queryService.forwardSql)
+router.post(routesConfig.query_wrapper.native_post.path, queryService.forwardNative)
+router.get(routesConfig.query_wrapper.native_get.path, queryService.forwardNativeGet)
+router.delete(routesConfig.query_wrapper.native_delete.path, queryService.forwardNativeDel)
+router.get(`/status`, queryService.nativeStatus)
