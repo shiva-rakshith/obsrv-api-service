@@ -8,7 +8,7 @@ export const config = {
       "host": process.env.druid_host || "http://localhost",
       "port": process.env.druid_port || 8888,
       "sql_query_path": "/druid/v2/sql/",
-      "native_query_path": "/druid/v2"
+      "native_query_path": "/druid/v2/"
     }
   },
   "db_connector_config": {
