@@ -159,7 +159,7 @@ export class QueryValidator implements IValidator {
     }
 
     public async getDataSourceRef(datasource: string): Promise<string> {
-        const record: any = await dbConnector.readRecords("datasources", { "filters": { "datasource": datasource } })
+        const record: any = await dbConnector.readRecords("datasources", { "filters": { "dataset_id": datasource } })
         return record[0].datasource_ref
     }
 

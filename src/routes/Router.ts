@@ -15,9 +15,9 @@ import { OperationType, telemetryAuditStart } from "../services/telemetry";
 import telemetryActions from "../data/telemetryActions";
 import { ClientCloudService } from "../services/ClientCloudService";
 
-const validationService = new ValidationService();
+export const validationService = new ValidationService();
 
-const queryService = new QueryService(new HTTPConnector(`${config.query_api.druid.host}:${config.query_api.druid.port}`))
+export const queryService = new QueryService(new HTTPConnector(`${config.query_api.druid.host}:${config.query_api.druid.port}`));
 
 export const kafkaConnector = new KafkaConnector()
 
