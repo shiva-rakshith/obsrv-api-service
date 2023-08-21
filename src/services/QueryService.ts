@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from "axios";
+import { AxiosInstance } from "axios";
 import { NextFunction, Request, Response } from "express";
 import errorResponse from "http-errors";
 import httpStatus from "http-status";
