@@ -44,7 +44,8 @@ export class IngestorService {
             ResponseHandler.successResponse(req, res, { status: 200, data: { message: constants.INGESTION_SUBMITTED } });
         }
         catch (error: any) {
-            let errorMessage = error.response.data.error || "Internal Server Error"
+            console.log({error}, {errorKeys: _.keys(error)})
+            let errorMessage = error?.response?.data?.error || "Internal Server Error"
             console.error(errorMessage)
             next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: errorMessage, errCode: error.code || httpStatus[ "500_NAME" ] });
         }
