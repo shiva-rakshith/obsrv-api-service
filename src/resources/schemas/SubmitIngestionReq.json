@@ -1,0 +1,59 @@
+{
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string"
+    },
+    "spec": {
+      "type": "object",
+      "properties": {
+        "dataSchema": {
+          "type": "object",
+          "properties": {
+            "dataSource": {
+              "type": "string"
+            },
+            "timestampSpec": {
+              "type": "object"
+            },
+            "dimensionsSpec": {
+              "type": "object"
+            },
+            "metricsSpec": {
+              "type": "object"
+            },
+            "granularitySpec": {
+              "type": "object"
+            }
+          }
+        },
+        "ioConfig": {
+          "type": "object",
+          "properties": {
+            "consumerProperties": {
+              "type": "object",
+              "properties": {
+                "bootstrap.servers": {
+                  "type": "string"
+                }
+              },
+              "required": ["bootstrap.servers"]
+            },
+            "topic": {
+              "type": "string"
+            },
+            "inputFormat": {
+              "type": "string"
+            }
+          },
+          "required": ["consumerProperties", "topic", "inputFormat"]
+        },
+        "tuningConfig": {
+          "type": "object"
+        }
+      },
+      "required": ["dataSchema", "ioConfig"]
+    }
+  },
+  "required": ["type"]
+}

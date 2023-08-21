@@ -127,5 +127,11 @@ export const routesConfig = {
     path: "/metrics",
     validation_schema: null,
   },
+  submit_ingestion: {
+    api_id: "obsrv.submit.ingestion",
+    method: "post",
+    path: "/obsrv/v1/submit/ingestion",
+    validation_schema: "SubmitIngestionReq.json"
+  }
 }
 

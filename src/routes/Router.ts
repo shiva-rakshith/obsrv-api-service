@@ -58,3 +58,6 @@ router.post(`${routesConfig.config.datasource.list.path}`, ResponseHandler.setAp
 
 /** Exhaust API(s) */
 router.get(`${routesConfig.exhaust.path}`, ResponseHandler.setApiId(routesConfig.exhaust.api_id), validationService.validateRequestParams, exhaustService.getData);
+
+/*** Submit Ingestion API(s) */
+router.post(`${routesConfig.submit_ingestion.path}`, ResponseHandler.setApiId(routesConfig.submit_ingestion.api_id), validationService.validateRequestBody, ingestorService.submitIngestion)

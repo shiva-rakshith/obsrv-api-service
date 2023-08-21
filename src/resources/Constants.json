@@ -74,5 +74,6 @@
     "message": "Datasource ${datasource} not available for querying",
     "status": 404,
     "code": "NOT_FOUND"
-  }
+  },
+  "INGESTION_SUBMITTED": "ingestion spec has been submitted successfully"
 }

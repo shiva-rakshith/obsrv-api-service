@@ -6,10 +6,11 @@ import httpStatus from "http-status";
 import { globalCache } from "../routes/Router";
 import { refreshDatasetConfigs } from "../helpers/DatasetConfigs";
 import { IConnector } from "../models/DatasetModels";
-
+import { config } from '../configs/Config'
+import { AxiosInstance } from "axios";
 export class IngestorService {
     private kafkaConnector: IConnector;
-    private httpConnector: IConnector
+    private httpConnector: AxiosInstance
     constructor(kafkaConnector: IConnector, httpConnector: IConnector) {
         this.kafkaConnector = kafkaConnector
         this.httpConnector = httpConnector.connect()
@@ -38,7 +39,15 @@ export class IngestorService {
 
     }
     public submitIngestion = async (req: Request, res: Response, next: NextFunction) => {
-
+        try {
+            await this.httpConnector.post(config.query_api.druid.submit_ingestion, req.body)
+            ResponseHandler.successResponse(req, res, { status: 200, data: { message: constants.INGESTION_SUBMITTED } });
+        }
+        catch (error: any) {
+            let errorMessage = error.response.data.error || "Internal Server Error"
+            console.error(errorMessage)
+            next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: errorMessage, errCode: error.code || httpStatus[ "500_NAME" ] });
+        }
     }
     private getDatasetId(req: Request) {
         let datasetId = req.params.datasetId.trim()
