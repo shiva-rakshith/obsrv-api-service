@@ -213,7 +213,6 @@ describe("SUBMIT INGESTION ERROR SCENARIOS", ()=>{
             .post(config.apiSubmitIngestionEndPoint)
             .send(TestSubmitIngestion.VALID_INGESTION_SPEC)
             .end((err, res) => {
-                console.log({responseKeys: Object.keys(res)} )
                 res.should.have.status(httpStatus.INTERNAL_SERVER_ERROR);
                 res.body.should.be.a("object");
                 res.body.should.have.property("result");
