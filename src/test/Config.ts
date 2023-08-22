@@ -24,7 +24,7 @@ const config = {
   storage_url_expiry: 3600,
   exhaustMaxDateRange: 31,
   druidDatasourcesEndPoint: `${appConfig.query_api.druid.list_datasources_path}`,
-  druidSubmitIngestionEndPoint: `${appConfig.query_api.druid.submit_ingestion}`,
+  druidSubmitIngestionEndPoint: `/${appConfig.query_api.druid.submit_ingestion}`,
   apiSubmitIngestionEndPoint: `${routesConfig.submit_ingestion.path}`
 };
 export { config };
