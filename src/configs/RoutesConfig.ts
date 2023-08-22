@@ -132,6 +132,28 @@ export const routesConfig = {
     method: "post",
     path: "/obsrv/v1/submit/ingestion",
     validation_schema: "SubmitIngestionReq.json"
+  },
+  query_wrapper: {
+    sql_wrapper: {
+      api_id: "obsrv.sql.query",
+      method: "post",
+      path: "/obsrv/v1/sql",
+    },
+    native_post: {
+      api_id: "obsrv.native.query",
+      method: "post",
+      path: /\/druid\/v2.*/,
+    },
+    native_get: {
+      api_id: "obsrv.native.query",
+      method: "get",
+      path: "/\/druid\/v2.*/"
+    },
+    native_delete: {
+      api_id: "obsrv.native.query",
+      method: "delete",
+      path: "/druid/v2/:queryId"
+    }
   }
 }
 

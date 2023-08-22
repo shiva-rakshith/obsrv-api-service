@@ -14,6 +14,7 @@ import { IngestorService } from "../services/IngestorService";
 import { OperationType, telemetryAuditStart } from "../services/telemetry";
 import telemetryActions from "../data/telemetryActions";
 import { ClientCloudService } from "../services/ClientCloudService";
+import { WrapperService } from "../services/WrapperService";
 
 export const validationService = new ValidationService();
 
@@ -28,6 +29,7 @@ export const datasetService = new DatasetService(dbConnector, config.table_names
 export const datasetSourceConfigService = new DatasetSourceConfigService(dbConnector, config.table_names.datasetSourceConfig);
 export const ingestorService = new IngestorService(kafkaConnector, new HTTPConnector(`${config.query_api.druid.host}:${config.query_api.druid.port}`));
 export const exhaustService = new ClientCloudService(config.exhaust_config.cloud_storage_provider, config.exhaust_config.cloud_storage_config);
+export const wrapperService = new WrapperService();
 export const globalCache: any = new Map()
 export const router = express.Router()
 dbConnector.init()
@@ -59,5 +61,13 @@ router.post(`${routesConfig.config.datasource.list.path}`, ResponseHandler.setAp
 /** Exhaust API(s) */
 router.get(`${routesConfig.exhaust.path}`, ResponseHandler.setApiId(routesConfig.exhaust.api_id), validationService.validateRequestParams, exhaustService.getData);
 
-/*** Submit Ingestion API(s) */
+ /*** Submit Ingestion API(s) */
 router.post(`${routesConfig.submit_ingestion.path}`, ResponseHandler.setApiId(routesConfig.submit_ingestion.api_id), validationService.validateRequestBody, ingestorService.submitIngestion)
+ 
+/** Query Wrapper API(s) */
+router.post(routesConfig.query_wrapper.sql_wrapper.path, wrapperService.forwardSql)
+router.post(routesConfig.query_wrapper.native_post.path, wrapperService.forwardNative)
+router.get(routesConfig.query_wrapper.native_get.path, wrapperService.forwardNativeGet)
+router.delete(routesConfig.query_wrapper.native_delete.path, wrapperService.forwardNativeDel)
+router.get(`/status`, wrapperService.nativeStatus)
+ 
