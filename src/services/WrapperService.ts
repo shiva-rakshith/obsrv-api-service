@@ -7,7 +7,7 @@ import { config } from "../configs/Config";
 import { ResponseHandler } from "../helpers/ResponseHandler";
 
 export class WrapperService {
-    constructor() {}
+    constructor() { }
 
     private handleError = (error: any, next: NextFunction) => {
         console.error(error.message);
@@ -26,8 +26,8 @@ export class WrapperService {
             const result = await axios.post(
                 `${config.query_api.druid.host}:${config.query_api.druid.port}${config.query_api.druid.sql_query_path}`,
                 req.body, {
-                    headers: { Authorization: authorization },
-                }
+                headers: { Authorization: authorization },
+            }
             );
             ResponseHandler.flatResponse(req, res, result);
         } catch (error: any) { this.handleError(error, next); }
@@ -102,4 +102,9 @@ export class WrapperService {
             ResponseHandler.flatResponse(req, res, result);
         } catch (error: any) { this.handleError(error, next); }
     };
+
+    public submitIngestion = async (ingestionSpec: object) => {
+        console.log(JSON.stringify(ingestionSpec), "in wrapper service")
+        return await axios.post(`${config.query_api.druid.host}:${config.query_api.druid.port}/${config.query_api.druid.submit_ingestion}`, ingestionSpec)
+     }
 }

@@ -8,6 +8,7 @@ import { refreshDatasetConfigs } from "../helpers/DatasetConfigs";
 import { IConnector } from "../models/DatasetModels";
 import { config } from '../configs/Config'
 import { AxiosInstance } from "axios";
+import { wrapperService } from "../routes/Router";
 export class IngestorService {
     private kafkaConnector: IConnector;
     private httpConnector: AxiosInstance
@@ -40,7 +41,7 @@ export class IngestorService {
     }
     public submitIngestion = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            await this.httpConnector.post(config.query_api.druid.submit_ingestion, req.body)
+            await wrapperService.submitIngestion(req.body)
             ResponseHandler.successResponse(req, res, { status: 200, data: { message: constants.INGESTION_SUBMITTED } });
         }
         catch (error: any) {

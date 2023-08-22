@@ -6,6 +6,7 @@ import constants from '../resources/Constants.json'
 import { config as appConfig } from "../configs/Config"
 import { HTTPConnector } from "./HttpConnector";
 import _ from 'lodash'
+import { wrapperService } from "../routes/Router";
 const schemaMerger = new SchemaMerger()
 let httpInstance = new HTTPConnector(`${appConfig.query_api.druid.host}:${appConfig.query_api.druid.port}`)
 let httpConnector = httpInstance.connect()
@@ -46,7 +47,7 @@ export class DbConnector implements IConnector {
     public async insertRecord(table: string, fields: any, isDatasource: boolean) {
         await this.pool.transaction(async (dbTransaction) => {
             if (isDatasource) {
-                await this.submitIngestion(_.get(fields, ['ingestion_spec']))
+                await wrapperService.submitIngestion(_.get(fields, ['ingestion_spec']))
                     .catch((error: any) => {
                         throw constants.INGESTION_FAILED_ON_CREATE
                     })
@@ -63,7 +64,7 @@ export class DbConnector implements IConnector {
             if (_.isUndefined(currentRecord)) { throw constants.FAILED_RECORD_UPDATE }
             if (!_.isUndefined(currentRecord.tags)) { delete currentRecord.tags }
             if (isDatasource) {
-                await this.submitIngestion(_.get(fields, ['values', 'ingestion_spec']))
+                await wrapperService.submitIngestion(_.get(values, ['ingestion_spec']))
                     .catch((error: any) => {
                         throw constants.INGESTION_FAILED_ON_UPDATE
                     })
@@ -78,7 +79,7 @@ export class DbConnector implements IConnector {
         if (!_.isUndefined(existingRecord)) {
             await this.pool.transaction(async (dbTransaction) => {
                 if (isDatasource) {
-                    await this.submitIngestion(_.get(fields, ['values', 'ingestion_spec']))
+                    await wrapperService.submitIngestion(_.get(values, ['ingestion_spec']))
                         .catch((error: any) => {
                             throw constants.INGESTION_FAILED_ON_UPDATE
                         })
@@ -86,7 +87,15 @@ export class DbConnector implements IConnector {
                 await dbTransaction(table).where(filters).update(schemaMerger.mergeSchema(existingRecord, values))
             })
         } else {
-            await this.pool(table).insert(values)
+            await this.pool.transaction(async (dbTransaction) => {
+                if (isDatasource) {
+                    await wrapperService.submitIngestion(_.get(values, ['ingestion_spec']))
+                        .catch((error: any) => {
+                            throw constants.INGESTION_FAILED_ON_UPDATE
+                        })
+                }
+                await dbTransaction(table).insert(values)
+            })
         }
     }
 
@@ -108,9 +117,5 @@ export class DbConnector implements IConnector {
 
     public async listRecords(table: string) {
         return await this.pool.select('*').from(table)
-    }
-
-    public async submitIngestion(ingestionSpec: any){
-        return await httpConnector.post(`${appConfig.query_api.druid.submit_ingestion}`, ingestionSpec )
     }
 }
