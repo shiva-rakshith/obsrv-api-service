@@ -133,7 +133,7 @@ class TestExhaust {
   }
   public static INVALID_INGESTION_SPEC = {
     "type": "kafka",
-    "spec": {}
+    "spec": "ingestion_spec"
   }
 }
 
