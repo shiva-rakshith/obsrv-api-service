@@ -50,6 +50,7 @@ export class Datasets {
     }
 
     public setValues() {
+        console.log(JSON.stringify(this.getDefaults()), "defaults")
         return schemaMerger.mergeSchema(this.getDefaults(), this.getValues())
     }
 
@@ -62,10 +63,10 @@ export class Datasets {
 
     public getDefaults() {
         if (this.type == config.dataset_types.masterDataset) {
-            return defaultConfig.master
+            return {...defaultConfig.master}
         }
         else {
-            return defaultConfig.dataset
+            return {...defaultConfig.dataset}
         }
     }
 }
