@@ -70,4 +70,4 @@ router.post(routesConfig.query_wrapper.sql_wrapper.path, ResponseHandler.setApiI
 router.post(routesConfig.query_wrapper.native_post.path, ResponseHandler.setApiId(routesConfig.query_wrapper.native_post.api_id), onRequest({ entity: promEntities.data_out }), wrapperService.forwardNative)
 router.get(routesConfig.query_wrapper.native_get.path, ResponseHandler.setApiId(routesConfig.query_wrapper.native_get.api_id), onRequest({ entity: promEntities.data_out }), wrapperService.forwardNativeGet)
 router.delete(routesConfig.query_wrapper.native_delete.path, ResponseHandler.setApiId(routesConfig.query_wrapper.native_delete.api_id), onRequest({ entity: promEntities.data_out }), wrapperService.forwardNativeDel)
-router.get(routesConfig.query_wrapper.druid_status.path, ResponseHandler.setApiId(routesConfig.query_wrapper.druid_status.api_id), onRequest({ entity: promEntities.data_out }), wrapperService.nativeStatus)
+router.get(routesConfig.query_wrapper.druid_status.path, ResponseHandler.setApiId(routesConfig.query_wrapper.druid_status.api_id), wrapperService.nativeStatus)

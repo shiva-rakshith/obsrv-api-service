@@ -2,11 +2,11 @@ import { NextFunction, Response } from "express";
 import { incrementApiCalls, incrementFailedApiCalls, incrementSuccessfulApiCalls, setQueryResponseTime } from ".";
 
 export const onRequest = ({ entity }: any) => (req: any, res: Response, next: NextFunction) => {
-    const { id } = req;
+    const { id, url } = req;
     const startTime = Date.now();
     req.startTime = startTime;
     req.entity = entity;
-    incrementApiCalls({ entity, id })
+    incrementApiCalls({ entity, id, endpoint: url })
     next();
 }
 
@@ -16,15 +16,15 @@ const getDuration = (startTime: number) => {
 }
 
 export const onSuccess = (req: any, res: Response) => {
-    const { startTime, id, entity } = req;
+    const { startTime, id, entity, url } = req;
     const duration = getDuration(startTime);
-    duration && setQueryResponseTime(duration, { entity, id });
-    incrementSuccessfulApiCalls({ entity, id })
+    duration && setQueryResponseTime(duration, { entity, id, endpoint: url });
+    incrementSuccessfulApiCalls({ entity, id, endpoint: url })
 }
 
 export const onFailure = (req: any, res: Response) => {
-    const { startTime, id, entity } = req;
+    const { startTime, id, entity, url } = req;
     const duration = getDuration(startTime);
-    duration && setQueryResponseTime(duration, { entity, id });
-    incrementFailedApiCalls({ entity, id });
+    duration && setQueryResponseTime(duration, { entity, id, endpoint: url });
+    incrementFailedApiCalls({ entity, id, endpoint: url });
 }
