@@ -15,8 +15,8 @@ import { OperationType, telemetryAuditStart } from "../services/telemetry";
 import telemetryActions from "../data/telemetryActions";
 import { ClientCloudService } from "../services/ClientCloudService";
 import { WrapperService } from "../services/WrapperService";
-import { onRequest } from "../helpers/prometheus/methods";
-import promEntities from "../helpers/prometheus/prometheusEntities";
+import { onRequest } from "../helpers/prometheus/helpers";
+import promEntities from "../helpers/prometheus/entities";
 import { metricsScrapeHandler } from "../helpers/prometheus";
 
 const validationService = new ValidationService();
