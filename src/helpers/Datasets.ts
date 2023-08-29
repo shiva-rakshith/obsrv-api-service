@@ -50,7 +50,6 @@ export class Datasets {
     }
 
     public setValues() {
-        console.log(JSON.stringify(this.getDefaults()), "defaults")
         return schemaMerger.mergeSchema(this.getDefaults(), this.getValues())
     }
 
