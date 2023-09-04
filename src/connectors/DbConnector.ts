@@ -4,12 +4,9 @@ import { DbConnectorConfig } from "../models/ConnectionModels";
 import { SchemaMerger } from "../generators/SchemaMerger";
 import constants from '../resources/Constants.json'
 import { config as appConfig } from "../configs/Config"
-import { HTTPConnector } from "./HttpConnector";
 import _ from 'lodash'
 import { wrapperService } from "../routes/Router";
 const schemaMerger = new SchemaMerger()
-let httpInstance = new HTTPConnector(`${appConfig.query_api.druid.host}:${appConfig.query_api.druid.port}`)
-let httpConnector = httpInstance.connect()
 export class DbConnector implements IConnector {
     public pool: Knex
     private config: DbConnectorConfig
@@ -39,22 +36,15 @@ export class DbConnector implements IConnector {
     }
 
     execute(type: keyof typeof this.typeToMethod, property: any) {
-        let isDatasource = property[ "table" ] === appConfig.table_names.datasources
         this.method = this.typeToMethod[ type ]
-        return this.method(property[ "table" ], property[ "fields" ], isDatasource)
+        return this.method(property[ "table" ], property[ "fields" ])
     }
 
-    public async insertRecord(table: string, fields: any, isDatasource: boolean) {
+    public async insertRecord(table: string, fields: any) {
         await this.pool.transaction(async (dbTransaction) => {
-            if (isDatasource) {
-                await wrapperService.submitIngestion(_.get(fields, ['ingestion_spec']))
-                    .catch((error: any) => {
-                        throw constants.INGESTION_FAILED_ON_CREATE
-                    })
-            }
+            await this.submit_ingestion(_.get(fields, 'ingestion_spec'), table)
             await dbTransaction(table).insert(fields)
         })
-
     }
 
     public async updateRecord(table: string, fields: any, isDatasource: boolean) {
@@ -63,12 +53,6 @@ export class DbConnector implements IConnector {
             const currentRecord = await dbTransaction(table).select(Object.keys(values)).where(filters).first()
             if (_.isUndefined(currentRecord)) { throw constants.FAILED_RECORD_UPDATE }
             if (!_.isUndefined(currentRecord.tags)) { delete currentRecord.tags }
-            if (isDatasource) {
-                await wrapperService.submitIngestion(_.get(values, ['ingestion_spec']))
-                    .catch((error: any) => {
-                        throw constants.INGESTION_FAILED_ON_UPDATE
-                    })
-            }
             await dbTransaction(table).where(filters).update(schemaMerger.mergeSchema(currentRecord, values))
         })
     }
@@ -78,22 +62,12 @@ export class DbConnector implements IConnector {
         const existingRecord = await this.pool(table).select().where(filters).first()
         if (!_.isUndefined(existingRecord)) {
             await this.pool.transaction(async (dbTransaction) => {
-                if (isDatasource) {
-                    await wrapperService.submitIngestion(_.get(values, ['ingestion_spec']))
-                        .catch((error: any) => {
-                            throw constants.INGESTION_FAILED_ON_UPDATE
-                        })
-                }
+                await this.submit_ingestion(_.get(values, 'ingestion_spec'), table)
                 await dbTransaction(table).where(filters).update(schemaMerger.mergeSchema(existingRecord, values))
             })
         } else {
             await this.pool.transaction(async (dbTransaction) => {
-                if (isDatasource) {
-                    await wrapperService.submitIngestion(_.get(values, ['ingestion_spec']))
-                        .catch((error: any) => {
-                            throw constants.INGESTION_FAILED_ON_UPDATE
-                        })
-                }
+                await this.submit_ingestion(_.get(values, 'ingestion_spec'), table)
                 await dbTransaction(table).insert(values)
             })
         }
@@ -117,5 +91,15 @@ export class DbConnector implements IConnector {
 
     public async listRecords(table: string) {
         return await this.pool.select('*').from(table)
+    }
+
+    private async submit_ingestion(ingestion_spec: Record<string, any>, table: string) {
+        if (appConfig.table_names.datasources === table) {
+            return await wrapperService.submitIngestion(ingestion_spec)
+                .catch((error: any) => {
+                    throw constants.INGESTION_FAILED_ON_SAVE
+                })
+        }
+        return
     }
 }
