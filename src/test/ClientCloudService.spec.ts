@@ -5,7 +5,8 @@ import httpStatus from "http-status";
 import { TestExhaust } from "./Fixtures";
 import { config } from "./Config";
 import constants from "../resources/Constants.json";
-import { dbConnector, exhaustService, globalCache } from "../routes/Router";
+import { datasetService, dbConnector, exhaustService, globalCache, ingestorService } from "../routes/Router";
+
 import chaiSpies from 'chai-spies'
 import { describe, it } from 'mocha';
 import moment from "moment";

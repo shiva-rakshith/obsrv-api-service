@@ -3,13 +3,18 @@ import constants from "../resources/Constants.json"
 import { ResponseHandler } from "../helpers/ResponseHandler";
 import _ from 'lodash'
 import httpStatus from "http-status";
-import { dbConnector } from "../routes/Router";
 import { globalCache } from "../routes/Router";
 import { refreshDatasetConfigs } from "../helpers/DatasetConfigs";
+import { IConnector } from "../models/DatasetModels";
+import { config } from '../configs/Config'
+import { AxiosInstance } from "axios";
+import { wrapperService } from "../routes/Router";
 export class IngestorService {
-    private kafkaConnector: any;
-    constructor(kafkaConnector: any) {
+    private kafkaConnector: IConnector;
+    private httpConnector: AxiosInstance
+    constructor(kafkaConnector: IConnector, httpConnector: IConnector) {
         this.kafkaConnector = kafkaConnector
+        this.httpConnector = httpConnector.connect()
         this.init()
     }
     public init() {
@@ -33,6 +38,17 @@ export class IngestorService {
             next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: error.message || "", errCode: error.code || httpStatus["500_NAME"] });
         }
 
+    }
+    public submitIngestion = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            await wrapperService.submitIngestion(req.body)
+            ResponseHandler.successResponse(req, res, { status: 200, data: { message: constants.INGESTION_SUBMITTED } });
+        }
+        catch (error: any) {
+            let errorMessage = error?.response?.data?.error || "Internal Server Error"
+            console.error(errorMessage)
+            next({ statusCode: error.status || httpStatus.INTERNAL_SERVER_ERROR, message: errorMessage, errCode: error.code || httpStatus[ "500_NAME" ] });
+        }
     }
     private getDatasetId(req: Request) {
         let datasetId = req.params.datasetId.trim()
