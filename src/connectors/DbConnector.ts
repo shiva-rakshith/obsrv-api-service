@@ -97,7 +97,8 @@ export class DbConnector implements IConnector {
         if (appConfig.table_names.datasources === table) {
             return await wrapperService.submitIngestion(ingestion_spec)
                 .catch((error: any) => {
-                    throw constants.INGESTION_FAILED_ON_SAVE
+                    console.error(constants.INGESTION_FAILED_ON_SAVE)
+                    throw constants.FAILED_RECORD_UPDATE
                 })
         }
         return
