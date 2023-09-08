@@ -2167,7 +2167,7 @@ components:
                     example: FAILED
                   errmsg:
                     type: string
-                    example: Failed to update Record
+                    example: Failed to save Record
               responseCode:
                 type: string
                 example: BAD_REQUEST
@@ -3314,7 +3314,7 @@ components:
                     example: FAILED
                   errmsg:
                     type: string
-                    example: Failed to update Record
+                    example: Failed to save Record
               responseCode:
                 type: string
                 example: BAD_REQUEST
@@ -4218,7 +4218,7 @@ components:
                     example: FAILED
                   errmsg:
                     type: string
-                    example: Failed to update Record
+                    example: Failed to save Record
               responseCode:
                 type: string
                 example: BAD_REQUEST
