@@ -47,7 +47,7 @@ export class DbConnector implements IConnector {
         })
     }
 
-    public async updateRecord(table: string, fields: any, isDatasource: boolean) {
+    public async updateRecord(table: string, fields: any) {
         const { filters, values } = fields
         await this.pool.transaction(async (dbTransaction) => {
             const currentRecord = await dbTransaction(table).select(Object.keys(values)).where(filters).first()
@@ -57,7 +57,7 @@ export class DbConnector implements IConnector {
         })
     }
 
-    public async upsertRecord(table: string, fields: any, isDatasource: boolean) {
+    public async upsertRecord(table: string, fields: any) {
         const { filters, values } = fields;
         const existingRecord = await this.pool(table).select().where(filters).first()
         if (!_.isUndefined(existingRecord)) {

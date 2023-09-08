@@ -104,7 +104,6 @@ export class WrapperService {
     };
 
     public submitIngestion = async (ingestionSpec: object) => {
-        console.log(JSON.stringify(ingestionSpec), "in wrapper service")
         return await axios.post(`${config.query_api.druid.host}:${config.query_api.druid.port}/${config.query_api.druid.submit_ingestion}`, ingestionSpec)
      }
 }
