@@ -65,14 +65,17 @@ export class DataSourceService {
         }
     }
     public validateDatasource = async (payload: Record<string, any>) => {
-        let datasetRecord = await ingestorService.getDatasetConfig(payload.dataset_id)
-        if (_.isEmpty(datasetRecord)) { throw constants.DATASET_NOT_FOUND }
-        else {
-            if (!_.isUndefined(payload.datasource_ref) && !_.isUndefined(payload.ingestion_spec.spec.dataSchema.dataSource) && payload.datasource_ref !== payload.ingestion_spec.spec.dataSchema.dataSource) {
-                throw constants.INVALID_DATASOURCE_REF
-            } else if (!_.isUndefined(payload.dataset_id) && !_.isUndefined(payload.ingestion_spec) && datasetRecord.router_config.topic !== payload.ingestion_spec.spec.ioConfig.topic) {
-                throw constants.INVALID_TOPIC
-            }
+        let datasetRecord = await ingestorService.getDatasetConfig(payload.dataset_id);
+        if (_.isEmpty(datasetRecord)) {
+            throw constants.DATASET_NOT_FOUND;
+        }
+        if (!_.isUndefined(payload.datasource_ref) &&!_.isUndefined(payload.ingestion_spec.spec.dataSchema.dataSource) && payload.datasource_ref !== payload.ingestion_spec.spec.dataSchema.dataSource) {
+            throw constants.INVALID_DATASOURCE_REF;
+        }
+        if (
+            !_.isUndefined(payload.dataset_id) && !_.isUndefined(payload.ingestion_spec) && datasetRecord.router_config.topic !== payload.ingestion_spec.spec.ioConfig.topic) {
+            throw constants.INVALID_TOPIC;
         }
     }
+    
 }
