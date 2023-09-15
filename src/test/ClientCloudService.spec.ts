@@ -5,7 +5,8 @@ import httpStatus from "http-status";
 import { TestExhaust } from "./Fixtures";
 import { config } from "./Config";
 import constants from "../resources/Constants.json";
-import { exhaustService, globalCache } from "../routes/Router";
+import { datasetService, dbConnector, exhaustService, globalCache, ingestorService } from "../routes/Router";
+
 import chaiSpies from 'chai-spies'
 import { describe, it } from 'mocha';
 import moment from "moment";
@@ -26,6 +27,9 @@ describe("AWS Cloud Storage", () => {
 
     it("it should return 404 if dataset record not found", (done) => {
         chai.spy.restore()
+        chai.spy.on(dbConnector, "listRecords", () => {
+            return Promise.resolve([{}])
+        })
         chai.spy.on(globalCache, "get", () => {
             return []
         })

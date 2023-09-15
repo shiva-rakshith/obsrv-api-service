@@ -2,7 +2,7 @@ import httpStatus from "http-status";
 import _  from "lodash";
 import moment, { Moment} from "moment";
 import { queryRules } from "../configs/QueryRules";
-import { IValidator } from "../models/DatasetModels";
+import { IConnector, IValidator } from "../models/DatasetModels";
 import { ICommonRules, ILimits, IQuery, IQueryTypeRules, IRules } from "../models/QueryModels";
 import { ValidationStatus } from "../models/ValidationModels";
 import constants from "../resources/Constants.json";
@@ -10,12 +10,15 @@ import { dbConnector } from "../routes/Router";
 import { routesConfig } from "../configs/RoutesConfig";
 import { config } from "../configs/Config";
 import { isValidDateRange } from "../utils/common";
+import { HTTPConnector } from "../connectors/HttpConnector";
 export class QueryValidator implements IValidator {
     private limits: ILimits;
     private momentFormat: string;
+    private httpConnector: any
     constructor() {
         this.limits = queryRules
-        this.momentFormat = "YYYY-MM-DD HH:MI:SS";
+        this.momentFormat = "YYYY-MM-DD HH:MI:SS"
+        this.httpConnector = new HTTPConnector(`${config.query_api.druid.host}:${config.query_api.druid.port}`).connect()
     }
     public async validate(data: any, id: string): Promise<ValidationStatus> {
         let validationStatus
@@ -128,12 +131,20 @@ export class QueryValidator implements IValidator {
             }
         }
     }
-
+    public async validateDatasource(datasource: any) {
+        let existingDatasources = await this.httpConnector(config.query_api.druid.list_datasources_path, {})
+        if (!_.includes(existingDatasources.data, datasource)) {
+            let error = constants.INVALID_DATASOURCE
+            error.message = error.message.replace('${datasource}', datasource)
+            throw error
+        }
+        return
+    }
     public async setDatasourceRef(payload: any): Promise<ValidationStatus> {
         try {
             let dataSource = this.getDataSource(payload)
             let dataSourceRef = await this.getDataSourceRef(dataSource)
-
+            await this.validateDatasource(dataSourceRef)
             if (payload.querySql) {
                 payload.querySql.query = payload.querySql.query.replace(dataSource, dataSourceRef)
             }
@@ -142,13 +153,13 @@ export class QueryValidator implements IValidator {
             }
             return { isValid: true };
         } catch (error: any) {
-            console.log(error.message)
-            return { isValid: false, message: "error ocuured while fetching datasource record", code: httpStatus["400_NAME"] };
+            console.log(error?.message)
+            return { isValid: false, message: error.message || "error ocuured while fetching datasource record", code: error.code || httpStatus[ "400_NAME" ] };
         }
     }
 
     public async getDataSourceRef(datasource: string): Promise<string> {
-        const record: any = await dbConnector.readRecords("datasources", { "filters": { "datasource": datasource } })
+        const record: any = await dbConnector.readRecords("datasources", { "filters": { "dataset_id": datasource } })
         return record[0].datasource_ref
     }
 

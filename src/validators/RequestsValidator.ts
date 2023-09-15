@@ -63,6 +63,7 @@ export class RequestsValidator implements IValidator {
             routesConfig.config.dataset_source_config.update,
             routesConfig.config.dataset_source_config.list,
             routesConfig.exhaust,
+            routesConfig.submit_ingestion
         ]
     }
 
