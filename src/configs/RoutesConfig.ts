@@ -135,24 +135,29 @@ export const routesConfig = {
   },
   query_wrapper: {
     sql_wrapper: {
-      api_id: "obsrv.sql.query",
+      api_id: "obsrv.query.wrapper.sql.query",
       method: "post",
       path: "/obsrv/v1/sql",
     },
     native_post: {
-      api_id: "obsrv.native.query",
+      api_id: "obsrv.query.wrapper.native.post",
       method: "post",
       path: /\/druid\/v2.*/,
     },
     native_get: {
-      api_id: "obsrv.native.query",
+      api_id: "obsrv.query.wrapper.native.get",
       method: "get",
-      path: "/\/druid\/v2.*/"
+      path: /\/druid\/v2.*/
     },
     native_delete: {
-      api_id: "obsrv.native.query",
+      api_id: "obsrv.query.wrapper.native.delete",
       method: "delete",
       path: "/druid/v2/:queryId"
+    },
+    druid_status: {
+      api_id: "obsrv.query.wrapper.status",
+      method: "get",
+      path: "/status"
     }
   }
 }
