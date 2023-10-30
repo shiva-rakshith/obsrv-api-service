@@ -25,7 +25,7 @@ jobs:
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          
+
       - name: Build docker image and push
         uses: docker/build-push-action@v4
         with:
@@ -51,7 +51,7 @@ jobs:
           tags: ${{ vars.DOCKERHUB_USERNAME }}/flink-command-service:${{ github.ref_name }}
 
   aws-deploy:
-    needs: [check-tag, docker-build]
+    needs: [check-tag, docker-build-api-service, docker-build-command-service]
     if: needs.check-tag.outputs.ALLOWED_TAG ==  'True'
     runs-on: ubuntu-latest
     environment: aws-dev
@@ -97,7 +97,7 @@ jobs:
           -var dataset_api_image_tag=${{ github.ref_name }}
 
   azure-deploy:
-    needs: [check-tag, docker-build]
+    needs: [check-tag, docker-build-api-service, docker-build-command-service]
     if: needs.check-tag.outputs.ALLOWED_TAG ==  'True' && vars.CLOUD_PROVIDER == 'azure'
     runs-on: ubuntu-latest
     steps:
