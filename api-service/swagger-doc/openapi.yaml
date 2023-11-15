@@ -4413,7 +4413,7 @@ components:
                 type: object
 
 paths:
-  /obsrv/v1/query:
+  /obsrv/v1/data/query:
     post:
       summary: Perform a native query to fetch data from analytical data source
       description: |
@@ -4436,7 +4436,7 @@ paths:
         400:
           $ref: "#/components/responses/BadRequestResponseSchema"
 
-  /obsrv/v1/sql-query:
+  /obsrv/v1/data/sql-query:
     post:
       summary: Perform a sql query to fetch data from analytical data source
       description: |
@@ -4459,7 +4459,7 @@ paths:
         400:
           $ref: "#/components/responses/BadRequestResponseSchemaSql"
 
-  /obsrv/v1/data/{datasetId}:
+  /obsrv/v1/data/create/{datasetId}:
     post: 
       summary: The API designed for ingesting data into Kafka. 
       description: |
@@ -4490,7 +4490,7 @@ paths:
         404:
           $ref: "#/components/responses/DataIngestNotFound"
 
-  /obsrv/v1/datasets:
+  /obsrv/v1/datasets/create:
     post:
       summary: creating datasets into postgres tables
       description: This API allows you to create new datasets in the PostgreSQL database used by the analytical data source.
@@ -4511,6 +4511,8 @@ paths:
           $ref: "#/components/responses/DatasetCreateBadRequest"
         409:
           $ref: "#/components/responses/DatasetCreateDuplicate"
+          
+  /obsrv/v1/datasets/update:
     patch:
       summary: API to update existing records in database
       description: This API allows you to update existing datasets in the PostgreSQL database used by the analytical data source.
@@ -4529,7 +4531,8 @@ paths:
           $ref: "#/components/responses/DatasetUpdateResponseSchema"
         400:
           $ref: "#/components/responses/DatasetUpdateBadRequest"
-  /obsrv/v1/datasets/{datasetId}:
+          
+  /obsrv/v1/datasets/get/{datasetId}:
     get:
       summary: API to read records from database
       description: This API allows you to retrieve records from a dataset in the PostgreSQL. A successful response will return a status code of 200. If the dataset does not exist, a status code of 404 will be returned.
@@ -4567,7 +4570,7 @@ paths:
         400:
           $ref: "#/components/responses/DatasetListBadRequest"
 
-  /obsrv/v1/datasources:
+  /obsrv/v1/datasources/create:
     post:
       summary: creating datasources into postgres tables
       description: This API allows you to create new datasource in the PostgreSQL database. While saving a datasource, it is required that the datasource field in ingestion spec must match with datasource_ref.
@@ -4588,6 +4591,8 @@ paths:
           $ref: "#/components/responses/DatasourceCreateBadRequest"
         409:
           $ref: "#/components/responses/DatasourceCreateDuplicate"
+          
+  /obsrv/v1/datasources/update:
     patch:
       summary: API to update existing records in database
       description: This API allows you to update existing datasource in the PostgreSQL database. While saving a datasource, it is required that the datasource field in ingestion spec must match with datasource_ref.
@@ -4606,7 +4611,7 @@ paths:
           $ref: "#/components/responses/DatasourceUpdateResponseSchema"
         400:
           $ref: "#/components/responses/DatasourceUpdateBadRequest"
-  /obsrv/v1/datasources/{datasourceId}:
+  /obsrv/v1/datasources/get/{datasourceId}:
     get:
       summary: API to read records from database
       description: This API allows you to retrieve records from a datasource in the PostgreSQL. A successful response will return a status code of 200. If the datasource does not exist, a status code of 404 will be returned
@@ -4642,7 +4647,7 @@ paths:
           $ref: "#/components/responses/DatasourceListResponse"
         400:
           $ref: "#/components/responses/DatasourceListBadRequest"
-  /obsrv/v1/datasets/source/config:
+  /obsrv/v1/datasets/source/config/create:
     post:
       summary: creating datasets into postgres tables
       description: This API allows you to create new datasets in the PostgreSQL database used by the analytical data source.
@@ -4663,6 +4668,8 @@ paths:
           $ref: "#/components/responses/DatasetSourceConfigCreateBadRequest"
         409:
           $ref: "#/components/responses/DatasetSourceConfigCreateDuplicate"
+          
+  /obsrv/v1/datasets/source/config/update:
     patch:
       summary: API to update existing records in database
       description: This API allows you to update existing datasets in the PostgreSQL database used by the analytical data source.
@@ -4681,7 +4688,7 @@ paths:
           $ref: "#/components/responses/DatasetSourceConfigUpdateResponseSchema"
         400:
           $ref: "#/components/responses/DatasetSourceConfigUpdateBadRequest"
-  /obsrv/v1/datasets/source/config/{datasetId}:
+  /obsrv/v1/datasets/source/config/get/{datasetId}:
     get:
       summary: API to read records from database
       description: This API allows you to retrieve records from a dataset in the PostgreSQL. A successful response will return a status code of 200. If the dataset does not exist, a status code of 404 will be returned.
@@ -4718,7 +4725,7 @@ paths:
           $ref: "#/components/responses/DatasetSoureConfigListResponse"
         400:
           $ref: "#/components/responses/DatasetSourceConfigListBadRequest"
-  /obsrv/v1/submit/ingestion:
+  /obsrv/v1/data/submit/ingestion:
     post:
       summary: API to submit ingestion spec to analytical database
       tags: [Obsrv Datasource APIs]
@@ -4737,7 +4744,7 @@ paths:
         400:
           $ref: "#/components/responses/SubmitIngestionBadRequestResponseSchema"
               
-  /obsrv/v1/exhaust/{datasetId}:
+  /obsrv/v1/data/exhaust/{datasetId}:
     get:
       summary: API to access backup files from Cloud providers
       tags: [Obsrv Data Exhaust APIs]
