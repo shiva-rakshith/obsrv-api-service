@@ -125,7 +125,7 @@ describe("DATA INGEST API", () => {
     it("it should not ingest data when datasetid param is empty", (done) => {
         chai
             .request(app)
-            .post("/obsrv/v1/data/ /")
+            .post(config.apiDatasetIngestEndPoint.replace(':datasetId', " /"))
             .send(TestDataIngestion.SAMPLE_INPUT)
             .end((err, res) => {
                 res.should.have.status(httpStatus.BAD_REQUEST);
